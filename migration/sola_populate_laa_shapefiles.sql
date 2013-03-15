@@ -84,7 +84,7 @@ INSERT INTO cadastre.spatial_value_area (spatial_unit_id, type_code, size, chang
 	SELECT 	DISTINCT ON (plotnumber) gid, 'officialArea', cast(areai AS int), 'test' AS ch_user FROM interim_data.examined_plots WHERE plotnumber IS NOT NULL;
 
 
---INSERT INTO source.archive (id, name, change_user) VALUES ('archive-id', 'Land Administration Authority', 'test'); 
+INSERT INTO source.archive (id, name, change_user) VALUES ('archive-id', 'Land Administration Authority', 'test'); 
 
 INSERT INTO source.source (id, archive_id, la_nr, submission, maintype, type_code, content, availability_status_code, change_user)
 VALUES (uuid_generate_v1(), 'archive-id', 'Survey Section', '2012-12-03', 'mapDigital', 'cadastralMap', 'Land Administration Authority', 'available', 'test');
