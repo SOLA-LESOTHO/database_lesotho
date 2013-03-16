@@ -42,8 +42,7 @@ SET style = 'parcel.xml',
 WHERE "name" = 'parcels'; 
 
 UPDATE system.config_map_layer
-SET pojo_structure = 'theGeom:LineString,label:""',
-
+SET pojo_structure = 'theGeom:LineString,label:""'
 WHERE "name" = 'roads'; 
 
 -- Name Translations
@@ -368,3 +367,10 @@ INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_c
 -- from AtlasStyler to assist with layer styling. 
 -- Remove views that are not relevant to Lesotho
 --DROP VIEW IF EXISTS cadastre.place_name;
+
+-- Elton: This will change the query that is used to retrieve features for the parcels layer.
+-- The change from the original query is that it removes the condition of the area. and st_area(co.geom_polygon)> power(5 * #{pixel_res}, 2)
+UPDATE system.query 
+	SET sql = 'select co.id, co.name_firstpart || ''/'' || co.name_lastpart AS label,  st_asewkb(co.geom_polygon) AS the_geom FROM cadastre.cadastre_object co WHERE type_code= ''parcel'' and status_code= ''current'' 
+	AND ST_Intersects(co.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))'
+WHERE name = 'SpatialResult.getParcels';

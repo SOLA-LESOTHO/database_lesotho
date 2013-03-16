@@ -83,7 +83,8 @@ INSERT INTO cadastre.cadastre_object (id, name_firstpart, name_lastpart, transac
 INSERT INTO cadastre.spatial_value_area (spatial_unit_id, type_code, size, change_user)
 	SELECT 	DISTINCT ON (plotnumber) gid, 'officialArea', cast(areai AS int), 'test' AS ch_user FROM interim_data.examined_plots WHERE plotnumber IS NOT NULL;
 
-
+DELETE FROM source.source WHERE archive_id = 'archive-id';
+DELETE FROM source.archive WHERE id = 'archive-id';
 INSERT INTO source.archive (id, name, change_user) VALUES ('archive-id', 'Land Administration Authority', 'test'); 
 
 INSERT INTO source.source (id, archive_id, la_nr, submission, maintype, type_code, content, availability_status_code, change_user)
