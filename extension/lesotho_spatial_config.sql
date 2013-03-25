@@ -1,4 +1,13 @@
-﻿  
+﻿--Hold original values for srid 22287 in a new row with srid = 40000
+DELETE FROM public.spatial_ref_sys WHERE srid = 40000;
+INSERT INTO public.spatial_ref_sys(srid, auth_name, auth_srid, srtext, proj4text)
+	SELECT 40000, auth_name, 40000, srtext, proj4text FROM spatial_ref_sys WHERE srid = 22287;
+
+-- Modify srid 22287 for south oriented coordinat systems 
+UPDATE public.spatial_ref_sys set srtext = 
+	'PROJCS["Cape / Lo27",GEOGCS["Cape",DATUM["Cape",SPHEROID["Clarke 1880 (Arc)",6378249.145,293.4663077,AUTHORITY["EPSG","7013"]],AUTHORITY["EPSG","6222"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4222"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse Mercator (South Orientated)"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",27],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],AUTHORITY["EPSG","22287"],AXIS["Y",WEST],AXIS["X",SOUTH]]'
+WHERE srid = 22287;  
+
 ----- Existing Layer Updates ----
 -- Remove layers from core SOLA that are not used by Lesotho
 --DELETE FROM system.config_map_layer WHERE "name" IN ('place-names', 'survey-controls', 'roads'); 
@@ -33,8 +42,7 @@ SET style = 'parcel.xml',
 WHERE "name" = 'parcels'; 
 
 UPDATE system.config_map_layer
-SET pojo_structure = 'theGeom:LineString,label:""',
-
+SET pojo_structure = 'theGeom:LineString,label:""'
 WHERE "name" = 'roads'; 
 
 -- Name Translations
@@ -359,3 +367,10 @@ INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_c
 -- from AtlasStyler to assist with layer styling. 
 -- Remove views that are not relevant to Lesotho
 --DROP VIEW IF EXISTS cadastre.place_name;
+
+-- Elton: This will change the query that is used to retrieve features for the parcels layer.
+-- The change from the original query is that it removes the condition of the area. and st_area(co.geom_polygon)> power(5 * #{pixel_res}, 2)
+UPDATE system.query 
+	SET sql = 'select co.id, co.name_firstpart || ''/'' || co.name_lastpart AS label,  st_asewkb(co.geom_polygon) AS the_geom FROM cadastre.cadastre_object co WHERE type_code= ''parcel'' and status_code= ''current'' 
+	AND ST_Intersects(co.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))'
+WHERE name = 'SpatialResult.getParcels';
