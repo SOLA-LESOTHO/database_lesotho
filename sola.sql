@@ -1197,890 +1197,6 @@ COMMENT ON FUNCTION administrative.get_objections(
  namelastpart varchar
 ) IS '';
     
--- Function administrative.getsysregstatus --
-CREATE OR REPLACE FUNCTION administrative.getsysregstatus(
- fromdate varchar
-  , todate varchar
-  , namelastpart varchar
-) RETURNS SETOF record 
-AS $$
-DECLARE 
-
-       	block  			varchar;	
-       	appLodgedNoSP 		decimal:=0 ;	
-       	appLodgedSP   		decimal:=0 ;	
-       	SPnoApp 		decimal:=0 ;	
-       	appPendObj		decimal:=0 ;	
-       	appIncDoc		decimal:=0 ;	
-       	appPDisp		decimal:=0 ;	
-       	appCompPDispNoCert	decimal:=0 ;	
-       	appCertificate		decimal:=0 ;
-       	appPrLand		decimal:=0 ;	
-       	appPubLand		decimal:=0 ;	
-       	TotApp			decimal:=0 ;	
-       	TotSurvPar		decimal:=0 ;	
-
-
-
-      
-       rec     record;
-       sqlSt varchar;
-       statusFound boolean;
-       recToReturn record;
-
-        -- From Neil's email 9 march 2013
-	    -- STATUS REPORT
-		--Block	
-		--1. Total Number of Applications	
-		--2. No of Applications Lodged with Surveyed Parcel	
-		--3. No of Applications Lodged no Surveyed Parcel	     
-		--4. No of Surveyed Parcels with no application	
-		--5. No of Applications with pending Objection	        
-		--6. No of Applications with incomplete Documentation	
-		--7. No of Applications in Public Display	               
-		--8. No of Applications with Completed Public Display but Certificates not Issued	 
-		--9. No of Applications with Issued Certificate	
-		--10. No of Applications for Private Land	
-		--11. No of Applications for Public Land 	
-		--12. Total Number of Surveyed Parcels	
-
-    
-BEGIN  
-
-
-   sqlSt:= '';
-    
-    sqlSt:= 'select  bu.name_lastpart   as area
-                   FROM        application.application aa,
-			  application.service s,
-			  application.application_property ap,
-		          administrative.ba_unit bu
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = ''systematicRegn''::text
-			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			    AND   aa.id::text = ap.application_id::text
-		
-    ';
-
-    --raise exception '%',sqlSt;
-       statusFound = false;
-
-    -- Loop through results
-    
-    FOR rec in EXECUTE sqlSt loop
-
-    
-    select        ( SELECT  
-		    count (distinct(aa.id)) 
-		    FROM  application.application aa,
-			  application.service s,
-			  administrative.ba_unit bu, 
-		          application.application_property ap
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = 'systematicRegn'::text
-                            AND   aa.id::text = ap.application_id::text
-			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			    AND bu.name_lastpart = ''|| rec.area ||''
-			    AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-			    ),
-
-		    (SELECT count (distinct(aa.id))
-		     FROM application.application aa,
-		     administrative.ba_unit bu, 
-		     administrative.ba_unit_contains_spatial_unit su, 
-		     application.application_property ap,
-		     application.service s
-			 WHERE 
-			 bu.id::text = su.ba_unit_id::text 
-			 AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			 AND   aa.id::text = ap.application_id::text
-			 AND   s.request_type_code::text = 'systematicRegn'::text
-			 AND s.application_id = aa.id
-			 AND bu.name_lastpart = ''|| rec.area ||''
-			 AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )),
-
-	          (SELECT count (*)
-	            FROM cadastre.cadastre_object co
-			    WHERE co.type_code='parcel'
-			    AND   co.id not in (SELECT su.spatial_unit_id FROM administrative.ba_unit_contains_spatial_unit su)
-			    AND co.name_lastpart = ''|| rec.area ||''
-	          ),
-
-                  (
-	          SELECT (COUNT(*)) 
-		   FROM  application.application aa, 
-		   application.service s,
- 		   administrative.ba_unit bu, 
-		   application.application_property ap
-		  WHERE  s.application_id::text = aa.id::text 
-		  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-		  AND s.request_type_code::text = 'lodgeObjection'::text
-		  AND s.status_code::text != 'cancelled'::text
-		  AND   aa.id::text = ap.application_id::text
-		  AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-		  AND bu.name_lastpart = ''|| rec.area ||''
-		  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-		),
-
-		  ( WITH appSys AS 	(SELECT  
-		    distinct on (aa.id) aa.id as id
-		    FROM  application.application aa,
-			  application.service s,
- 		          administrative.ba_unit bu, 
-		          application.application_property ap
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = 'systematicRegn'::text
-			    AND   aa.id::text = ap.application_id::text
-		            AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-		            AND bu.name_lastpart = ''|| rec.area ||''
-		            AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )),
-		     sourceSys AS	
-		     (
-		     SELECT  DISTINCT (sc.id) FROM  application.application_uses_source a_s,
-							   source.source sc,
-							   appSys app
-						where sc.type_code='systematicRegn'
-						 and  sc.id = a_s.source_id
-						 and a_s.application_id=app.id
-						 AND  (
-						  (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-						   or
-						  (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-						  )
-						
-				)
-		      SELECT 	CASE 	WHEN (SELECT (SUM(1) IS NULL) FROM appSys) THEN 0
-				WHEN ((SELECT COUNT(*) FROM appSys) - (SELECT COUNT(*) FROM sourceSys) >= 0) THEN (SELECT COUNT(*) FROM appSys) - (SELECT COUNT(*) FROM sourceSys)
-				ELSE 0
-			END 
-				  ),
-     
-                 (select count(distinct (aa.id))
-                   from application.service s, application.application aa, 
-                   application.application_property ap
-                   where s.request_type_code::text = 'systematicRegn'::text
-		   AND s.application_id = aa.id
-		   AND ap.application_id = aa.id
-		   AND ap.name_lastpart = ''|| rec.area ||''
-		   AND ap.name_lastpart in ( select ss.reference_nr from   source.source ss 
-					     where ss.type_code='publicNotification'
-					     and ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and ss.expiration_date < to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and ss.reference_nr = ''|| rec.area ||''   
-					   )
-
-                 ),
-
-                 ( 
-                   select count(distinct (aa.id))
-                   from application.service s, application.application aa, 
-                   application.application_property ap
-                   where s.request_type_code::text = 'systematicRegn'::text
-		   AND s.application_id = aa.id
-		   AND ap.application_id = aa.id
-		   AND ap.name_lastpart = ''|| rec.area ||'' 
-		   AND ap.name_lastpart in ( select ss.reference_nr 
-					     from   source.source ss 
-					     where ss.type_code='publicNotification'
-					     and ss.expiration_date < to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and   ss.reference_nr not in ( select ss.reference_nr from   source.source ss 
-					     where ss.type_code='title'
-					     and ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and ss.reference_nr = ''|| rec.area ||''
-                                             )   
-					   )  
-                 ),
-
-                 (
-                   select count(distinct (aa.id))
-                   from application.service s, application.application aa, 
-                   application.application_property ap
-                   where s.request_type_code::text = 'systematicRegn'::text
-		   AND s.application_id = aa.id
-		   AND ap.application_id = aa.id
-		   AND ap.name_lastpart = ''|| rec.area ||'' 
-		   AND ap.name_lastpart in ( select ss.reference_nr 
-					     from   source.source ss 
-					     where ss.type_code='publicNotification'
-					     and ss.expiration_date < to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and   ss.reference_nr in ( select ss.reference_nr from   source.source ss 
-					     where ss.type_code='title'
-					     and ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and ss.reference_nr = ''|| rec.area ||''
-                                             )   
-					   )  
-                ),
-		 (SELECT count (distinct (aa.id) )
-			FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, 
-			administrative.ba_unit_contains_spatial_unit su, application.application_property ap, 
-			application.application aa, application.service s, party.party pp, administrative.party_for_rrr pr, 
-			administrative.rrr rrr, administrative.ba_unit bu
-			  WHERE sa.spatial_unit_id::text = co.id::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text 
-			  AND sa.type_code::text = 'officialrec.area'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
-			  AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text AND ap.name_firstpart::text = bu.name_firstpart::text) 
-			  AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text 
-			  AND s.status_code::text = 'completed'::text AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text 
-			  AND rrr.ba_unit_id::text = su.ba_unit_id::text
-			  AND co.name_lastpart = ''|| rec.area ||'' 
-			  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-			  AND 
-			  (rrr.type_code::text = 'ownership'::text 
-			   OR rrr.type_code::text = 'apartment'::text 
-			   OR rrr.type_code::text = 'commonOwnership'::text 
-			   ) 
-			  AND bu.id::text = su.ba_unit_id::text
-		 ),		
-		 ( SELECT count (distinct (aa.id) )
-			FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, 
-			administrative.ba_unit_contains_spatial_unit su, application.application_property ap, 
-			application.application aa, application.service s, party.party pp, administrative.party_for_rrr pr, 
-			administrative.rrr rrr, administrative.ba_unit bu
-			  WHERE sa.spatial_unit_id::text = co.id::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text 
-			  AND sa.type_code::text = 'officialrec.area'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
-			  AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text AND ap.name_firstpart::text = bu.name_firstpart::text) 
-			  AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text 
-			  AND s.status_code::text = 'completed'::text AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text 
-			  AND rrr.ba_unit_id::text = su.ba_unit_id::text AND rrr.type_code::text = 'stateOwnership'::text AND bu.id::text = su.ba_unit_id::text
-			  AND co.name_lastpart = ''|| rec.area ||''
-			  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          ) 
-	  	 ), 	
-                 (SELECT count (*)
-	            FROM cadastre.cadastre_object co
-			    WHERE co.type_code='parcel'
-			    AND co.name_lastpart = ''|| rec.area ||'' 
-                 )    
-              INTO       TotApp,
-                         appLodgedSP,
-                         SPnoApp,
-                         appPendObj,
-                         appIncDoc,
-                         appPDisp,
-                         appCompPDispNoCert,
-                         appCertificate,
-                         appPrLand,
-                         appPubLand,
-                         TotSurvPar
-                
-              FROM        application.application aa,
-			  application.service s,
-			  application.application_property ap,
-		          administrative.ba_unit bu
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = 'systematicRegn'::text
-			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			    AND   aa.id::text = ap.application_id::text
-			    AND bu.name_lastpart = ''|| rec.area ||''
-                                               
-	  ;        
-
-                block = rec.area;
-                TotApp = TotApp;
-		appLodgedSP = appLodgedSP;
-		SPnoApp = SPnoApp;
-                appPendObj = appPendObj;
-		appIncDoc = appIncDoc;
-		appPDisp = appPDisp;
-		appCompPDispNoCert = appCompPDispNoCert;
-		appCertificate = appCertificate;
-		appPrLand = appPrLand;
-		appPubLand = appPubLand;
-		TotSurvPar = TotSurvPar;
-		appLodgedNoSP = TotApp-appLodgedSP;
-		
-
-
-	  
-	  select into recToReturn
-	       	block::			varchar,
-		TotApp::  		decimal,
-		appLodgedSP::  		decimal,
-		SPnoApp::  		decimal,
-		appPendObj::  		decimal,
-		appIncDoc::  		decimal,
-		appPDisp::  		decimal,
-		appCompPDispNoCert::  	decimal,
-		appCertificate::  	decimal,
-		appPrLand::  		decimal,
-		appPubLand::  		decimal,
-		TotSurvPar::  		decimal,
-		appLodgedNoSP::  	decimal;
-
-		                         
-          return next recToReturn;
-          statusFound = true;
-          
-    end loop;
-   
-    if (not statusFound) then
-         block = 'none';
-                
-        select into recToReturn
-	       	block::			varchar,
-		TotApp::  		decimal,
-		appLodgedSP::  		decimal,
-		SPnoApp::  		decimal,
-		appPendObj::  		decimal,
-		appIncDoc::  		decimal,
-		appPDisp::  		decimal,
-		appCompPDispNoCert::  	decimal,
-		appCertificate::  	decimal,
-		appPrLand::  		decimal,
-		appPubLand::  		decimal,
-		TotSurvPar::  		decimal,
-		appLodgedNoSP::  	decimal;
-
-		                         
-          return next recToReturn;
-
-    end if;
-    return;
-END;
-$$ LANGUAGE plpgsql;
-COMMENT ON FUNCTION administrative.getsysregstatus(
- fromdate varchar
-  , todate varchar
-  , namelastpart varchar
-) IS '';
-    
--- Function administrative.getsysregprogress --
-CREATE OR REPLACE FUNCTION administrative.getsysregprogress(
- fromdate varchar
-  , todate varchar
-  , namelastpart varchar
-) RETURNS SETOF record 
-AS $$
-DECLARE 
-
-       	block  			varchar;	
-       	TotAppLod		decimal:=0 ;	
-        TotParcLoaded		varchar:='none' ;	
-        TotRecObj		decimal:=0 ;	
-        TotSolvedObj		decimal:=0 ;	
-        TotAppPDisp		decimal:=0 ;	
-        TotPrepCertificate      decimal:=0 ;	
-        TotIssuedCertificate	decimal:=0 ;	
-
-
-        Total  			varchar;	
-       	TotalAppLod		decimal:=0 ;	
-        TotalParcLoaded		varchar:='none' ;	
-        TotalRecObj		decimal:=0 ;	
-        TotalSolvedObj		decimal:=0 ;	
-        TotalAppPDisp		decimal:=0 ;	
-        TotalPrepCertificate      decimal:=0 ;	
-        TotalIssuedCertificate	decimal:=0 ;	
-
-
-  
-      
-       rec     record;
-       sqlSt varchar;
-       workFound boolean;
-       recToReturn record;
-
-       recTotalToReturn record;
-
-        -- From Neil's email 9 march 2013
-	    -- PROGRESS REPORT
-		--0. Block	
-		--1. Total Number of Applications Lodged	
-		--2. No of Parcel loaded	
-		--3. No of Objections received
-		--4. No of Objections resolved
-		--5. No of Applications in Public Display	               
-		--6. No of Applications with Prepared Certificate	
-		--7. No of Applications with Issued Certificate	
-		
-    
-BEGIN  
-
-
-   sqlSt:= '';
-    
-    sqlSt:= 'select  bu.name_lastpart   as area
-                   FROM        application.application aa,
-			  application.service s,
-			  application.application_property ap,
-		          administrative.ba_unit bu
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = ''systematicRegn''::text
-			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			    AND   aa.id::text = ap.application_id::text
-		
-    ';
-
-    --raise exception '%',sqlSt;
-       workFound = false;
-
-    -- Loop through results
-    
-    FOR rec in EXECUTE sqlSt loop
-
-    
-    select  (      
-                  ( SELECT  
-		    count (distinct(aa.id)) 
-		    FROM  application.application aa,
-			  application.service s,
-			  administrative.ba_unit bu, 
-		          application.application_property ap
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = 'systematicRegn'::text
-			    AND   aa.action_code='lodge'
-                            AND   aa.id::text = ap.application_id::text
-			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			    AND bu.name_lastpart = ''|| rec.area ||''
-			    AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-			    ) +
-	           ( SELECT  
-		    count (distinct(aa.id)) 
-		    FROM  application.application_historic aa,
-			  application.service s,
-			  administrative.ba_unit bu, 
-		          application.application_property ap
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = 'systematicRegn'::text
-			    AND   aa.action_code='lodge'
-                            AND   aa.id::text = ap.application_id::text
-			    AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			    AND bu.name_lastpart = ''|| rec.area ||''
-			    AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-			    )
-		    
-
-	      ),  --- TotApp
-          (           
-	   
-	   (
-	    SELECT count (DISTINCT co.id)
-	    FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application_property ap, application.application aa, application.service s, administrative.ba_unit bu
-	    WHERE sa.spatial_unit_id::text = co.id::text AND sa.type_code::text = 'officialArea'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
-	    AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text AND ap.name_firstpart::text = bu.name_firstpart::text) 
-	    AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text 
-	    AND s.status_code::text = 'completed'::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text AND bu.id::text = su.ba_unit_id::text
-	    AND co.name_lastpart = ''|| rec.area ||''
-	    )
-            ||'/'||
-	    (SELECT count (*)
-	            FROM cadastre.cadastre_object co
-			    WHERE co.type_code='parcel'
-			    AND co.name_lastpart = ''|| rec.area ||''
-	     )
-
-	   )
-                 ,  ---TotParcelLoaded
-                  
-                  (
-                  SELECT 
-                  (
-	            (SELECT (COUNT(*)) 
-			FROM  application.application aa, 
-			   application.service s,
-			   administrative.ba_unit bu, 
-			   application.application_property ap
-			  WHERE  s.application_id::text = aa.id::text 
-			  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-			  AND s.request_type_code::text = 'lodgeObjection'::text
-			  AND s.status_code::text = 'lodged'::text
-			  AND   aa.id::text = ap.application_id::text
-			  AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			  AND bu.name_lastpart = ''|| rec.area ||''
-			  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-		        ) +
-		        (SELECT (COUNT(*)) 
-			FROM  application.application aa, 
-			   application.service_historic s,
-			   administrative.ba_unit bu, 
-			   application.application_property ap
-			  WHERE  s.application_id::text = aa.id::text 
-			  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-			  AND s.request_type_code::text = 'lodgeObjection'::text
-			  AND s.status_code::text = 'lodged'::text
-			  AND   aa.id::text = ap.application_id::text
-			  AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			  AND bu.name_lastpart = ''|| rec.area ||''
-			  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-		        )  
-		   )  
-		),  --TotLodgedObj
-
-                (
-	          SELECT (COUNT(*)) 
-		   FROM  application.application aa, 
-		   application.service s,
- 		   administrative.ba_unit bu, 
-		   application.application_property ap
-		  WHERE  s.application_id::text = aa.id::text 
-		  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-		  AND s.request_type_code::text = 'lodgeObjection'::text
-		  AND s.status_code::text = 'cancelled'::text
-		  AND   aa.id::text = ap.application_id::text
-		  AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-		  AND bu.name_lastpart = ''|| rec.area ||''
-		  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-		), --TotSolvedObj
-		
-		(
-		SELECT  
-		    count (distinct(aa.id)) 
-		    FROM  application.application aa,
-			  application.service s,
-			  application.application_property ap
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = 'systematicRegn'::text
-			    AND   aa.id::text = ap.application_id::text
-			    AND ap.name_lastpart = ''|| rec.area ||''
-			    AND ap.name_lastpart in (select ss.reference_nr 
-									from   source.source ss 
-									where ss.type_code='publicNotification'
-									AND ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
-                                                                        )
-                                                  
-
-                 ),  ---TotAppPubDispl
-
-
-                 (
-                  select count(distinct (aa.id))
-                   from application.service s, application.application aa, 
-                   application.application_property ap
-                   where s.request_type_code::text = 'systematicRegn'::text
-		   AND s.application_id = aa.id
-		   AND ap.application_id = aa.id
-		   AND ap.name_lastpart = ''|| rec.area ||'' 
-		   AND ap.name_lastpart in ( select ss.reference_nr 
-					     from   source.source ss 
-					     where ss.type_code='publicNotification'
-					     and ss.expiration_date < to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and   ss.reference_nr in ( select ss.reference_nr from   source.source ss 
-					     where ss.type_code='title'
-					     and ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and ss.reference_nr = ''|| rec.area ||''
-                                             )   
-					   )  
-
-                 ),  ---TotCertificatesPrepared
-                 (select count (distinct(s.id))
-                   FROM 
-                       application.service s   --,
-		   WHERE s.request_type_code::text = 'documentCopy'::text
-		   AND s.lodging_datetime between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
-                   AND s.action_notes = ''|| rec.area ||'')  --TotCertificatesIssued
-
-                    
-              INTO       TotAppLod,
-                         TotParcLoaded,
-                         TotRecObj,
-                         TotSolvedObj,
-                         TotAppPDisp,
-                         TotPrepCertificate,
-                         TotIssuedCertificate
-                
-              --FROM        application.application aa,
-		--	  application.service s,
-		--	  application.application_property ap,
-		  --        administrative.ba_unit bu
-			--    WHERE s.application_id = aa.id
-			  --  AND   s.request_type_code::text = 'systematicRegn'::text
-			    --AND   ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart
-			    --AND   aa.id::text = ap.application_id::text
-			    --AND bu.name_lastpart = ''|| rec.area ||''
-                                               
-	  ;        
-
-                block = rec.area;
-                TotAppLod = TotAppLod;
-                TotParcLoaded = TotParcLoaded;
-                TotRecObj = TotRecObj;
-                TotSolvedObj = TotSolvedObj;
-                TotAppPDisp = TotAppPDisp;
-                TotPrepCertificate = TotPrepCertificate;
-                TotIssuedCertificate = TotIssuedCertificate;
-	  
-	  select into recToReturn
-	       	block::			varchar,
-		TotAppLod::  		decimal,	
-		TotParcLoaded::  	varchar,	
-		TotRecObj::  		decimal,	
-		TotSolvedObj::  	decimal,	
-		TotAppPDisp::  		decimal,	
-		TotPrepCertificate::  	decimal,	
-		TotIssuedCertificate::  decimal;	
-		                         
-		return next recToReturn;
-		workFound = true;
-          
-    end loop;
-   
-    if (not workFound) then
-         block = 'none';
-                
-        select into recToReturn
-	       	block::			varchar,
-		TotAppLod::  		decimal,	
-		TotParcLoaded::  	varchar,	
-		TotRecObj::  		decimal,	
-		TotSolvedObj::  	decimal,	
-		TotAppPDisp::  		decimal,	
-		TotPrepCertificate::  	decimal,	
-		TotIssuedCertificate::  decimal;		
-		                         
-		return next recToReturn;
-
-    end if;
-
------- TOTALS ------------------
-                
-              select  (      
-                  ( SELECT  
-		    count (distinct(aa.id)) 
-		    FROM  application.application aa,
-			  application.service s
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = 'systematicRegn'::text
-			    AND   aa.action_code='lodge'
-                            AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-			    ) +
-	           ( SELECT  
-		    count (distinct(aa.id)) 
-		    FROM  application.application_historic aa,
-			  application.service s
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = 'systematicRegn'::text
-			    AND   aa.action_code='lodge'
-                            AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-			    )
-		    
-
-	      ),  --- TotApp
-
-		   
-	          (           
-	   
-	   (
-	    SELECT count (DISTINCT co.id)
-	    FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application_property ap, application.application aa, application.service s, administrative.ba_unit bu
-	    WHERE sa.spatial_unit_id::text = co.id::text AND sa.type_code::text = 'officialArea'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
-	    AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text AND ap.name_firstpart::text = bu.name_firstpart::text) 
-	    AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text 
-	    AND s.status_code::text = 'completed'::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text AND bu.id::text = su.ba_unit_id::text
-	    )
-            ||'/'||
-	    (SELECT count (*)
-	            FROM cadastre.cadastre_object co
-			    WHERE co.type_code='parcel'
-	    )
-
-	   ),  ---TotParcelLoaded
-                  
-                  (
-                  SELECT 
-                  (
-	            (SELECT (COUNT(*)) 
-			FROM  application.application aa, 
-			   application.service s
-			  WHERE  s.application_id::text = aa.id::text 
-			  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-			  AND s.request_type_code::text = 'lodgeObjection'::text
-			  AND s.status_code::text = 'lodged'::text
-			  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-		        ) +
-		        (SELECT (COUNT(*)) 
-			FROM  application.application aa, 
-			   application.service_historic s
-			  WHERE  s.application_id::text = aa.id::text 
-			  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-			  AND s.request_type_code::text = 'lodgeObjection'::text
-			  AND s.status_code::text = 'lodged'::text
-			  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-		        )  
-		   )  
-		),  --TotLodgedObj
-
-                (
-	          SELECT (COUNT(*)) 
-		   FROM  application.application aa, 
-		   application.service s
-		  WHERE  s.application_id::text = aa.id::text 
-		  AND s.application_id::text in (select s.application_id 
-						 FROM application.service s
-						 where s.request_type_code::text = 'systematicRegn'::text
-						 ) 
-		  AND s.request_type_code::text = 'lodgeObjection'::text
-		  AND s.status_code::text = 'cancelled'::text
-		  AND  (
-		          (aa.lodging_datetime  between to_date(''|| fromDate || '','yyyy-mm-dd')  and to_date(''|| toDate || '','yyyy-mm-dd'))
-		           or
-		          (aa.change_time  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd'))
-		          )
-		), --TotSolvedObj
-		
-		(
-		SELECT  
-		    count (distinct(aa.id)) 
-		    FROM  application.application aa,
-			  application.service s,
-			  application.application_property ap
-			    WHERE s.application_id = aa.id
-			    AND   s.request_type_code::text = 'systematicRegn'::text
-			    AND   aa.id::text = ap.application_id::text
-			    AND ap.name_lastpart in (select ss.reference_nr 
-									from   source.source ss 
-									where ss.type_code='publicNotification'
-									AND ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
-                                                                        )
-                                                  
-
-                 ),  ---TotAppPubDispl
-
-
-                 (
-                  select count(distinct (aa.id))
-                   from application.service s, application.application aa, 
-                   application.application_property ap
-                   where s.request_type_code::text = 'systematicRegn'::text
-		   AND s.application_id = aa.id
-		   AND ap.application_id = aa.id
-		   AND ap.name_lastpart in ( select ss.reference_nr 
-					     from   source.source ss 
-					     where ss.type_code='publicNotification'
-					     and ss.expiration_date < to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             and   ss.reference_nr in ( select ss.reference_nr from   source.source ss 
-					     where ss.type_code='title'
-					     and ss.recordation  between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
-                                             )   
-					   )  
-
-                 ),  ---TotCertificatesPrepared
-                 (select count (distinct(s.id))
-                   FROM 
-                       application.service s   --,
-		   WHERE s.request_type_code::text = 'documentCopy'::text
-		   AND s.lodging_datetime between to_date(''|| fromDate ||'','yyyy-mm-dd')  and to_date(''|| toDate ||'','yyyy-mm-dd')
-                   AND s.action_notes is not null )  --TotCertificatesIssued
-
-      
-
-                     
-              INTO       TotalAppLod,
-                         TotalParcLoaded,
-                         TotalRecObj,
-                         TotalSolvedObj,
-                         TotalAppPDisp,
-                         TotalPrepCertificate,
-                         TotalIssuedCertificate
-               ;        
-                Total = 'Total';
-                TotalAppLod = TotalAppLod;
-                TotalParcLoaded = TotalParcLoaded;
-                TotalRecObj = TotalRecObj;
-                TotalSolvedObj = TotalSolvedObj;
-                TotalAppPDisp = TotalAppPDisp;
-                TotalPrepCertificate = TotalPrepCertificate;
-                TotalIssuedCertificate = TotalIssuedCertificate;
-	  
-	  select into recTotalToReturn
-                Total::                 varchar, 
-                TotalAppLod::  		decimal,	
-		TotalParcLoaded::  	varchar,	
-		TotalRecObj::  		decimal,	
-		TotalSolvedObj::  	decimal,	
-		TotalAppPDisp::  	decimal,	
-		TotalPrepCertificate:: 	decimal,	
-		TotalIssuedCertificate::  decimal;	
-
-	                         
-		return next recTotalToReturn;
-
-                
-    return;
-
-END;
-$$ LANGUAGE plpgsql;
-COMMENT ON FUNCTION administrative.getsysregprogress(
- fromdate varchar
-  , todate varchar
-  , namelastpart varchar
-) IS '';
-    
 -- Function cadastre.cadastre_object_name_is_valid --
 CREATE OR REPLACE FUNCTION cadastre.cadastre_object_name_is_valid(
  name_firstpart varchar
@@ -2874,7 +1990,6 @@ CREATE TABLE source.source(
     owner_name varchar(255),
     version varchar(10),
     description varchar(255),
-    signing_date date,
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -2926,7 +2041,6 @@ CREATE TABLE source.source_historic
     owner_name varchar(255),
     version varchar(10),
     description varchar(255),
-    signing_date date,
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),
@@ -4668,8 +3782,7 @@ CREATE TABLE administrative.rrr(
     registration_date timestamp,
     expiration_date timestamp,
     share double precision,
-    amount numeric(29, 2),
-    due_date date,
+    mortgage_amount numeric(29, 2),
     mortgage_interest_rate numeric(5, 2),
     mortgage_ranking integer,
     mortgage_type_code varchar(20),
@@ -4716,8 +3829,7 @@ CREATE TABLE administrative.rrr_historic
     registration_date timestamp,
     expiration_date timestamp,
     share double precision,
-    amount numeric(29, 2),
-    due_date date,
+    mortgage_amount numeric(29, 2),
     mortgage_interest_rate numeric(5, 2),
     mortgage_ranking integer,
     mortgage_type_code varchar(20),
@@ -6874,7 +5986,6 @@ CREATE TABLE system.config_map_layer(
     security_user varchar(30),
     security_password varchar(30),
     added_from_bulk_operation bool NOT NULL DEFAULT (false),
-    use_in_public_display bool NOT NULL DEFAULT (false),
 
     -- Internal constraints
     
@@ -6887,17 +5998,15 @@ CREATE TABLE system.config_map_layer(
 comment on table system.config_map_layer is 'Sola extension: In this table are defined map layers for configuring the map component. The layers can be of different types. For the type of layers supported, check out the data in the table config_map_layer_type.';
     
  -- Data for the table system.config_map_layer -- 
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('parcels', 'Parcels::::Particelle', 'pojo', true, true, 20, 'parcel.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcels', 'dynamic.informationtool.get_parcel', false);
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('pending-parcels', 'Pending parcels::::Particelle pendenti', 'pojo', true, true, 30, 'pending_parcels.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsPending', 'dynamic.informationtool.get_parcel_pending', false);
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('roads', 'Roads::::Strade', 'pojo', true, true, 40, 'road.xml', 'theGeom:MultiPolygon,label:""', 'SpatialResult.getRoads', 'dynamic.informationtool.get_road', true);
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('survey-controls', 'Survey controls::::Piani di controllo', 'pojo', true, true, 50, 'survey_control.xml', 'theGeom:Point,label:""', 'SpatialResult.getSurveyControls', 'dynamic.informationtool.get_survey_control', false);
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('place-names', 'Places names::::Nomi di luoghi', 'pojo', true, true, 60, 'place_name.xml', 'theGeom:Point,label:""', 'SpatialResult.getPlaceNames', 'dynamic.informationtool.get_place_name', false);
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('applications', 'Applications::::Pratiche', 'pojo', true, true, 70, 'application.xml', 'theGeom:MultiPoint,label:""', 'SpatialResult.getApplications', 'dynamic.informationtool.get_application', false);
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select, use_in_public_display) values('parcels-historic-current-ba', 'Historic parcels with current titles', 'pojo', true, true, 10, 'parcel_historic_current_ba.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsHistoricWithCurrentBA', 'dynamic.informationtool.get_parcel_historic_current_ba', false);
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, use_in_public_display) values('parcel-nodes', 'Parcel nodes', 'pojo', true, true, 5, 'parcel_node.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelNodes', false);
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, url, wms_layers, wms_version, wms_format, use_in_public_display) values('orthophoto', 'Orthophoto', 'wms', true, false, 1, 'http://localhost:8085/geoserver/sola/wms', 'sola:nz_orthophoto', '1.1.1', 'image/jpeg', false);
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, use_in_public_display) values('public-display-parcels', 'Public display parcels', 'pojo_public_display', true, true, 35, 'public_display_parcel.xml', 'theGeom:Polygon,label:""', 'public_display.parcels', true);
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, use_in_public_display) values('public-display-parcels-next', 'Public display parcels next', 'pojo_public_display', true, true, 30, 'public_display_parcel_next.xml', 'theGeom:Polygon,label:""', 'public_display.parcels_next', true);
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('parcels', 'Parcels::::Particelle', 'pojo', true, true, 20, 'parcel.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcels', 'dynamic.informationtool.get_parcel');
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('pending-parcels', 'Pending parcels::::Particelle pendenti', 'pojo', true, true, 30, 'pending_parcels.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsPending', 'dynamic.informationtool.get_parcel_pending');
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('roads', 'Roads::::Strade', 'pojo', true, true, 40, 'road.xml', 'theGeom:MultiPolygon,label:""', 'SpatialResult.getRoads', 'dynamic.informationtool.get_road');
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('survey-controls', 'Survey controls::::Piani di controllo', 'pojo', true, true, 50, 'survey_control.xml', 'theGeom:Point,label:""', 'SpatialResult.getSurveyControls', 'dynamic.informationtool.get_survey_control');
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('place-names', 'Places names::::Nomi di luoghi', 'pojo', true, true, 60, 'place_name.xml', 'theGeom:Point,label:""', 'SpatialResult.getPlaceNames', 'dynamic.informationtool.get_place_name');
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('applications', 'Applications::::Pratiche', 'pojo', true, true, 70, 'application.xml', 'theGeom:MultiPoint,label:""', 'SpatialResult.getApplications', 'dynamic.informationtool.get_application');
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('parcels-historic-current-ba', 'Historic parcels with current titles', 'pojo', true, true, 10, 'parcel_historic_current_ba.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelsHistoricWithCurrentBA', 'dynamic.informationtool.get_parcel_historic_current_ba');
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name) values('parcel-nodes', 'Parcel nodes', 'pojo', true, true, 5, 'parcel_node.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getParcelNodes');
+insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, url, wms_layers, wms_version, wms_format) values('orthophoto', 'Orthophoto', 'wms', true, false, 1, 'http://localhost:8085/geoserver/sola/wms', 'sola:nz_orthophoto', '1.1.1', 'image/jpeg');
 
 
 
@@ -6926,7 +6035,6 @@ Not Applicable';
 insert into system.config_map_layer_type(code, display_value, status) values('wms', 'WMS server with layers::::Server WMS con layer', 'c');
 insert into system.config_map_layer_type(code, display_value, status) values('shape', 'Shapefile::::Shapefile', 'c');
 insert into system.config_map_layer_type(code, display_value, status) values('pojo', 'Pojo layer::::Pojo layer', 'c');
-insert into system.config_map_layer_type(code, display_value, status, description) values('pojo_public_display', 'Pojo layer used for public display', 'c', 'It is an extension of pojo layer. It is used only during the public display map generation.');
 
 
 
@@ -6965,8 +6073,6 @@ insert into system.query(name, sql) values('map_search.cadastre_object_by_baunit
 insert into system.query(name, sql) values('map_search.cadastre_object_by_baunit_owner', 'select distinct co.id,  coalesce(party.name, '''') || '' '' || coalesce(party.last_name, '''') || '' > '' || co.name_firstpart || ''/ '' || co.name_lastpart as label,  st_asewkb(co.geom_polygon) as the_geom  from cadastre.cadastre_object  co     inner join administrative.ba_unit_contains_spatial_unit bas on co.id = bas.spatial_unit_id     inner join administrative.ba_unit on bas.ba_unit_id= ba_unit.id     inner join administrative.rrr on (ba_unit.id = rrr.ba_unit_id and rrr.status_code = ''current'' and rrr.type_code = ''ownership'')     inner join administrative.party_for_rrr pfr on rrr.id = pfr.rrr_id     inner join party.party on pfr.party_id= party.id where (co.status_code= ''current'' or ba_unit.status_code= ''current'')     and compare_strings(#{search_string}, coalesce(party.name, '''') || '' '' || coalesce(party.last_name, '''')) limit 30');
 insert into system.query(name, sql, description) values('system_search.cadastre_object_by_baunit_id', 'SELECT id,  name_firstpart || ''/ '' || name_lastpart as label, st_asewkb(geom_polygon) as the_geom  FROM cadastre.cadastre_object WHERE transaction_id IN (  SELECT cot.transaction_id FROM (administrative.ba_unit_contains_spatial_unit ba_su     INNER JOIN cadastre.cadastre_object co ON ba_su.spatial_unit_id = co.id)     INNER JOIN cadastre.cadastre_object_target cot ON co.id = cot.cadastre_object_id     WHERE ba_su.ba_unit_id = #{search_string})  AND (SELECT COUNT(1) FROM administrative.ba_unit_contains_spatial_unit WHERE spatial_unit_id = cadastre_object.id) = 0 AND status_code = ''current''', 'Query used by BaUnitBean.loadNewParcels');
 insert into system.query(name, sql) values('SpatialResult.getParcelNodes', 'select distinct st_astext(geom) as id, '''' as label, st_asewkb(geom) as the_geom from (select (ST_DumpPoints(geom_polygon)).* from cadastre.cadastre_object co  where type_code= ''parcel'' and status_code= ''current''  and ST_Intersects(co.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))) tmp_table ');
-insert into system.query(name, sql, description) values('public_display.parcels', 'select co.id, co.name_firstpart as label,  st_asewkb(co.geom_polygon) as the_geom from cadastre.cadastre_object co where type_code= ''parcel'' and status_code= ''current'' and name_lastpart = #{name_lastpart} and ST_Intersects(co.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', 'Query is used from public display map. It retrieves parcels being of a certain area (name_lastpart).');
-insert into system.query(name, sql, description) values('public_display.parcels_next', 'SELECT co_next.id, co_next.name_firstpart as label,  st_asewkb(co_next.geom_polygon) as the_geom  from cadastre.cadastre_object co_next, cadastre.cadastre_object co where co.type_code= ''parcel'' and co.status_code= ''current'' and co_next.type_code= ''parcel'' and co_next.status_code= ''current'' and co.name_lastpart = #{name_lastpart} and co_next.name_lastpart != #{name_lastpart} and st_dwithin(co.geom_polygon, co_next.geom_polygon, 5) and ST_Intersects(co_next.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))', ' Query is used from public display map. It retrieves parcels being near the parcels of the layer public-display-parcels.');
 
 
 
@@ -7208,7 +6314,6 @@ insert into system.approle(code, display_value, status, description) values('Bul
 insert into system.approle(code, display_value, status, description) values('sysRegnReports', 'Systematic Registration Reports', 'c', 'Allows generation of Systematic Registration Reports');
 insert into system.approle(code, display_value, status, description) values('systematicRegn', 'Systematic Registration', 'c', 'Allows to access Systematic Registration Service');
 insert into system.approle(code, display_value, status, description) values('lodgeObjection', 'Objection lodgment', 'c', 'Allows to access Lodge Objection Service');
-insert into system.approle(code, display_value, status, description) values('RightsExport', 'Export', 'c', 'Allows to export');
 
 
 
@@ -7240,7 +6345,6 @@ insert into system.approle_appgroup(approle_code, appgroup_id) values('ApplnUnas
 insert into system.approle_appgroup(approle_code, appgroup_id) values('BulkApplication', 'super-group-id');
 insert into system.approle_appgroup(approle_code, appgroup_id) values('systematicRegn', 'super-group-id');
 insert into system.approle_appgroup(approle_code, appgroup_id) values('lodgeObjection', 'super-group-id');
-insert into system.approle_appgroup(approle_code, appgroup_id) values('RightsExport', 'super-group-id');
 
 
 
@@ -7386,7 +6490,13 @@ insert into cadastre.land_use_type(code, display_value, status) values('commerci
 insert into cadastre.land_use_type(code, display_value, status) values('residential', 'Residential::::ITALIANO', 'c');
 insert into cadastre.land_use_type(code, display_value, status) values('industrial', 'Industrial::::ITALIANO', 'c');
 insert into cadastre.land_use_type(code, display_value, status) values('agricultural', 'Agricultural::::ITALIANO', 'c');
-
+insert into cadastre.land_use_type(code, display_value, status) values('recreational', 'Recreational::::ITALIANO', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('educational', 'Educational::::ITALIANO', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('religious', 'Religious::::ITALIANO', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('hospital', 'Hospital::::ITALIANO', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('hotel', 'Hotel::::ITALIANO', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('charitable', 'Charitable::::ITALIANO', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('petroleum', 'Petroleum::::ITALIANO', 'c');
 
 
 --Table bulk_operation.spatial_unit_temporary ----
@@ -7431,134 +6541,6 @@ DROP TRIGGER IF EXISTS __track_changes ON bulk_operation.spatial_unit_temporary 
 CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
    ON bulk_operation.spatial_unit_temporary FOR EACH ROW
    EXECUTE PROCEDURE f_for_trg_track_changes();
-    
---Table administrative.lease_condition ----
-DROP TABLE IF EXISTS administrative.lease_condition CASCADE;
-CREATE TABLE administrative.lease_condition(
-    code varchar(20) NOT NULL,
-    display_value varchar(250) NOT NULL,
-    description varchar(5000) NOT NULL,
-    status char(1) NOT NULL,
-
-    -- Internal constraints
-    
-    CONSTRAINT lease_condition_display_value_unique UNIQUE (display_value),
-    CONSTRAINT lease_condition_pkey PRIMARY KEY (code)
-);
-
-
-comment on table administrative.lease_condition is 'Reference Table / Code list for standard lease conditions
-LADM Definition
-Not Defined';
-    
- -- Data for the table administrative.lease_condition -- 
-insert into administrative.lease_condition(code, display_value, description, status) values('c1', 'Condition 1', 'Unless the Minister directs otherwise the Lessee shall fence the boundaries of the land within 6 (six) months of the date of the grant and the Lessee shall maintain the fence to the satisfaction of the Commissioner.', 'c');
-insert into administrative.lease_condition(code, display_value, description, status) values('c2', 'Condition 2', 'Unless special written authority is given by the Commissioner, the Lessee shall commence development of the land within 5 years of the date of the granting of a lease. This shall also apply to further development of the land held under a lease during the term of the lease.', 'c');
-insert into administrative.lease_condition(code, display_value, description, status) values('c3', 'Condition 3', 'Within a period of the time to be fixed by the planning authority, the Lessee shall provide at his own expense main drainage or main sewerage connections from the building erected on the land as the planning authority may require.', 'c');
-insert into administrative.lease_condition(code, display_value, description, status) values('c4', 'Condtion 4', 'The Lessee shall use the land comprised in the lease only for the purpose specified in the lease or in any variation made to the original lease.', 'c');
-insert into administrative.lease_condition(code, display_value, description, status) values('c5', 'Condition 5', 'Save with the written authority of the planning authority, no electrical power or telephone pole or line or water, drainage or sewer pipe being upon or passing through, over or under the land and no replacement thereof, shall be moved or in any way be interfered with and reasonable access thereto shall be preserved to allow for inspection, maintenance, repair, renewal and replacement.', 'c');
-insert into administrative.lease_condition(code, display_value, description, status) values('c6', 'Condition 6', 'The interior and exterior of any building erected on the land and all building additions thereto and all other buildings at any time erected or standing on the land and walls, drains and other appurtenances, shall be kept by the Lessee in good repair and tenantable condition to the satisfaction of the planning authority.', 'c');
-
-
-
---Table administrative.lease_condition_for_rrr ----
-DROP TABLE IF EXISTS administrative.lease_condition_for_rrr CASCADE;
-CREATE TABLE administrative.lease_condition_for_rrr(
-    id varchar(40) NOT NULL,
-    rrr_id varchar(40) NOT NULL,
-    lease_condition_code varchar(20),
-    custom_condition_text varchar(500),
-    rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
-    rowversion integer NOT NULL DEFAULT (0),
-    change_action char(1) NOT NULL DEFAULT ('i'),
-    change_user varchar(50),
-    change_time timestamp NOT NULL DEFAULT (now()),
-
-    -- Internal constraints
-    
-    CONSTRAINT lease_condition_for_rrr_pkey PRIMARY KEY (id)
-);
-
-
-
--- Index lease_condition_for_rrr_index_on_rowidentifier  --
-CREATE INDEX lease_condition_for_rrr_index_on_rowidentifier ON administrative.lease_condition_for_rrr (rowidentifier);
-    
-
-comment on table administrative.lease_condition_for_rrr is 'Lease conditions, related to RRR of lease type';
-    
-DROP TRIGGER IF EXISTS __track_changes ON administrative.lease_condition_for_rrr CASCADE;
-CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
-   ON administrative.lease_condition_for_rrr FOR EACH ROW
-   EXECUTE PROCEDURE f_for_trg_track_changes();
-    
-
-----Table administrative.lease_condition_for_rrr_historic used for the history of data of table administrative.lease_condition_for_rrr ---
-DROP TABLE IF EXISTS administrative.lease_condition_for_rrr_historic CASCADE;
-CREATE TABLE administrative.lease_condition_for_rrr_historic
-(
-    id varchar(40),
-    rrr_id varchar(40),
-    lease_condition_code varchar(20),
-    custom_condition_text varchar(500),
-    rowidentifier varchar(40),
-    rowversion integer,
-    change_action char(1),
-    change_user varchar(50),
-    change_time timestamp,
-    change_time_valid_until TIMESTAMP NOT NULL default NOW()
-);
-
-
--- Index lease_condition_for_rrr_historic_index_on_rowidentifier  --
-CREATE INDEX lease_condition_for_rrr_historic_index_on_rowidentifier ON administrative.lease_condition_for_rrr_historic (rowidentifier);
-    
-
-DROP TRIGGER IF EXISTS __track_history ON administrative.lease_condition_for_rrr CASCADE;
-CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
-   ON administrative.lease_condition_for_rrr FOR EACH ROW
-   EXECUTE PROCEDURE f_for_trg_track_history();
-    
---Table application.application_ba_unit ----
-DROP TABLE IF EXISTS application.application_ba_unit CASCADE;
-CREATE TABLE application.application_ba_unit(
-    id varchar(40) NOT NULL,
-    application_id varchar(40) NOT NULL,
-    ba_unit_id varchar(40),
-    name_firstpart varchar(20),
-    name_lastpart varchar(20),
-    area numeric(20, 2) NOT NULL,
-    total_value numeric(20, 2) NOT NULL,
-
-    -- Internal constraints
-    
-    CONSTRAINT application_ba_unit_pkey PRIMARY KEY (id)
-);
-
-
-comment on table application.application_ba_unit is '';
-    
---Table application.application_spatial_unit ----
-DROP TABLE IF EXISTS application.application_spatial_unit CASCADE;
-CREATE TABLE application.application_spatial_unit(
-    id varchar(40) NOT NULL,
-    application_id varchar(40) NOT NULL,
-    spatial_unit_id varchar(40),
-    name_firstpart varchar(20),
-    name_lastpart varchar(20),
-    survey_plan_number varchar(20),
-    area numeric(20, 2),
-    address_id varchar(40),
-    cadastre_object_type_code varchar(20),
-    land_use_code varchar(20) NOT NULL,
-
-    -- Internal constraints
-    
-    CONSTRAINT application_spatial_unit_pkey PRIMARY KEY (id)
-);
-
-
-comment on table application.application_spatial_unit is '';
     
 
 ALTER TABLE source.source ADD CONSTRAINT source_archive_id_fk0 
@@ -8080,42 +7062,6 @@ CREATE INDEX spatial_unit_temporary_cadastre_object_type_code_fk128_ind ON bulk_
 ALTER TABLE cadastre.spatial_unit ADD CONSTRAINT spatial_unit_transaction_id_fk129 
             FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE Cascade;
 CREATE INDEX spatial_unit_transaction_id_fk129_ind ON cadastre.spatial_unit (transaction_id);
-
-ALTER TABLE administrative.lease_condition_for_rrr ADD CONSTRAINT lease_condition_for_rrr_lease_condition_code_fk130 
-            FOREIGN KEY (lease_condition_code) REFERENCES administrative.lease_condition(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX lease_condition_for_rrr_lease_condition_code_fk130_ind ON administrative.lease_condition_for_rrr (lease_condition_code);
-
-ALTER TABLE administrative.lease_condition_for_rrr ADD CONSTRAINT lease_condition_for_rrr_rrr_id_fk131 
-            FOREIGN KEY (rrr_id) REFERENCES administrative.rrr(id) ON UPDATE CASCADE ON DELETE Cascade;
-CREATE INDEX lease_condition_for_rrr_rrr_id_fk131_ind ON administrative.lease_condition_for_rrr (rrr_id);
-
-ALTER TABLE application.application_ba_unit ADD CONSTRAINT application_ba_unit_ba_unit_id_fk132 
-            FOREIGN KEY (ba_unit_id) REFERENCES administrative.ba_unit(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_ba_unit_ba_unit_id_fk132_ind ON application.application_ba_unit (ba_unit_id);
-
-ALTER TABLE application.application_ba_unit ADD CONSTRAINT application_ba_unit_application_id_fk133 
-            FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_ba_unit_application_id_fk133_ind ON application.application_ba_unit (application_id);
-
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_spatial_unit_id_fk134 
-            FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.cadastre_object(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_spatial_unit_spatial_unit_id_fk134_ind ON application.application_spatial_unit (spatial_unit_id);
-
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_application_id_fk135 
-            FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_spatial_unit_application_id_fk135_ind ON application.application_spatial_unit (application_id);
-
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_land_use_code_fk136 
-            FOREIGN KEY (land_use_code) REFERENCES cadastre.land_use_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_spatial_unit_land_use_code_fk136_ind ON application.application_spatial_unit (land_use_code);
-
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_cadastre_object_type_code_fk137 
-            FOREIGN KEY (cadastre_object_type_code) REFERENCES cadastre.cadastre_object_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_spatial_unit_cadastre_object_type_code_fk137_ind ON application.application_spatial_unit (cadastre_object_type_code);
-
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_address_id_fk138 
-            FOREIGN KEY (address_id) REFERENCES address.address(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX application_spatial_unit_address_id_fk138_ind ON application.application_spatial_unit (address_id);
 --Generate triggers for tables --
 -- triggers for table source.source -- 
 
@@ -8421,22 +7367,20 @@ UNION
 
 -------View application.systematic_registration_certificates ---------
 DROP VIEW IF EXISTS application.systematic_registration_certificates CASCADE;
-CREATE VIEW application.systematic_registration_certificates AS SELECT aa.nr, co.name_firstpart, co.name_lastpart,
- su.ba_unit_id
-   FROM application.application_status_type ast, 
-   cadastre.land_use_type lu, cadastre.cadastre_object co, 
-   administrative.ba_unit bu, cadastre.spatial_value_area sa, 
-   administrative.ba_unit_contains_spatial_unit su, 
-   application.application_property ap, application.application aa, 
-   application.service s
-   WHERE sa.spatial_unit_id::text = co.id::text 
-   AND sa.type_code::text = 'officialArea'::text 
-   AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
-   AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart)
-   AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text 
-   AND s.request_type_code::text = 'systematicRegn'::text 
-   AND aa.status_code::text = ast.code::text AND aa.status_code::text = 'approved'::text 
-   AND COALESCE(ap.land_use_code, 'residential'::character varying)::text = lu.code::text ;
+CREATE VIEW application.systematic_registration_certificates AS SELECT aa.nr, co.id, co.name_firstpart, co.name_lastpart, sa.size, get_translation(lu.display_value, NULL::character varying) AS land_use_code, get_translation(ast.display_value, NULL::character varying) AS application_status, su.ba_unit_id, bu.name, bu.creation_date, get_translation(rtc.display_value, NULL::character varying) AS type_code
+   FROM application.application_status_type ast, cadastre.land_use_type lu, cadastre.cadastre_object co, administrative.ba_unit bu, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application_property ap, application.application aa, application.service s, administrative.rrr rrr, administrative.rrr_type rtc
+  WHERE sa.spatial_unit_id::text = co.id::text 
+  AND sa.type_code::text = 'officialArea'::text 
+  AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
+   AND (ap.ba_unit_id::text = su.ba_unit_id::text 
+           OR (ap.name_lastpart::text = bu.name_lastpart::text 
+           AND ap.name_firstpart::text = bu.name_firstpart::text)
+           )
+  AND aa.id::text = ap.application_id::text 
+  AND s.application_id::text = aa.id::text AND bu.id::text = su.ba_unit_id::text 
+  AND rrr.ba_unit_id::text = bu.id::text AND s.request_type_code::text = 'systematicRegn'::text 
+  AND aa.status_code::text = ast.code::text AND aa.status_code::text = 'approved'::text 
+  AND COALESCE(ap.land_use_code, 'residential'::character varying)::text = lu.code::text AND rrr.type_code::text = rtc.code::text;
 
 
 -- Scan tables and views for geometry columns                 and populate geometry_columns table
