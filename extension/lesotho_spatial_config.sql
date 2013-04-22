@@ -52,7 +52,7 @@ WHERE "name" = 'roads';
 DELETE FROM cadastre.spatial_value_area;
 DELETE FROM cadastre.spatial_unit;
 DELETE FROM cadastre.spatial_unit_historic;
-DELETE FROM cadastre.level;
+--DELETE FROM cadastre.level;
 DELETE FROM cadastre.cadastre_object;
 DELETE FROM cadastre.cadastre_object_historic;
 
@@ -154,10 +154,10 @@ INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_c
   VALUES (uuid_generate_v1(), 'Zones', 'all', 'polygon', 'mixed', 'test');
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
 	VALUES (uuid_generate_v1(), 'Roads', 'all', 'unStructuredLine', 'network', 'test');
-INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
-	VALUES (uuid_generate_v1(), 'Parcels', 'all', 'polygon', 'primaryRight', 'test');
-INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
-	VALUES ('cadastreObject', 'Cadastre object', 'all', 'polygon', 'primaryRight', 'db:postgres');
+--INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+--	VALUES (uuid_generate_v1(), 'Parcels', 'all', 'polygon', 'primaryRight', 'test');
+--INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+--	VALUES ('cadastreObject', 'Cadastre object', 'all', 'polygon', 'primaryRight', 'db:postgres');
 
 ---*******************************			
 -- Create Views for each layer. Note that these views are not used by the application, but can be used
