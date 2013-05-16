@@ -406,29 +406,6 @@ VALUES('newtitle-br24-check-rrr-accounted', 'critical', 'validate', 'application
 
 ----------------------------------------------------------------------------------------------------
 INSERT INTO system.br(id, technical_type_code, feedback) 
-VALUES('application-for-new-title-has-cancel-property-service', 'sql', 
-'When a new title is created there must be a cancel title service in the application for the parent title.::::Non esiste nella pratica un servizio di cancellazione titolo. Aggiungere questo servizio alla pratica' );
-
-INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
-VALUES('application-for-new-title-has-cancel-property-service', now(), 'infinity', 
-'
-WITH 	newFreeholdApp	AS	(SELECT (SUM(1) > 0) AS fhCheck FROM application.service se
-				WHERE se.application_id = #{id}
-				AND se.request_type_code = ''newFreehold'')
-					
-				
-SELECT CASE WHEN fhCheck IS TRUE THEN (SELECT COUNT(id) FROM application.service sv 
-					WHERE sv.application_id = #{id}
-					AND sv.request_type_code = ''cancelProperty'') > 0
-		ELSE NULL
-	END AS vl FROM newFreeholdApp');
-
-INSERT INTO system.br_validation(br_id, target_code, target_application_moment, severity_code, order_of_execution)
-VALUES ('application-for-new-title-has-cancel-property-service', 'application', 'validate', 'critical', 1);
-
-----------------------------------------------------------------------------------------------------
-
-INSERT INTO system.br(id, technical_type_code, feedback) 
 VALUES('application-cancel-property-service-before-new-title', 'sql', 
 'New Freehold title service must come before Cancel Title service in the application.::::Il servizio di cancellazione titolo deve venire prima di quello di creazione nuovo titolo. Cambiare ordine servizi nella pratica' );
 
@@ -455,34 +432,6 @@ VALUES ('application-cancel-property-service-before-new-title', 'application', '
 
 ----------------------------------------------------------------------------------------------------
 
-INSERT INTO system.br(id, technical_type_code, feedback) 
-VALUES('application-approve-cancel-old-titles', 'sql', 
-'An application including a new freehold service must also terminate the parent title(s) with a cancel title service.::::Identificati titoli esistenti. Prego terminare i titoli esistenti usando il servizio di Cancellazione Titolo' );
-
-INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
-VALUES('application-approve-cancel-old-titles', now(), 'infinity', 
-'
-WITH 	newFreeholdApp	AS	(SELECT (SUM(1) > 0) AS fhCheck FROM application.service se
-				WHERE se.application_id = #{id}
-				AND se.request_type_code = ''newFreehold''),
-	parent_titles	AS	(SELECT DISTINCT ON (ba.id) ba.id AS liveTitle, ba.status_code FROM administrative.ba_unit ba
-				INNER JOIN transaction.transaction tn ON (ba.transaction_id = tn.id)
-				INNER JOIN application.service s ON (tn.from_service_id = s.id) 
-				INNER JOIN administrative.required_relationship_baunit pt ON (ba.id = pt.to_ba_unit_id)
-				WHERE s.application_id = #{id}
-				AND ba.status_code = ''pending'')
-				
-SELECT CASE WHEN fhCheck IS TRUE THEN (SELECT COUNT(liveTitle) FROM parent_titles) > 0
-		ELSE NULL
-	END AS vl FROM newFreeholdApp
-');
-
-
-INSERT INTO system.br_validation(br_id, target_code, target_application_moment, severity_code, order_of_execution)
-VALUES ('application-approve-cancel-old-titles', 'application', 'approve', 'critical', 250);
-
-
-----------------------------------------------------------------------------------------------------
 INSERT INTO system.br(id, technical_type_code, feedback, technical_description) 
 VALUES('cancel-title-check-rrr-cancelled', 'sql', 
 'All rights and restrictions on the title to be cancelled must be transfered or cancelled in this application.::::Tutti i diritti e le restrizioni sul titolo da cancellare devono essere trasferiti o cancellati in questa pratica', 
