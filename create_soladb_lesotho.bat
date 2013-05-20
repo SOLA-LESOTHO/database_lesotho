@@ -62,64 +62,69 @@ echo Loading Lesotho Business Rules... >> build.log 2>&1
 echo Loading documents required per service >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\InsertDocumentsPerService.sql >> build.log 2>&1
 
+echo Parcel numbering trigger >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\system_query_localised_parcel_numbering.sql >> build.log 2>&1
+echo Parcel numbering >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\trigger_new_cadastre_object.sql >> build.log 2>&1
+
+
 
 REM loading lease data section
-
-
-echo Creating temporary schema and tables...
-echo Creating temporary schema and tables... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part01.sql >> build.log 2>&1
 
 echo Loading lease and deeds documents
 echo Loading lease and deeds documents >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\laa_data\document.sql >> build.log 2>&1
 
+REM echo Creating temporary schema and tables...
+REM echo Creating temporary schema and tables... >> build.log 2>&1
+REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part01.sql >> build.log 2>&1
 
-echo Loading access Lease Data...
-echo Loading access Lease Data... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\laa_data\lease.sql >> build.log 2>&1
 
-echo Loading access Lease Transaction Data...
-echo Loading access Lease Transaction Data... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\laa_data\lease_transaction.sql >> build.log 2>&1
+REM echo Loading access Lease Data...
+REM echo Loading access Lease Data... >> build.log 2>&1
+REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\laa_data\lease.sql >> build.log 2>&1
 
-echo Loading LAA Interim Lease Data
-echo Loading LAA Interim Lease Data >> build.log 2>&1
+REM echo Loading access Lease Transaction Data...
+REM echo Loading access Lease Transaction Data... >> build.log 2>&1
+REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\laa_data\lease_transaction.sql >> build.log 2>&1
 
-echo Loading original lease data...
-echo Loading original lease data... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part02.sql >> build.log 2>&1
+REM echo Loading LAA Interim Lease Data
+REM echo Loading LAA Interim Lease Data >> build.log 2>&1
 
-echo Preprocessing of data...
-echo Preprocessing of data... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part03.sql >> build.log 2>&1
+REM echo Loading original lease data...
+REM echo Loading original lease data... >> build.log 2>&1
+REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part02.sql >> build.log 2>&1
 
-echo Loading parties...
-echo Loading parties... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part04.sql >> build.log 2>&1
+REM echo Preprocessing of data...
+REM echo Preprocessing of data... >> build.log 2>&1
+REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part03.sql >> build.log 2>&1
 
-echo Loading plots...
-echo Loading plots... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part05.sql >> build.log 2>&1
+REM echo Loading parties...
+REM echo Loading parties... >> build.log 2>&1
+REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part04.sql >> build.log 2>&1
 
-echo Loading property...
-echo Loading property... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part06.sql >> build.log 2>&1
+REM echo Loading plots...
+REM echo Loading plots... >> build.log 2>&1
+REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part05.sql >> build.log 2>&1
 
-echo Loading rrr's...
-echo Loading rrr's... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part07.sql >> build.log 2>&1
+REM echo Loading property...
+REM echo Loading property... >> build.log 2>&1
+REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part06.sql >> build.log 2>&1
 
-echo loading rrr Share...
-echo loading rrr Share... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part08.sql >> build.log 2>&1
+REM echo Loading rrr's...
+REM echo Loading rrr's... >> build.log 2>&1
+REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part07.sql >> build.log 2>&1
 
-echo loading party for rrr...
-echo loading party for rrr... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part09.sql >> build.log 2>&1
+REM echo loading rrr Share...
+REM echo loading rrr Share... >> build.log 2>&1
+REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part08.sql >> build.log 2>&1
 
-echo loading administrative schema...
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part10.sql >> build.log 2>&1
+REM echo loading party for rrr...
+REM echo loading party for rrr... >> build.log 2>&1
+REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part09.sql >> build.log 2>&1
+
+REM echo loading administrative schema...
+REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part10.sql >> build.log 2>&1
 
 
 REM  Loading laa spatial data section
@@ -136,6 +141,16 @@ echo Loading LAA shape files...
 
 echo Loading Lesotho map layer... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\config_map_layer_lesotho.sql >> build.log 2>&1
+
+echo Loading Maseru Parcels (+/- 40,000)... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\sola_populate_maseru_parcels.sql >> build.log 2>&1
+
+
+echo Loading Lesotho Grids... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interim_grid.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\sola_populate_cadastral_grid.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\system_query_localised_parcel_numbering.sql >> build.log 2>&1
+
 
 REM end of loading laa spatial data section
 

@@ -19,9 +19,9 @@ INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_c
 	SELECT uuid_generate_v1(), '2D', 'Industrial 1', 'onSurface', the_geom, (SELECT id FROM cadastre.level WHERE name='Zones') As l_id, 'test' AS ch_user
 	FROM interim_data.industrial1 WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
 
-INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
-	SELECT uuid_generate_v1(), '2D', 'Industrial 2', 'onSurface', the_geom, (SELECT id FROM cadastre.level WHERE name='Zones') As l_id, 'test' AS ch_user 
-	FROM interim_data.industrial2 WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
+--INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
+	--SELECT uuid_generate_v1(), '2D', 'Industrial 2', 'onSurface', the_geom, (SELECT id FROM cadastre.level WHERE name='Zones') As l_id, 'test' AS ch_user 
+	--FROM interim_data.industrial2 WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
 
 INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
 	SELECT uuid_generate_v1(), '2D', 'Residential 1', 'onSurface', the_geom, (SELECT id FROM cadastre.level WHERE name='Zones') As l_id, 'test' AS ch_user 

@@ -1,0 +1,1 @@
+﻿select su.id, su.label,  geometry_contain(st_asewkb(su.geom),(select geom_polygon from cadastre.cadastre_object where name_firstpart='14283' and name_lastpart='729') )  from cadastre.spatial_unit su, cadastre.level l where su.level_id = l.id and l."name" = 'Grids' and su.label='14283';
