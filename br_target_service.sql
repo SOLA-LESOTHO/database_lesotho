@@ -196,7 +196,7 @@ VALUES('documents-present', now(), 'infinity',
  SELECT (((SELECT COUNT(*) FROM serviceDocs) - (SELECT COUNT(*) FROM serviceDocs WHERE ext_archive_id IS NOT NULL)) = 0) AS vl');
 
 INSERT INTO system.br_validation(br_id, severity_code, target_service_moment, target_code, order_of_execution) 
-VALUES('documents-present', 'critical', 'complete', 'service', 200);
+VALUES('documents-present', 'warning', 'complete', 'service', 200);
 --------------------------------------------------------------------------------------------------
 
 INSERT INTO system.br(id, technical_type_code, feedback, technical_description) 
@@ -270,7 +270,7 @@ FROM application.service sv
   LEFT JOIN application.application_uses_source aus ON (aus.application_id = sv.application_id)
   LEFT JOIN source.source sc ON ((sc.id = aus.source_id) AND (sc.type_code = ''idVerification''))
 WHERE sv.id= #{id}
-GROUP BY sv.id
+GROUP BY sv.id, sv.application_id
 LIMIT 1');
 
 INSERT INTO system.br_validation(br_id, severity_code, target_service_moment, target_code, order_of_execution) 
