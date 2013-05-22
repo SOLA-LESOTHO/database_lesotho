@@ -6314,6 +6314,9 @@ insert into system.approle(code, display_value, status, description) values('Bul
 insert into system.approle(code, display_value, status, description) values('sysRegnReports', 'Systematic Registration Reports', 'c', 'Allows generation of Systematic Registration Reports');
 insert into system.approle(code, display_value, status, description) values('systematicRegn', 'Systematic Registration', 'c', 'Allows to access Systematic Registration Service');
 insert into system.approle(code, display_value, status, description) values('lodgeObjection', 'Objection lodgment', 'c', 'Allows to access Lodge Objection Service');
+insert into system.approle(code, display_value, status, description) values('disputeSave', 'Dispute Save', 'c', 'Allows to save dispute Service');
+insert into system.approle(code, display_value, status, description) values('disputeCommentsSave', 'Dispute Comments Save', 'c', 'Allows to add changes to dispute comments service');
+insert into system.approle(code, display_value, status, description) values('disputeSearch', 'Dispute Search', 'c', 'Allows to search dispute Service');
 
 
 
