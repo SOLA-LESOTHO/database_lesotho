@@ -130,16 +130,19 @@ echo loading administrative schema...
 
 REM  Loading laa spatial data section
 
-echo Loading spatial data...
-echo Loading spatial data... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\laa_data\interim_data.sql >> build.log 2>&1
+rem echo Loading spatial data...
+rem echo Loading spatial data... >> build.log 2>&1
+rem %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\laa_data\interim_data.sql >> build.log 2>&1
 
+echo Loading Lesotho spatial configurations...
 echo Loading spatial config... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\lesotho_spatial_config.sql >> build.log 2>&1
 
+echo Loading Lesotho map layer...
 echo Loading Lesotho map layer... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\config_map_layer_lesotho.sql >> build.log 2>&1
 
+echo Loading Maseru parcels data...
 echo Loading Maseru Parcels ... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\sola_populate_maseru_parcels.sql >> build.log 2>&1
 
