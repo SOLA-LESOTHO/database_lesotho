@@ -241,7 +241,11 @@
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
 		VALUES ('courtOrder', 'lostLease');
-		
+	INSERT INTO application.request_type_requires_source_type(
+				source_type_code, request_type_code)
+		VALUES ('appForm', 'lostLease');
+	
+	
 	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'transferMortgage';
 
 	INSERT INTO application.request_type_requires_source_type(
@@ -302,6 +306,14 @@
 				source_type_code, request_type_code)
 		VALUES ('appForm', 'exemptionApp');
 		
+
+	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'surveyApprv';
+	INSERT INTO application.request_type_requires_source_type(
+				source_type_code, request_type_code)
+		VALUES ('surveyReport', 'surveyApprv');
+	INSERT INTO application.request_type_requires_source_type(
+				source_type_code, request_type_code)
+		VALUES ('otherDocument', 'surveyApprv');
 
 	--Attach an Application form to every service provided by LAA
 	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.source_type_code LIKE 'appForm';
@@ -413,9 +425,6 @@
 		VALUES ('appForm', 'examSurveyFiles');
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
-		VALUES ('appForm', 'foreignEntHoldTitle');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
 		VALUES ('appForm', 'regSurrenderLease');
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
@@ -453,5 +462,10 @@
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
 		VALUES ('appForm', 'surveyPlanCopy');		
+	INSERT INTO application.request_type_requires_source_type(
+				source_type_code, request_type_code)
+		VALUES ('appForm', 'surveyApprv');
+		
+	UPDATE application.request_type_requires_source_type SET source_type_status = TRUE;
 
 		
