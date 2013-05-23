@@ -5,7 +5,7 @@ INSERT INTO transaction.transaction(id,from_service_id,status_code,approval_date
 
 --load property
 
-INSERT INTO administrative.ba_unit 
+INSERT INTO lesotho_etl.ba_unit 
 (id, 
 type_code, 
 name, 
@@ -28,5 +28,55 @@ registration_date,
 FROM lesotho_etl.entity_plots
 WHERE transaction_type = 'lease';
 
-UPDATE administrative.ba_unit
-SET id = uuid_generate_v1();
+INSERT INTO administrative.ba_unit(
+id, 
+type_code, 
+cadastre_object_id, 
+name, 
+name_firstpart, 
+name_lastpart, 
+creation_date, 
+expiration_date, 
+status_code, 
+transaction_id)
+SELECT 
+b.id, 
+b.type_code,
+c.id, 
+b.name, 
+b.name_firstpart, 
+b.name_lastpart, 
+b.creation_date, 
+b.expiration_date, 
+b.status_code, 
+b.transaction_id
+FROM lesotho_etl.ba_unit b 
+inner join  cadastre.cadastre_object c
+on c.name_firstpart = INSERT INTO administrative.ba_unit(
+id, 
+type_code, 
+cadastre_object_id, 
+name, 
+name_firstpart, 
+name_lastpart, 
+creation_date, 
+expiration_date, 
+status_code, 
+transaction_id)
+SELECT 
+uuid_generate_v1(), 
+b.type_code,
+c.id, 
+b.name, 
+b.name_firstpart, 
+b.name_lastpart, 
+b.creation_date, 
+b.expiration_date, 
+b.status_code, 
+b.transaction_id
+FROM lesotho_etl.ba_unit b 
+inner join  cadastre.cadastre_object c
+on c.name_firstpart = b.name_firstpart and c.name_lastpart = b.name_lastpart;
+
+
+
