@@ -155,7 +155,7 @@ REM echo loading administrative schema...
 REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part10.sql >> build.log 2>&1
 
 
-
+REM 
 echo Finished at %time% - Check build.log for errors!
 echo Finished at %time% >> build.log 2>&1
 pause
