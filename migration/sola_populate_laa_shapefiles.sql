@@ -7,6 +7,7 @@
 --DELETE FROM cadastre.cadastre_object;
 DELETE FROM cadastre.spatial_unit where spatial_unit.level_id = (select level.id from cadastre.level where level.name='Roads');
 DELETE FROM cadastre.spatial_unit where spatial_unit.level_id = (select level.id from cadastre.level where level.name='Zones');
+DELETE FROM cadastre.spatial_unit where spatial_unit.level_id = (select level.id from cadastre.level where level.name='Trigs');
 --ALTER TABLE cadastre.cadastre_object DROP CONSTRAINT enforce_geotype_geom_polygon ;
 --ALTER TABLE cadastre.cadastre_object
 --  ADD CONSTRAINT enforce_geotype_geom_polygon CHECK (geometrytype(geom_polygon) = 'POLYGON'::text OR geom_polygon IS NULL);
