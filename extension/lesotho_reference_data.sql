@@ -111,9 +111,6 @@
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('LeaseEndoInherit', 'registrationServices', 'Register Lease Endorsement ', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('variationMortgage', 'registrationServices', 'Change Mortgage::::Phetoho ea Mortgage', 'Variation of Mortgage', 'x', 20, 100.00, 0.00, 0.00, 1, 'Variation of mortgage <reference>', 'mortgage', 'vary');
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regCessionLease', 'registrationServices', 'Register Cession of Lease', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
-	-- Completed on 2013-03-19 08:49:34
 
-	--
-	-- PostgreSQL database dump complete
 
 

@@ -180,3 +180,4 @@ INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_c
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
 	VALUES ('cadastreObject', 'Cadastre object', 'all', 'polygon', 'primaryRight', 'db:postgres');
 
+-----------
