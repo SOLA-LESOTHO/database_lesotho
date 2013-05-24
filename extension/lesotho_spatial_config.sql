@@ -52,7 +52,7 @@ WHERE "name" = 'roads';
 DELETE FROM cadastre.spatial_value_area;
 DELETE FROM cadastre.spatial_unit;
 DELETE FROM cadastre.spatial_unit_historic;
---DELETE FROM cadastre.level;
+DELETE FROM cadastre.level;
 DELETE FROM cadastre.cadastre_object;
 DELETE FROM cadastre.cadastre_object_historic;
 
@@ -68,22 +68,38 @@ UPDATE system.setting SET vl = '-3254891' WHERE "name" = 'map-north';
 -- Add the necessary dynamic queries
 delete from system.query where name='SpatialResult.getZones';
 delete from system.query where name='dynamic.informationtool.get_zones';
+delete from system.query where name='SpatialResult.getGrids';
+delete from system.query where name='dynamic.informationtool.get_grids';
+
 
 INSERT INTO system.query("name", sql)
  VALUES ('SpatialResult.getZones', 
  'select su.id, su.label,  st_asewkb(su.geom) as the_geom from cadastre.spatial_unit su, cadastre.level l where su.level_id = l.id and l."name" = ''Zones'' and ST_Intersects(su.geom, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, #{maxy})), #{srid}))');
+
+ INSERT INTO system.query("name", sql)
+ VALUES ('SpatialResult.getGrids', 
+ 'select su.id, su.label,  st_asewkb(su.geom) as the_geom from cadastre.spatial_unit su, cadastre.level l where su.level_id = l.id and l."name" = ''Grids'' ');
 
  
 INSERT INTO system.query("name", sql)
  VALUES ('dynamic.informationtool.get_zones', 
  'select su.id, su.label, st_asewkb(su.geom) as the_geom from cadastre.spatial_unit su, cadastre.level l where su.level_id = l.id and l."name" = ''Zones''  and ST_Intersects(su.geom, ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid}))');
 
+ INSERT INTO system.query("name", sql)
+ VALUES ('dynamic.informationtool.get_grids', 
+ 'select su.id, su.label, st_asewkb(su.geom) as the_geom from cadastre.spatial_unit su, cadastre.level l where su.level_id = l.id and l."name" = ''Grids''  and ST_Intersects(su.geom, ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid}))');
+
+ 
 --Insert information tool data for get_zones
 delete from system.query_field where query_name='dynamic.informationtool.get_zones';
 INSERT INTO system.query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_zones', 0, 'id', NULL);
 INSERT INTO system.query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_zones', 1, 'label', 'Name::::Nome');
 INSERT INTO system.query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_zones', 2, 'the_geom', NULL); 
  
+delete from system.query_field where query_name='dynamic.informationtool.get_grids';
+INSERT INTO system.query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_grids', 0, 'id', NULL);
+INSERT INTO system.query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_grids', 1, 'label', 'Name::::Nome');
+INSERT INTO system.query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_grids', 2, 'the_geom', NULL); 
 --Add new static layers called ls_orthophoto and zones
 
 delete from system.config_map_layer where name='ls_orthophoto';
@@ -96,6 +112,10 @@ INSERT INTO system.config_map_layer ("name", title, type_code, pojo_query_name, 
  VALUES ('zones', 'Zones', 'pojo', 'SpatialResult.getZones', 'theGeom:Polygon,label:""', 
   'dynamic.informationtool.get_zones', 'zone.xml', TRUE, 50, TRUE);
 
+DELETE FROM system.config_map_layer WHERE "name" = 'grids';
+
+INSERT INTO system.config_map_layer ("name", title, type_code, pojo_query_name, pojo_structure, pojo_query_name_for_select, style, active, item_order, visible_in_start)
+ VALUES ('grid', 'Grids', 'pojo', 'SpatialResult.getGrids', 'theGeom:Polygon,label:""','dynamic.informationtool.get_grids', 'zone.xml', TRUE, 50, TRUE);
 --make all roads visible on the roads layer by removing the second condition [st_area(geom)> power(5 * #{pixel_res}, 2)] from sql
 
 UPDATE system.query
@@ -148,26 +168,15 @@ ALTER TABLE cadastre.survey_point_historic ADD CONSTRAINT enforce_srid_original_
 ALTER TABLE bulk_operation.spatial_unit_temporary DROP CONSTRAINT IF EXISTS enforce_srid_geom;
 ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 22287);
 
--- Configure the Level data for Lesotho
--- add levels**********************
+-- Data for the table cadastre.level -- 
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+  VALUES (uuid_generate_v1(), 'Grids', 'all', 'polygon', 'mixed', 'test');
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
   VALUES (uuid_generate_v1(), 'Zones', 'all', 'polygon', 'mixed', 'test');
 INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
 	VALUES (uuid_generate_v1(), 'Roads', 'all', 'unStructuredLine', 'network', 'test');
---INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
---	VALUES (uuid_generate_v1(), 'Parcels', 'all', 'polygon', 'primaryRight', 'test');
---INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
---	VALUES ('cadastreObject', 'Cadastre object', 'all', 'polygon', 'primaryRight', 'db:postgres');
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+	VALUES (uuid_generate_v1(), 'Parcels', 'all', 'polygon', 'primaryRight', 'test');
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+	VALUES ('cadastreObject', 'Cadastre object', 'all', 'polygon', 'primaryRight', 'db:postgres');
 
----*******************************			
--- Create Views for each layer. Note that these views are not used by the application, but can be used
--- from AtlasStyler to assist with layer styling. 
--- Remove views that are not relevant to Lesotho
---DROP VIEW IF EXISTS cadastre.place_name;
-
--- Elton: This will change the query that is used to retrieve features for the parcels layer.
--- The change from the original query is that it removes the condition of the area. and st_area(co.geom_polygon)> power(5 * #{pixel_res}, 2)
---UPDATE system.query 
---	SET sql = 'select co.id, co.name_firstpart || ''/'' || co.name_lastpart AS label,  st_asewkb(co.geom_polygon) --AS the_geom FROM cadastre.cadastre_object co WHERE type_code= ''parcel'' and status_code= ''current'' 
---	AND ST_Intersects(co.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, --#{maxy})), #{srid}))'
---WHERE name = 'SpatialResult.getParcels';

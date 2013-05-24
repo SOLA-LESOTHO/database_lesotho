@@ -1,0 +1,1 @@
+DROP SCHEMA interim_data

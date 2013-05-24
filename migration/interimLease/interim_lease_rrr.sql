@@ -16,7 +16,7 @@ select
 uuid_generate_v1(), 
 b.id, 
 trim(to_char(nextval('administrative.rrr_nr_seq'), '000000')),
-'ownership',
+'lease',
 'current', 
 TRUE, 
 'adm-transaction', 
@@ -27,5 +27,5 @@ FROM administrative.ba_unit b;
 
 INSERT INTO  administrative.notation(id, rrr_id, transaction_id, change_user, notation_date, status_code, notation_text, reference_nr) 
 SELECT uuid_generate_v1(), r.id, 'adm-transaction', 'test-id', 
-r.registration_date, 'current', 'ownership', r.nr
+r.registration_date, 'current', 'lease', r.nr
 FROM administrative.rrr r;

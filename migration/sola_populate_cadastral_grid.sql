@@ -1,7 +1,7 @@
-﻿ALTER TABLE interim_data.grid DROP COLUMN IF EXISTS grid_number;
-ALTER TABLE interim_data.grid ADD COLUMN grid_number character varying(6);
-update interim_data.grid set grid_number=right('0' || cpindexnum,5);
-select * from interim_data.grid;
+﻿ALTER TABLE interim_data."1to2500 Survey Grid Drawing_CombinedAreas" DROP COLUMN IF EXISTS grid_number;
+ALTER TABLE interim_data."1to2500 Survey Grid Drawing_CombinedAreas" ADD COLUMN grid_number character varying(6);
+update interim_data."1to2500 Survey Grid Drawing_CombinedAreas" set grid_number=right('0' || cpindexnum,5);
+--select * from interim_data."1to2500 Survey Grid Drawing_CombinedAreas";
 
 DELETE FROM cadastre.spatial_unit AS su WHERE su.level_id= (select cl.id from cadastre.level as cl WHERE cl.name='Grids');
 delete from cadastre.level cascade  where name='Grids';
@@ -11,7 +11,7 @@ INSERT INTO cadastre.level(id, name, register_type_code, structure_code, type_co
 
 INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
 	SELECT uuid_generate_v1(), '2D', grid_number, 'onSurface', ST_SetSRID(the_geom,22287) as the_geom, (SELECT id FROM cadastre.level WHERE name='Grids') As l_id, 'test' AS ch_user 
-	FROM interim_data.grid 
+	FROM interim_data."1to2500 Survey Grid Drawing_CombinedAreas" 
 	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
 	
 
