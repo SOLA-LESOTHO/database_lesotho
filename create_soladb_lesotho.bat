@@ -30,7 +30,7 @@ REM set /p archive_password= Test Data Archive Password [%archive_password%] :
 echo
 echo
 echo Starting Build at %time%
-echo Starting Build at %time% > build.log 2>&1
+echo Starting Build at %time% >> build.log 2>&1
 
 echo Creating database...
 echo Creating database... >> build.log 2>&1
@@ -60,6 +60,11 @@ echo Loading Lesotho Business Rules... >> build.log 2>&1
 echo Loading documents required per service >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\InsertDocumentsPerService.sql >> build.log 2>&1
 
+REM Loading Users and Roles
+echo Loading Users and Roles... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\lesotho_users_roles.sql >> build.log 2>&1
+echo Loading Lodging Agents... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\lesotho_agents.sql >> build.log 2>&1
 
 
 
@@ -96,10 +101,7 @@ echo Renaming Zones >> build.log 2>&1
 REM end of loading laa spatial data section
 
 
-echo Loading Users and Roles... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\lesotho_users_roles.sql >> build.log 2>&1
-echo Loading Lodging Agents... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\lesotho_agents.sql >> build.log 2>&1
+
 
 REM loading lease data section
 
