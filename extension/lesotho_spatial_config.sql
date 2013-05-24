@@ -52,7 +52,7 @@ WHERE "name" = 'roads';
 DELETE FROM cadastre.spatial_value_area;
 DELETE FROM cadastre.spatial_unit;
 DELETE FROM cadastre.spatial_unit_historic;
---DELETE FROM cadastre.level;
+DELETE FROM cadastre.level;
 DELETE FROM cadastre.cadastre_object;
 DELETE FROM cadastre.cadastre_object_historic;
 
@@ -70,6 +70,10 @@ delete from system.query where name='SpatialResult.getZones';
 delete from system.query where name='dynamic.informationtool.get_zones';
 delete from system.query where name='SpatialResult.getGrids';
 delete from system.query where name='dynamic.informationtool.get_grids';
+<<<<<<< HEAD
+=======
+
+>>>>>>> pomomo
 
 INSERT INTO system.query("name", sql)
  VALUES ('SpatialResult.getZones', 
@@ -89,7 +93,10 @@ INSERT INTO system.query("name", sql)
  'select su.id, su.label, st_asewkb(su.geom) as the_geom from cadastre.spatial_unit su, cadastre.level l where su.level_id = l.id and l."name" = ''Grids''  and ST_Intersects(su.geom, ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid}))');
 
  
+<<<<<<< HEAD
  
+=======
+>>>>>>> pomomo
 --Insert information tool data for get_zones
 delete from system.query_field where query_name='dynamic.informationtool.get_zones';
 INSERT INTO system.query_field (query_name, index_in_query, name, display_value) VALUES ('dynamic.informationtool.get_zones', 0, 'id', NULL);
@@ -168,6 +175,7 @@ ALTER TABLE cadastre.survey_point_historic ADD CONSTRAINT enforce_srid_original_
 ALTER TABLE bulk_operation.spatial_unit_temporary DROP CONSTRAINT IF EXISTS enforce_srid_geom;
 ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 22287);
 
+<<<<<<< HEAD
 -- Configure the Level data for Lesotho
 -- add levels**********************
 --INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
@@ -191,3 +199,17 @@ ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT enforce_srid_ge
 --	SET sql = 'select co.id, co.name_firstpart || ''/'' || co.name_lastpart AS label,  st_asewkb(co.geom_polygon) --AS the_geom FROM cadastre.cadastre_object co WHERE type_code= ''parcel'' and status_code= ''current'' 
 --	AND ST_Intersects(co.geom_polygon, ST_SetSRID(ST_MakeBox3D(ST_Point(#{minx}, #{miny}),ST_Point(#{maxx}, --#{maxy})), #{srid}))'
 --WHERE name = 'SpatialResult.getParcels';
+=======
+-- Data for the table cadastre.level -- 
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+  VALUES (uuid_generate_v1(), 'Grids', 'all', 'polygon', 'mixed', 'test');
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+  VALUES (uuid_generate_v1(), 'Zones', 'all', 'polygon', 'mixed', 'test');
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+	VALUES (uuid_generate_v1(), 'Roads', 'all', 'unStructuredLine', 'network', 'test');
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+	VALUES (uuid_generate_v1(), 'Parcels', 'all', 'polygon', 'primaryRight', 'test');
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, change_user)
+	VALUES ('cadastreObject', 'Cadastre object', 'all', 'polygon', 'primaryRight', 'db:postgres');
+
+>>>>>>> pomomo

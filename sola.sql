@@ -4287,7 +4287,7 @@ CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
 DROP TABLE IF EXISTS cadastre.cadastre_object_node_target CASCADE;
 CREATE TABLE cadastre.cadastre_object_node_target(
     transaction_id varchar(40) NOT NULL,
-    node_id varchar(40) NOT NULL,
+    node_id varchar(60) NOT NULL,
     geom GEOMETRY NOT NULL
         CONSTRAINT enforce_dims_geom CHECK (st_ndims(geom) = 2),
         CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 2193),
@@ -4326,7 +4326,7 @@ DROP TABLE IF EXISTS cadastre.cadastre_object_node_target_historic CASCADE;
 CREATE TABLE cadastre.cadastre_object_node_target_historic
 (
     transaction_id varchar(40),
-    node_id varchar(40),
+    node_id varchar(60),
     geom GEOMETRY
         CONSTRAINT enforce_dims_geom CHECK (st_ndims(geom) = 2),
         CONSTRAINT enforce_srid_geom CHECK (st_srid(geom) = 2193),
@@ -9080,7 +9080,7 @@ CREATE VIEW application.systematic_registration_certificates AS SELECT aa.nr, co
    AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text 
    AND s.request_type_code::text = 'systematicRegn'::text 
    AND aa.status_code::text = ast.code::text AND aa.status_code::text = 'approved'::text 
-   AND COALESCE(ap.land_use_code, 'residential'::character varying)::text = lu.code::text ;
+   AND  'residential'::text = lu.code::text;
 
 -------View administrative.systematic_registration_listing ---------
 DROP VIEW IF EXISTS administrative.systematic_registration_listing CASCADE;

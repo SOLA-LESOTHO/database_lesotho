@@ -63,9 +63,9 @@ UPDATE  system.approle SET display_value = req.display_value
 FROM 	application.request_type req
 WHERE   system.approle.code = req.code; 
 
--- This delete will cascade delete from the system.approle_appgroup table. 
-DELETE FROM system.approle WHERE code IN ('buildingRestriction', 'documentCopy', 'historicOrder', 'limtedRoadAccess', 
-'newApartment', 'serviceEnquiry', 'servitude', 'surveyPlanCopy', 'titleSearch', 'varyMortgage', 'varyRight'); 
+-- This delete will cascade delete from the system.approle_appgroup table. 'documentCopy','varyMortgage', 
+DELETE FROM system.approle WHERE code IN ('buildingRestriction',  'historicOrder', 'limtedRoadAccess', 
+'newApartment', 'serviceEnquiry', 'servitude', 'surveyPlanCopy', 'titleSearch', 'varyRight'); 
 
 -- Add any missing roles to the super-group-id
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) 

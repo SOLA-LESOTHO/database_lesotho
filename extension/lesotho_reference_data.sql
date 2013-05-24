@@ -1,24 +1,4 @@
-﻿	--
-	-- PostgreSQL database dump
-	--
-
-	-- Dumped from database version 9.1.5
-	-- Dumped by pg_dump version 9.1.5
-	-- Started on 2013-03-14 15:53:17
-
-	SET statement_timeout = 0;
-	SET client_encoding = 'UTF8';
-	SET standard_conforming_strings = on;
-	SET check_function_bodies = false;
-	SET client_min_messages = warning;
-
-	SET search_path = source, pg_catalog;
-
-	--
-	-- TOC entry 3379 (class 0 OID 23610)
-	-- Dependencies: 206 3380
-	-- Data for Name: administrative_source_type; Type: TABLE DATA; Schema: source; Owner: postgres
-	--Insert Document types for Lesotho data
+﻿
 	DELETE FROM source.administrative_source_type;
 
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('deed', 'Deed', 'c', NULL, false);
@@ -57,7 +37,7 @@
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('specialNotarialBond', 'Special Notarial Bond', 'c', NULL, false);
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('addendumSublease', 'Addendum to Sublease', 'c', NULL, false);
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('courtOrder', 'Court Order::::Taelo ea Lekhotla', 'c', 'Extension to LADM', false);
-	INSERT INTO administrative_source_type VALUES ('idVerification', 'Identification Document::::Boitsebiso', 'c', 'Extension to LADM', false);
+	INSERT INTO source.administrative_source_type VALUES ('idVerification', 'Identification Document::::Boitsebiso', 'c', 'Extension to LADM', false);
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('marriageCert', 'Marriage Certificate::::Lengolo la Lenyalo', 'c', NULL, false);
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('landUseCert', 'Land Use Certificate', 'c', NULL, false);
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('valuationReport', 'Property Valuation Report', 'c', NULL, false);
@@ -79,31 +59,10 @@
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('taxClrCert', 'Tax Clearance Certificate', 'c', NULL, false);
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('copyLease', 'Copy of Lease', 'c', NULL, false);
 
-	--Insert request types for Lesotho data
-	--
-	-- PostgreSQL database dump
-	--
 
-	-- Dumped from database version 9.1.5
-	-- Dumped by pg_dump version 9.1.5
-	-- Started on 2013-03-19 08:49:34
-
-	SET statement_timeout = 0;
-	SET client_encoding = 'UTF8';
-	SET standard_conforming_strings = on;
-	SET check_function_bodies = false;
-	SET client_min_messages = warning;
-
-	SET search_path = application, pg_catalog;
-
-	--
-	-- TOC entry 3390 (class 0 OID 23860)
-	-- Dependencies: 226 3391
-	-- Data for Name: request_type; Type: TABLE DATA; Schema: application; Owner: postgres
-
-	DELETE FROM application.request_type;
 
 	--A Section with status 'c'
+<<<<<<< HEAD
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regnReducMortgage', 'registrationServices', 'Register Reducible Mortgage', NULL, 'c', 5, 5.00, 1.00, 0.00, 1, NULL, NULL, 'vary');
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('cancServitude', 'registrationServices', 'Cancel Servitude', NULL, 'c', 5, 5.00, 1.00, 0.00, 1, NULL, NULL, 'cancel');
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regnDeeds', 'registrationServices', 'Register Notarial Bond', NULL, 'c', 3, 1.00, 0.00, 0.00, 0, NULL, NULL, NULL);
@@ -118,12 +77,23 @@
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('leaseTransfer', 'registrationServices', 'Consent to Transfer a Lease', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regRedMortBond', 'registrationServices', 'Register Reducable Mortgage Bond', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('cedeMortgage', 'registrationServices', 'Cession of a Mortgage bond::::kopo ea tahlo ea Mortgage bond', NULL, 'c', 1, 5.00, 0.00, 0.00, 1, 'Cede on the mortgage bond', 'mortgage', 'vary');
+=======
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regnReducMortgage', 'registrationServices', 'Register Reducible Mortgage', NULL, 'x', 5, 5.00, 1.00, 0.00, 1, NULL, NULL, 'vary');
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('cancServitude', 'registrationServices', 'Cancel Servitude', NULL, 'x', 5, 5.00, 1.00, 0.00, 1, NULL, NULL, 'cancel');
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('cnclDocument', 'registrationServices', 'Withdraw Document', 'To withdraw from use any standard document (such as standard mortgage or standard lease)', 'c', 1, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('provideSpatialData', 'informationServices', 'Provide Spatial Data::::Fana ka  boitsebiso ba spatial Data', 'Provide Spatial Data', 'c', 1, 0.00, 0.00, 0.00, 1, 'Provide Spatial Data', NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('documentSearch', 'informationServices', 'Document Search', NULL, 'x', 1, 5.00, 0.00, 0.00, 1, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('cancelMortBonds', 'registrationServices', 'Cancellation of Mortgage Bonds', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regRedMortBond', 'registrationServices', 'Register Reducible Mortgage Bond', NULL, 'x', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('cedeMortgage', 'registrationServices', 'Cession of a Mortgage bond::::kopo ea tahlo ea Mortgage bond', NULL, 'x', 1, 5.00, 0.00, 0.00, 1, 'Cede on the mortgage bond', 'mortgage', 'vary');
+>>>>>>> pomomo
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('counterClaim', 'legalServices', 'Lodge Counter Claim', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('courtProcess', 'legalServices', 'Lodge Court Process', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('disputeReg', 'legalServices', 'Lodge Regularization Dispute', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('disputeSpdic', 'legalServices', 'Lodge Sporadic Dispute', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('lodgeObjection', 'legalServices', 'Lodge Objection', NULL, 'x', 90, 5.00, 0.00, 0.00, 1, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('exemptionApp', 'registrationServices', 'Ground Rent Exemption Application', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+<<<<<<< HEAD
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('documentCopy', 'informationServices', 'Document Copy::::Kopi ea tokomane', NULL, 'c', 1, 0.50, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('copyLostDeed', 'registrationServices', 'Copy of Lost Deed::::kopi ea deed', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regVarLease', 'registrationServices', 'Register Variation of Lease', NULL, 'c', 0, 5.00, 0.00, 0.00, 1, NULL, NULL, NULL);
@@ -133,15 +103,24 @@
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regNotcovBond', 'registrationServices', 'Register Notarial Covering Bond', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regNotarSuretyBond', 'registrationServices', 'Register Notarial Surety Bond', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regCessionDeed', 'registrationServices', 'Register Cession of Deed', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+=======
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('copyLostDeed', 'registrationServices', 'Copy of Lost Deed::::kopi ea deed', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regVarLease', 'registrationServices', 'Register Variation of Lease', NULL, 'c', 0, 5.00, 0.00, 0.00, 1, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regSpecNotBond', 'registrationServices', 'Register Special Notarial Bond', NULL, 'x', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regNotcovBond', 'registrationServices', 'Register Notarial Covering Bond', NULL, 'x', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regNotarSuretyBond', 'registrationServices', 'Register Notarial Surety Bond', NULL, 'x', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regCessionDeed', 'registrationServices', 'Register Cession of Deed', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+>>>>>>> pomomo
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('mapSale', 'informationServices', 'Map Sales', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
-	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('jointUseLand', 'registrationServices', 'Joint Use of Land Application', NULL, 'c', 0, 0.00, 0.00, 0.00, 1, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('jointUseLand', 'registrationServices', 'Joint Use of Land Application', NULL, 'x', 0, 0.00, 0.00, 0.00, 1, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('groundRentCalc', 'informationServices', 'Ground Rent Calculation', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('printSurveyApp', 'informationServices', 'Print Survey Approval (S10)::::Hatisa S10', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('printSurveyDiag', 'informationServices', 'Print Survey Diagram::::Ngolisa Mapa oa Mapotiele', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
-	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regNotGenBond', 'registrationServices', 'Register Notarial General Bond', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
-	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('RegMiningLease', 'registrationServices', 'Register Mining Lease::::Ngolisa Lease ea Mine', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
-	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regNotDeedSer', 'registrationServices', 'Register Notarial Deed of Servitude', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regNotGenBond', 'registrationServices', 'Register Notarial General Bond', NULL, 'x', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('RegMiningLease', 'registrationServices', 'Register Mining Lease::::Ngolisa Lease ea Mine', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regNotDeedSer', 'registrationServices', 'Register Notarial Deed of Servitude', NULL, 'x', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regSublease', 'registrationServices', 'Register Sublease::::Ngolisa sublease', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+<<<<<<< HEAD
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('examSurveyFiles', 'cadastreServices', 'Examination of Survey Files::::Thlahlobo ea File', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regSurrenderLease', 'registrationServices', 'Register Surrender of a Lease', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('printAllocMap', 'informationServices', 'Print Allocation Maps::::Hatisa Mapa', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
@@ -154,6 +133,18 @@
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('transferMortgage', 'legalServices', 'Transfer of a Mortgage Bond', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('lostLease', 'legalServices', 'Application for a lost Lease', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regDeedTransfer', 'registrationServices', 'Register Deed of Transfer', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+=======
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('foreignEntHoldTitle', 'registrationServices', 'Foreign Enterprise to Hold Title to Land', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regSurrenderLease', 'registrationServices', 'Register Surrender of a Lease', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('printAllocMap', 'informationServices', 'Print Allocation Maps::::Hatisa Mapa', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('leaseTrans', 'legalServices', 'Application for Lease Transmission', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('leaseSubdiv', 'legalServices', 'Register Lease Subdivision', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('transmitJointLease', 'legalServices', 'Application for transmission of a Lease held Jointly', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('ministrialConsent', 'registrationServices', 'Ministerial consent for foreign enterprise to hold title to land', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('transferMortgage', 'legalServices', 'Transfer of a Mortgage Bond', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('lostLease', 'legalServices', 'Application for a lost Lease', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regDeedTransfer', 'registrationServices', 'Register Deed of Transfer', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+>>>>>>> pomomo
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('surveyApprv', 'registrationServices', 'Application for Approval of Land Survey', NULL, 'c', 1, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 
 	--A Section with status 'x'
