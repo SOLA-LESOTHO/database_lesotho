@@ -15,6 +15,12 @@ DELETE FROM cadastre.spatial_unit where spatial_unit.level_id = (select level.id
 INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
 	SELECT uuid_generate_v1(), '2D', msuvalzones."type", 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Zones') As l_id, 'test' AS ch_user 
 	FROM interim_data.msuvalzones WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
+	
+--INSERT VALUES FOR TRIG STATIONS	
+
+INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
+	SELECT uuid_generate_v1(), '2D', "Lesotho TRIG Stations"."level", 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Trigs') As l_id, 'test' AS ch_user 
+	FROM interim_data."Lesotho TRIG Stations" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
 
 ----INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
 	----SELECT uuid_generate_v1(), '2D', 'Industrial 1', 'onSurface', the_geom, (SELECT id FROM cadastre.level WHERE name='Zones') As l_id, 'test' AS ch_user
