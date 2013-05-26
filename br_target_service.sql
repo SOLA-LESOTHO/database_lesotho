@@ -11,7 +11,7 @@ values('application-baunit-has-parcels', now(), 'infinity',
 	where co.status_code in (''current'') and co.geom_polygon is not null and ba_su.ba_unit_id= ba.id) as vl
 from application.service s 
 	inner join application.application_property ap on (s.application_id= ap.application_id)
-	INNER JOIN administrative.ba_unit ba ON (ap.name_firstpart, ap.name_lastpart) = (ba.name_firstpart, ba.name_lastpart)
+	INNER JOIN administrative.ba_unit ba ON ap.ba_unit_id = ba.id
 where s.id = #{id}
 order by 1
 limit 1');
@@ -45,7 +45,7 @@ insert into system.br_definition(br_id, active_from, active_until, body)
 values('service-check-no-previous-digital-title-service', now(), 'infinity', 
 'SELECT coalesce(not rrr.is_primary, true) as vl
 FROM application.service s inner join application.application_property ap on s.application_id = ap.application_id
-  INNER JOIN administrative.ba_unit ba ON (ap.name_firstpart, ap.name_lastpart) = (ba.name_firstpart, ba.name_lastpart)
+  INNER JOIN administrative.ba_unit ba ON ap.ba_unit_id = ba.id
   LEFT JOIN administrative.rrr ON rrr.ba_unit_id = ba.id
 WHERE s.id = #{id} 
 order by 1 desc
@@ -84,7 +84,7 @@ insert into system.br_definition(br_id, active_from, active_until, body)
 values('mortgage-value-check', now(), 'infinity', 
 'SELECT (ap.total_value < rrr.mortgage_amount) AS vl 
   from application.service s inner join application.application_property ap on s.application_id = ap.application_id 
- INNER JOIN administrative.ba_unit ba ON (ap.name_firstpart, ap.name_lastpart) = (ba.name_firstpart, ba.name_lastpart)
+ INNER JOIN administrative.ba_unit ba ON ap.ba_unit_id = ba.id
  INNER JOIN administrative.rrr ON rrr.ba_unit_id = ba.id
 WHERE s.id = #{id} and rrr.type_code= ''mortgage'' and rrr.status_code in (''pending'')
 order by 1
@@ -106,7 +106,7 @@ INSERT INTO system.br_definition(br_id, active_from, active_until, body)
 VALUES('current-rrr-for-variation-or-cancellation-check', now(), 'infinity', 
 'SELECT (SUM(1) > 0) AS vl FROM application.service sv 
 			INNER JOIN application.application_property ap ON (sv.application_id = ap.application_id )
-			  INNER JOIN administrative.ba_unit ba ON (ap.name_firstpart, ap.name_lastpart) = (ba.name_firstpart, ba.name_lastpart)
+			  INNER JOIN administrative.ba_unit ba ON ap.ba_unit_id = ba.id
 			  INNER JOIN administrative.rrr rr ON rr.ba_unit_id = ba.id
 			  WHERE sv.id = #{id}
 			  AND sv.request_type_code IN (SELECT code FROM application.request_type WHERE ((status = ''c'') AND (type_action_code IN (''vary'', ''cancel''))))

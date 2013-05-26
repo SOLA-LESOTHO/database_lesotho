@@ -79,7 +79,7 @@ VALUES('application-br3-check-properties-are-not-historic', 'sql',
 INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
 VALUES('application-br3-check-properties-are-not-historic', now(), 'infinity', 
 'WITH baUnitRecs AS	(SELECT ba.status_code AS status FROM application.application_property ap
-				INNER JOIN administrative.ba_unit ba ON ((ap.name_lastpart = ba.name_lastpart) AND (ap.name_firstpart = ba.name_firstpart))
+				INNER JOIN administrative.ba_unit ba ON ap.ba_unit_id = ba.id
 			WHERE application_id= #{id})
 
 SELECT	CASE 	WHEN (SELECT (COUNT(*) = 0) FROM baUnitRecs) THEN NULL
@@ -131,26 +131,6 @@ VALUES ('application-br5-check-there-are-front-desk-services', 'application', 'v
 
 ----------------------------------------------------------------------------------------------------
 INSERT INTO system.br(id, technical_type_code, feedback, technical_description) 
-VALUES('application-br6-check-new-title-service-is-needed', 'sql', 
-'An application can be associated with a property which should have a digital title record.::::Non esiste un formato digitale per questa proprieta. Aggiungere un Nuovo Titolo Digitale alla vostra pratica',
-'Rule checks to see if there is a ba_unit record for the property identified for the application at lodgement' );
-
-INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
-VALUES('application-br6-check-new-title-service-is-needed', now(), 'infinity', 
-'SELECT	CASE	WHEN (name_firstpart, name_lastpart) NOT IN (SELECT name_firstpart, name_lastpart FROM administrative.ba_unit)
-			THEN (SELECT (COUNT(*) > 0) FROM application.service WHERE request_type_code = ''newFreehold'')
-		ELSE TRUE
-	END AS vl
-FROM application.application_property  
-WHERE application_id=#{id}
-ORDER BY 1
-LIMIT 1');
-
-INSERT INTO system.br_validation(br_id, target_code, target_application_moment, severity_code, order_of_execution)
-VALUES ('application-br6-check-new-title-service-is-needed', 'application', 'validate', 'warning', 730);
-
-----------------------------------------------------------------------------------------------------
-INSERT INTO system.br(id, technical_type_code, feedback, technical_description) 
 VALUES('applicant-name-to-owner-name-check', 'sql', 
 'The applicants name should be the same as (one of) the current owner(s)::::Il nome del richiedente differisce da quello dei proprietari registrati',
  '#{id}(application.application.id) is requested');
@@ -164,7 +144,7 @@ VALUES('applicant-name-to-owner-name-check', NOW(), 'infinity',
 		INNER JOIN application.application ap ON (ap.contact_person_id = pty.id)
 		WHERE ap.id = #{id}),
     poaQuery AS (SELECT pty.name AS firstName, pty.last_name AS lastName FROM application.application_property ap
-			INNER JOIN administrative.ba_unit ba ON ((ap.name_firstpart, ap.name_lastpart) = (ba.name_firstpart, ba.name_lastpart))
+			INNER JOIN administrative.ba_unit ba ON ap.ba_unit_id = ba.id
 			INNER JOIN administrative.rrr rr ON ((ba.id = rr.ba_unit_id) AND (rr.status_code = ''current'') AND rr.is_primary)
 			INNER JOIN administrative.rrr_share rs ON (rr.id = rs.rrr_id)
 			INNER JOIN administrative.party_for_rrr pr ON (rs.rrr_id = pr.rrr_id)
@@ -194,7 +174,7 @@ VALUES('app-current-caveat-and-no-remove-or-vary', now(), 'infinity',
 'SELECT (SELECT (COUNT(*) > 0) FROM application.service sv 
   WHERE ((sv.application_id = ap.application_id) AND (sv.request_type_code IN (''varyCaveat'', ''removeCaveat'')))) AS vl
 FROM application.application_property ap 
-  INNER JOIN administrative.ba_unit ba ON ((ap.name_firstpart, ap.name_lastpart) = (ba.name_firstpart, ba.name_lastpart))
+  INNER JOIN administrative.ba_unit ba ON ap.ba_unit_id = ba.id
   LEFT JOIN administrative.rrr ON (rrr.ba_unit_id = ba.id)
 WHERE ((ap.application_id = #{id}) AND (rrr.type_code = ''caveat'') AND (rrr.status_code IN (''pending'', ''current'')))
 ORDER BY 1 desc
@@ -214,7 +194,7 @@ INSERT INTO system.br_definition(br_id, active_from, active_until, body)
 VALUES('app-other-app-with-caveat', now(), 'infinity', 
 'SELECT (SELECT COUNT(*) > 0 FROM application.service sv WHERE sv.application_id = ap.application_id AND sv.request_type_code IN (''varyCaveat'', ''removeCaveat'')) AS vl
 FROM application.application_property ap
-	INNER JOIN application.application_property ap2 ON (((ap.name_firstpart, ap.name_lastpart) = (ap2.name_firstpart, ap2.name_lastpart)) AND (ap.id != ap2.id))
+	INNER JOIN application.application_property ap2 ON (((ap.ba_unit_id) = (ap2.ba_unit_id)) AND (ap.rowidentifier != ap2.rowidentifier))
 	INNER JOIN application.application app2 ON (ap2.application_id = app2.id)
 	INNER JOIN application.service sv2 ON ((app2.id = sv2.application_id) AND (sv2.request_type_code = ''caveat'') AND (sv2.status_code != ''cancelled'') AND (app2.status_code NOT IN (''completed'', ''annulled'')))
 WHERE ap.application_id = #{id} 
@@ -465,29 +445,6 @@ SELECT CASE 	WHEN (SELECT (COUNT(*) = 0) FROM cancelPropApp) THEN NULL
 
 INSERT INTO system.br_validation(br_id, target_code, target_application_moment, severity_code, order_of_execution)
 VALUES ('cancel-title-check-rrr-cancelled', 'application', 'validate', 'critical', 150);
-----------------------------------------------------------------------------------------------------
-INSERT INTO system.br(id, technical_type_code, feedback, description) 
-VALUES('app-check-title-ref', 'sql', 'Invalid identifier for title::::ITALIANO',
- '#{id}(application.application_property.application_id) is requested');
-
---delete from system.br_definition where br_id = 'app-check-title-ref'
-INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
-VALUES('app-check-title-ref', NOW(), 'infinity', 
-'WITH 	convertTitleApp	AS	(SELECT se.id FROM application.service se
-				WHERE se.application_id = #{id}
-				AND se.request_type_code = ''newDigitalTitle''),
-	titleRefChk	AS	(SELECT aprp.application_id FROM application.application_property aprp
-				WHERE aprp.application_id= #{id} 
-				AND SUBSTR(aprp.name_firstpart, 1) != ''N''
-				AND NOT(aprp.name_lastpart ~ ''^[0-9]+$''))--isnumeric test
-	
-SELECT CASE 	WHEN (SELECT (COUNT(*) = 0) FROM convertTitleApp) THEN NULL
-		WHEN (SELECT (COUNT(*) = 0) FROM titleRefChk) THEN TRUE
-		ELSE FALSE
-	END AS vl');
-
-INSERT INTO system.br_validation(br_id, severity_code, target_application_moment, target_code, order_of_execution) 
-VALUES ('app-check-title-ref', 'medium', 'validate', 'application', 750);
 
 ----------------------------------------------------------------------------------------------------------------------
 UPDATE system.br SET display_name = id WHERE display_name !=id;

@@ -154,7 +154,7 @@ REM echo loading party for rrr... >> build.log 2>&1
 REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part09.sql >> build.log 2>&1
 
 echo HOUSE KEEPING... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=house_keeper.sql >> build.log 2>&1
+REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=house_keeper.sql >> build.log 2>&1
 
 
 REM 

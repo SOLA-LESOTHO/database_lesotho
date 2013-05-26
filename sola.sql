@@ -2037,46 +2037,20 @@ CREATE OR REPLACE FUNCTION application.get_concatenated_name(
 ) RETURNS varchar 
 AS $$
 declare
-  rec record;
   name character varying;
   
 BEGIN
-  name = '';
-   
-	for rec in 
-	   Select bu.name_firstpart||'/'||bu.name_lastpart||' ( '||pippo.firstpart||'/'||pippo.lastpart || ' ' || pippo.cadtype||' )'  as value,
-	        pippo.id
-		from application.service s 
-		join application.application_property ap on (s.application_id=ap.application_id)
-		join administrative.ba_unit bu on (ap.name_firstpart||ap.name_lastpart=bu.name_firstpart||bu.name_lastpart)
-		join (select co.name_firstpart firstpart,
-			   co.name_lastpart lastpart,
-			   get_translation(cot.display_value, null) cadtype,
-			   bsu.ba_unit_id unit_id,
-			   co.id id
-			   from administrative.ba_unit_contains_spatial_unit  bsu
-			   join cadastre.cadastre_object co on (bsu.spatial_unit_id = co.id)
-			   join cadastre.cadastre_object_type cot on (co.type_code = cot.code)) pippo
-			   on (bu.id = pippo.unit_id)
-	   where s.id = service_id 
-	    and (s.request_type_code = 'cadastreChange' or s.request_type_code = 'redefineCadastre' or s.request_type_code = 'newApartment' 
-	   or s.request_type_code = 'newDigitalProperty' or s.request_type_code = 'newDigitalTitle' or s.request_type_code = 'newFreehold' 
-	   or s.request_type_code = 'newOwnership' or s.request_type_code = 'newState')
-	   and s.status_code != 'lodged'
-	loop
-	   name = name || ', ' || replace (rec.value,rec.id, '');
-	end loop;
+return (SELECT string_agg((b.name_firstpart||'-'||b.name_lastpart), ', ') FROM administrative.ba_unit b 
+WHERE b.transaction_id IN (SELECT id FROM transaction.transaction WHERE from_service_id = service_id) 
+OR id IN (SELECT rrr.ba_unit_id FROM administrative.rrr rrr WHERE rrr.transaction_id IN 
+	   (SELECT id FROM transaction.transaction WHERE from_service_id = service_id)
+         UNION
+         SELECT n.ba_unit_id FROM administrative.notation n 
+         WHERE n.ba_unit_id IS NOT NULL AND n.transaction_id IN 
+           (SELECT id FROM transaction.transaction WHERE from_service_id = service_id))
+);
 
-        if name = '' then
-	  return name;
-	end if;
-
-	if substr(name, 1, 1) = ',' then
-          name = substr(name,2);
-        end if;
-return name;
 END;
-
 $$ LANGUAGE plpgsql;
 COMMENT ON FUNCTION application.get_concatenated_name(
  service_id varchar
@@ -3132,14 +3106,7 @@ comment on table application.application_form is '';
 --Table application.application_property ----
 DROP TABLE IF EXISTS application.application_property CASCADE;
 CREATE TABLE application.application_property(
-    id varchar(40) NOT NULL,
     application_id varchar(40) NOT NULL,
-    name_firstpart varchar(20) NOT NULL,
-    name_lastpart varchar(20) NOT NULL,
-    area numeric(20, 2) NOT NULL DEFAULT (0),
-    total_value numeric(20, 2) NOT NULL DEFAULT (0),
-    verified_exists bool NOT NULL DEFAULT (false),
-    verified_location bool NOT NULL DEFAULT (false),
     ba_unit_id varchar(40) NOT NULL,
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
@@ -3149,8 +3116,7 @@ CREATE TABLE application.application_property(
 
     -- Internal constraints
     
-    CONSTRAINT application_property_property_once UNIQUE (application_id, name_firstpart, name_lastpart),
-    CONSTRAINT application_property_pkey PRIMARY KEY (id)
+    CONSTRAINT application_property_pkey PRIMARY KEY (application_id,ba_unit_id)
 );
 
 
@@ -3175,14 +3141,7 @@ CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
 DROP TABLE IF EXISTS application.application_property_historic CASCADE;
 CREATE TABLE application.application_property_historic
 (
-    id varchar(40),
     application_id varchar(40),
-    name_firstpart varchar(20),
-    name_lastpart varchar(20),
-    area numeric(20, 2),
-    total_value numeric(20, 2),
-    verified_exists bool,
-    verified_location bool,
     ba_unit_id varchar(40),
     rowidentifier varchar(40),
     rowversion integer,
@@ -8521,11 +8480,11 @@ ALTER TABLE cadastre.ground_rent_multiplication_factor ADD CONSTRAINT ground_ren
 CREATE INDEX ground_rent_multiplication_factor_valuation_zone_fk115_ind ON cadastre.ground_rent_multiplication_factor (valuation_zone);
 
 ALTER TABLE application.application_property ADD CONSTRAINT application_property_application_id_fk116 
-            FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+            FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE CASCADE;
 CREATE INDEX application_property_application_id_fk116_ind ON application.application_property (application_id);
 
 ALTER TABLE application.application_property ADD CONSTRAINT application_property_ba_unit_id_fk117 
-            FOREIGN KEY (ba_unit_id) REFERENCES administrative.ba_unit(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+            FOREIGN KEY (ba_unit_id) REFERENCES administrative.ba_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
 CREATE INDEX application_property_ba_unit_id_fk117_ind ON application.application_property (ba_unit_id);
 
 ALTER TABLE application.application_uses_source ADD CONSTRAINT application_uses_source_application_id_fk118 
@@ -8883,15 +8842,7 @@ WHERE l.id = su.level_id AND l.name = 'Survey Control';;
 
 -------View administrative.sys_reg_owner_name ---------
 DROP VIEW IF EXISTS administrative.sys_reg_owner_name CASCADE;
-CREATE VIEW administrative.sys_reg_owner_name AS SELECT (pp.name::text || ' '::text) || COALESCE(pp.last_name, ''::character varying)::text AS value, 
-         pp.name::text as name,
-         COALESCE(pp.last_name, ''::character varying)::text AS last_name,
-         co.id, 
-         co.name_firstpart, 
-         co.name_lastpart, 
-         get_translation(lu.display_value, NULL::character varying) AS land_use_code,
-         su.ba_unit_id,
-         sa.size, 
+CREATE VIEW administrative.sys_reg_owner_name AS SELECT (pp.name::text || ' '::text) || COALESCE(pp.last_name, ''::character varying)::text AS value, pp.name::text AS name, COALESCE(pp.last_name, ''::character varying)::text AS last_name, co.id, co.name_firstpart, co.name_lastpart, get_translation(lu.display_value, NULL::character varying) AS land_use_code, su.ba_unit_id, sa.size, 
                 CASE
                     WHEN COALESCE(co.land_use_code, 'residential'::character varying)::text = 'residential'::text THEN sa.size
                     ELSE 0::numeric
@@ -8908,20 +8859,10 @@ CREATE VIEW administrative.sys_reg_owner_name AS SELECT (pp.name::text || ' '::t
                     WHEN COALESCE(co.land_use_code, 'residential'::character varying)::text = 'industrial'::text THEN sa.size
                     ELSE 0::numeric
                 END AS industrial
-           FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application_property ap, application.application aa, application.service s, party.party pp, administrative.party_for_rrr pr, administrative.rrr rrr, administrative.ba_unit bu
-          WHERE sa.spatial_unit_id::text = co.id::text AND sa.type_code::text = 'officialArea'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text AND ap.name_firstpart::text = bu.name_firstpart::text) AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text AND s.status_code::text = 'completed'::text AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text AND rrr.ba_unit_id::text = su.ba_unit_id::text AND (rrr.type_code::text = 'ownership'::text OR rrr.type_code::text = 'apartment'::text OR rrr.type_code::text = 'commonOwnership'::text) 
-          AND bu.id::text = su.ba_unit_id::text
-          AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text
+           FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application aa, application.service s, party.party pp, administrative.party_for_rrr pr, administrative.rrr rrr, administrative.ba_unit bu
+          WHERE sa.spatial_unit_id::text = co.id::text AND sa.type_code::text = 'officialArea'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text AND s.status_code::text = 'completed'::text AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text AND rrr.ba_unit_id::text = su.ba_unit_id::text AND (rrr.type_code::text = 'ownership'::text OR rrr.type_code::text = 'apartment'::text OR rrr.type_code::text = 'commonOwnership'::text) AND bu.id::text = su.ba_unit_id::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text
 UNION 
-         SELECT DISTINCT 'No Claimant '::text AS value, 
-         'No Claimant '::text as name,
-         'No Claimant '::text AS last_name, 
-         co.id, 
-         co.name_firstpart, 
-         co.name_lastpart, 
-         get_translation(lu.display_value, NULL::character varying) AS land_use_code,
-         su.ba_unit_id,
-         sa.size, 
+         SELECT DISTINCT 'No Claimant '::text AS value, 'No Claimant '::text AS name, 'No Claimant '::text AS last_name, co.id, co.name_firstpart, co.name_lastpart, get_translation(lu.display_value, NULL::character varying) AS land_use_code, su.ba_unit_id, sa.size, 
                 CASE
                     WHEN COALESCE(co.land_use_code, 'residential'::character varying)::text = 'residential'::text THEN sa.size
                     ELSE 0::numeric
@@ -8938,22 +8879,15 @@ UNION
                     WHEN COALESCE(co.land_use_code, 'residential'::character varying)::text = 'industrial'::text THEN sa.size
                     ELSE 0::numeric
                 END AS industrial
-           FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application_property ap, application.application aa, party.party pp, administrative.party_for_rrr pr, administrative.rrr rrr, application.service s, administrative.ba_unit bu
-          WHERE sa.spatial_unit_id::text = co.id::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text 
-          AND sa.type_code::text = 'officialArea'::text AND bu.id::text = su.ba_unit_id::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text AND ap.name_firstpart::text = bu.name_firstpart::text) AND aa.id::text = ap.application_id::text AND NOT (su.ba_unit_id::text IN ( SELECT rrr.ba_unit_id
+           FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application aa, party.party pp, administrative.party_for_rrr pr, administrative.rrr rrr, application.service s, administrative.ba_unit bu
+          WHERE sa.spatial_unit_id::text = co.id::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text AND sa.type_code::text = 'officialArea'::text AND bu.id::text = su.ba_unit_id::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text AND NOT (su.ba_unit_id::text IN ( SELECT rrr.ba_unit_id
                    FROM administrative.rrr rrr, party.party pp, administrative.party_for_rrr pr
                   WHERE (rrr.type_code::text = 'ownership'::text OR rrr.type_code::text = 'apartment'::text OR rrr.type_code::text = 'commonOwnership'::text OR rrr.type_code::text = 'stateOwnership'::text) AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text)) AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text AND s.status_code::text = 'completed'::text
-  ORDER BY last_name, name;
+  ORDER BY 3, 2;;
 
 -------View administrative.sys_reg_state_land ---------
 DROP VIEW IF EXISTS administrative.sys_reg_state_land CASCADE;
-CREATE VIEW administrative.sys_reg_state_land AS SELECT (pp.name::text || ' '::text) || COALESCE(pp.last_name, ' '::character varying)::text AS value, 
- co.id, 
- co.name_firstpart, 
- co.name_lastpart, 
- get_translation(lu.display_value, NULL::character varying) AS land_use_code,
- su.ba_unit_id,
-         sa.size,  
+CREATE VIEW administrative.sys_reg_state_land AS SELECT (pp.name::text || ' '::text) || COALESCE(pp.last_name, ' '::character varying)::text AS value, co.id, co.name_firstpart, co.name_lastpart, get_translation(lu.display_value, NULL::character varying) AS land_use_code, su.ba_unit_id, sa.size, 
         CASE
             WHEN COALESCE(co.land_use_code, 'residential'::character varying)::text = 'residential'::text THEN sa.size
             ELSE 0::numeric
@@ -8970,39 +8904,21 @@ CREATE VIEW administrative.sys_reg_state_land AS SELECT (pp.name::text || ' '::t
             WHEN COALESCE(co.land_use_code, 'residential'::character varying)::text = 'industrial'::text THEN sa.size
             ELSE 0::numeric
         END AS industrial
-   FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application_property ap, application.application aa, application.service s, party.party pp, administrative.party_for_rrr pr, administrative.rrr rrr, administrative.ba_unit bu
-  WHERE sa.spatial_unit_id::text = co.id::text
-  AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text
-   AND sa.type_code::text = 'officialArea'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text AND ap.name_firstpart::text = bu.name_firstpart::text) AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text AND s.status_code::text = 'completed'::text AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text AND rrr.ba_unit_id::text = su.ba_unit_id::text AND rrr.type_code::text = 'stateOwnership'::text AND bu.id::text = su.ba_unit_id::text
-  ORDER BY (pp.name::text || ' '::text) || COALESCE(pp.last_name, ' '::character varying)::text;
+   FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application aa, application.service s, party.party pp, administrative.party_for_rrr pr, administrative.rrr rrr, administrative.ba_unit bu
+  WHERE sa.spatial_unit_id::text = co.id::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text AND sa.type_code::text = 'officialArea'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text AND s.status_code::text = 'completed'::text AND pp.id::text = pr.party_id::text AND pr.rrr_id::text = rrr.id::text AND rrr.ba_unit_id::text = su.ba_unit_id::text AND rrr.type_code::text = 'stateOwnership'::text AND bu.id::text = su.ba_unit_id::text
+  ORDER BY (pp.name::text || ' '::text) || COALESCE(pp.last_name, ' '::character varying)::text;;
 
 -------View application.systematic_registration_certificates ---------
 DROP VIEW IF EXISTS application.systematic_registration_certificates CASCADE;
-CREATE VIEW application.systematic_registration_certificates AS SELECT aa.nr, co.name_firstpart, co.name_lastpart,
- su.ba_unit_id
-   FROM application.application_status_type ast, 
-   cadastre.land_use_type lu, cadastre.cadastre_object co, 
-   administrative.ba_unit bu, cadastre.spatial_value_area sa, 
-   administrative.ba_unit_contains_spatial_unit su, 
-   application.application_property ap, application.application aa, 
-   application.service s
-   WHERE sa.spatial_unit_id::text = co.id::text 
-   AND sa.type_code::text = 'officialArea'::text 
-   AND su.spatial_unit_id::text = sa.spatial_unit_id::text 
-   AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_firstpart||ap.name_lastpart= bu.name_firstpart||bu.name_lastpart)
-   AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text 
-   AND s.request_type_code::text = 'systematicRegn'::text 
-   AND aa.status_code::text = ast.code::text AND aa.status_code::text = 'approved'::text 
-   AND  'residential'::text = lu.code::text;
+CREATE VIEW application.systematic_registration_certificates AS SELECT aa.nr, co.name_firstpart, co.name_lastpart, su.ba_unit_id
+   FROM application.application_status_type ast, cadastre.land_use_type lu, cadastre.cadastre_object co, administrative.ba_unit bu, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application aa, application.service s
+  WHERE sa.spatial_unit_id::text = co.id::text AND sa.type_code::text = 'officialArea'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text AND aa.status_code::text = ast.code::text AND aa.status_code::text = 'approved'::text AND 'residential'::text = lu.code::text;;
 
 -------View administrative.systematic_registration_listing ---------
 DROP VIEW IF EXISTS administrative.systematic_registration_listing CASCADE;
-CREATE VIEW administrative.systematic_registration_listing AS SELECT DISTINCT co.id, co.name_firstpart, co.name_lastpart, sa.size, 
- get_translation(lu.display_value, NULL::character varying) AS land_use_code, 
- su.ba_unit_id, 
- bu.name_firstpart||'/'||bu.name_lastpart as name
-   FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application_property ap, application.application aa, application.service s, administrative.ba_unit bu
-  WHERE sa.spatial_unit_id::text = co.id::text AND sa.type_code::text = 'officialArea'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text AND (ap.ba_unit_id::text = su.ba_unit_id::text OR ap.name_lastpart::text = bu.name_lastpart::text AND ap.name_firstpart::text = bu.name_firstpart::text) AND aa.id::text = ap.application_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text AND s.status_code::text = 'completed'::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text AND bu.id::text = su.ba_unit_id::text;
+CREATE VIEW administrative.systematic_registration_listing AS SELECT DISTINCT co.id, co.name_firstpart, co.name_lastpart, sa.size, get_translation(lu.display_value, NULL::character varying) AS land_use_code, su.ba_unit_id, (bu.name_firstpart::text || '/'::text) || bu.name_lastpart::text AS name
+   FROM cadastre.land_use_type lu, cadastre.cadastre_object co, cadastre.spatial_value_area sa, administrative.ba_unit_contains_spatial_unit su, application.application aa, application.service s, administrative.ba_unit bu
+  WHERE sa.spatial_unit_id::text = co.id::text AND sa.type_code::text = 'officialArea'::text AND su.spatial_unit_id::text = sa.spatial_unit_id::text AND s.application_id::text = aa.id::text AND s.request_type_code::text = 'systematicRegn'::text AND s.status_code::text = 'completed'::text AND COALESCE(co.land_use_code, 'residential'::character varying)::text = lu.code::text AND bu.id::text = su.ba_unit_id::text;;
 
 -------View system.user_roles ---------
 DROP VIEW IF EXISTS system.user_roles CASCADE;
