@@ -120,6 +120,7 @@ echo Loading access Lease Data... >> build.log 2>&1
 echo Loading access Lease Transaction Data...
 echo Loading access Lease Transaction Data... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=..\laa_data\lease_transaction.sql >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\registration_services.sql >> build.log 2>&1
 
 echo Preprocessing of data...
 echo Preprocessing of data.... >> build.log 2>&1
