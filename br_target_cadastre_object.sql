@@ -130,32 +130,6 @@ values('new-cadastre-objects-present', 'critical', 'current', 'cadastre_object',
 ----------------------------------------------------------------------------------------------------
 
 insert into system.br(id, technical_type_code, feedback, technical_description) 
-values('target-and-new-union-the-same', 'sql', 'The union of new parcel polygons is the same with the union of the target parcel polygons::::La unione dei nuovi oggetti catastali deve corrispondere alla unione di quelli originari',
- '#{id}(transaction_id) is requested');
-
-insert into system.br_definition(br_id, active_from, active_until, body) 
-values('target-and-new-union-the-same', now(), 'infinity', 
- 'select st_equals(geom_to_snap,target_geom) as vl
-from cadastre.snap_geometry_to_geometry(
-(select st_union(co.geom_polygon) 
-from cadastre.cadastre_object co where transaction_id = #{id})
-, (select st_union(co.geom_polygon)
-from cadastre.cadastre_object co 
-where id in (select cadastre_object_id 
-  from cadastre.cadastre_object_target  where transaction_id = #{id})), 
-  system.get_setting(''map-tolerance'')::double precision, true)
- ');
-
-insert into system.br_validation(br_id, severity_code, target_reg_moment, target_code, target_request_type_code, order_of_execution) 
-values('target-and-new-union-the-same', 'warning', 'pending', 'cadastre_object', 'cadastreChange', 470);
-
-
-insert into system.br_validation(br_id, severity_code, target_reg_moment, target_code, target_request_type_code, order_of_execution) 
-values('target-and-new-union-the-same', 'warning', 'current', 'cadastre_object', 'cadastreChange', 460);
-
-----------------------------------------------------------------------------------------------------
-
-insert into system.br(id, technical_type_code, feedback, technical_description) 
 values('new-cadastre-objects-do-not-overlap', 'sql', 'The new parcel polygons must not overlap::::I nuovi oggetti catastali non devono sovrapporsi',
  '#{id}(transaction_id) is requested. Check the union of new co has the same area as the sum of all areas of new co-s, which means the new co-s don''t overlap');
 
