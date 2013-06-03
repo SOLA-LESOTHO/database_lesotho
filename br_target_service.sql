@@ -82,7 +82,7 @@ values('mortgage-value-check', 'sql', 'For the Register Mortgage service, the ne
 
 insert into system.br_definition(br_id, active_from, active_until, body) 
 values('mortgage-value-check', now(), 'infinity', 
-'SELECT (ap.total_value < rrr.mortgage_amount) AS vl 
+'SELECT (ap.total_value < rrr.amount) AS vl 
   from application.service s inner join application.application_property ap on s.application_id = ap.application_id 
  INNER JOIN administrative.ba_unit ba ON ap.ba_unit_id = ba.id
  INNER JOIN administrative.rrr ON rrr.ba_unit_id = ba.id
@@ -339,5 +339,10 @@ INSERT INTO system.br_validation(br_id, target_code, target_request_type_code, s
 VALUES ('application-baunit-check-area', 'service', 'cadastreChange', 'warning', 520);
 ----------------------------------------------------------------------------------------------------
 
+insert into system.br(id, technical_type_code) values('generate-dispute-nr', 'sql');
+
+insert into system.br_definition(br_id, active_from, active_until, body) 
+values('generate-dispute-nr', now(), 'infinity', 
+'SELECT to_char(now(), ''yymm'') || trim(to_char(nextval(''administrative.dispute_nr_seq''), ''0000'')) AS vl');
 
 update system.br set display_name = id where display_name is null;

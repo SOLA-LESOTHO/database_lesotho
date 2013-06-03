@@ -98,6 +98,9 @@ echo Parcel numbering >> build.log 2>&1
 echo Renaming Zones >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\update_spatial_unit_zones.sql >> build.log 2>&1
 
+echo Updating Layer Precedence >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\system_config_layer_precedence.sql >> build.log 2>&1
+
 REM end of loading laa spatial data section
 
 
@@ -150,9 +153,9 @@ echo loading party for rrr...
 echo loading party for rrr... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_party_for_rrr.sql >> build.log 2>&1
 
-REM echo loading party for rrr...
-REM echo loading party for rrr... >> build.log 2>&1
-REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_query_ver9_part09.sql >> build.log 2>&1
+echo loading transactions against a lease...
+echo loading transactions against a lease... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_transaction_against_lease.sql >> build.log 2>&1
 
 echo HOUSE KEEPING... >> build.log 2>&1
 REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=house_keeper.sql >> build.log 2>&1
