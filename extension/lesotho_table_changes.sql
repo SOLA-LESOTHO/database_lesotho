@@ -220,3 +220,127 @@ DROP TRIGGER IF EXISTS __track_history ON application.application_spatial_unit C
 CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
    ON application.application_spatial_unit FOR EACH ROW
    EXECUTE PROCEDURE f_for_trg_track_history();
+   
+   
+   -----snap_geometry_to_geometry
+   
+   -- Function: cadastre.snap_geometry_to_geometry(geometry, geometry, double precision, boolean)
+
+-- DROP FUNCTION cadastre.snap_geometry_to_geometry(geometry, geometry, double precision, boolean);
+
+CREATE OR REPLACE FUNCTION cadastre.snap_geometry_to_geometry(INOUT geom_to_snap geometry, INOUT target_geom geometry, IN snap_distance double precision, IN change_target_if_needed boolean, OUT snapped boolean, OUT target_is_changed boolean)
+  RETURNS record AS
+$BODY$
+DECLARE
+  i integer;
+  nr_elements integer;
+  rec record;
+  rec2 record;
+  point_location float;
+  rings geometry[];
+  
+BEGIN
+  target_is_changed = false;
+  snapped = false;
+  if st_geometrytype(geom_to_snap) not in ('ST_Point', 'ST_LineString', 'ST_Polygon' ,'ST_MultiPolygon') then
+    raise exception 'geom_to_snap not supported. Only point, linestring and polygon is supported.';
+  end if;
+  if st_geometrytype(geom_to_snap) = 'ST_Point' then
+    -- If the geometry to snap is POINT
+    if st_geometrytype(target_geom) = 'ST_Point' then
+      if st_dwithin(geom_to_snap, target_geom, snap_distance) then
+        geom_to_snap = target_geom;
+        snapped = true;
+      end if;
+    elseif st_geometrytype(target_geom) = 'ST_LineString' then
+      -- Check first if there is any point of linestring where the point can be snapped.
+      select t.* into rec from ST_DumpPoints(target_geom) t where st_dwithin(geom_to_snap, t.geom, snap_distance);
+      if rec is not null then
+        geom_to_snap = rec.geom;
+        snapped = true;
+        return;
+      end if;
+      --Check second if the point is within distance from linestring and get an interpolation point in the line.
+      if st_dwithin(geom_to_snap, target_geom, snap_distance) then
+        point_location = ST_Line_Locate_Point(target_geom, geom_to_snap);
+        geom_to_snap = ST_Line_Interpolate_Point(target_geom, point_location);
+        if change_target_if_needed then
+          target_geom = ST_LineMerge(ST_Union(ST_Line_Substring(target_geom, 0, point_location), ST_Line_Substring(target_geom, point_location, 1)));
+          target_is_changed = true;
+        end if;
+        snapped = true;  
+      end if;
+    elseif st_geometrytype(target_geom) = 'ST_Polygon' then
+      select  array_agg(ST_ExteriorRing(geom)) into rings from ST_DumpRings(target_geom);
+      nr_elements = array_upper(rings,1);
+      i = 1;
+      while i <= nr_elements loop
+        select t.* into rec from cadastre.snap_geometry_to_geometry(geom_to_snap, rings[i], snap_distance, change_target_if_needed) t;
+        if rec.snapped then
+          geom_to_snap = rec.geom_to_snap;
+          snapped = true;
+          if change_target_if_needed then
+            rings[i] = rec.target_geom;
+            target_geom = ST_MakePolygon(rings[1], rings[2:nr_elements]);
+            target_is_changed = rec.target_is_changed;
+            return;
+          end if;
+        end if;
+        i = i+1;
+      end loop;
+    end if;
+  elseif st_geometrytype(geom_to_snap) = 'ST_LineString' then
+    nr_elements = st_npoints(geom_to_snap);
+    i = 1;
+    while i <= nr_elements loop
+      select t.* into rec
+        from cadastre.snap_geometry_to_geometry(st_pointn(geom_to_snap,i), target_geom, snap_distance, change_target_if_needed) t;
+      if rec.snapped then
+        if rec.target_is_changed then
+          target_geom= rec.target_geom;
+          target_is_changed = true;
+        end if;
+        geom_to_snap = st_setpoint(geom_to_snap, i-1, rec.geom_to_snap);
+        snapped = true;
+      end if;
+      i = i+1;
+    end loop;
+    -- For each point of the target checks if it can snap to the geom_to_snap
+    for rec in select * from ST_DumpPoints(target_geom) t 
+      where st_dwithin(geom_to_snap, t.geom, snap_distance) loop
+      select t.* into rec2
+        from cadastre.snap_geometry_to_geometry(rec.geom, geom_to_snap, snap_distance, true) t;
+      if rec2.target_is_changed then
+        geom_to_snap = rec2.target_geom;
+        snapped = true;
+      end if;
+    end loop;
+  elseif st_geometrytype(geom_to_snap) = 'ST_Polygon' then
+    select  array_agg(ST_ExteriorRing(geom)) into rings from ST_DumpRings(geom_to_snap);
+    nr_elements = array_upper(rings,1);
+    i = 1;
+    while i <= nr_elements loop
+      select t.* into rec
+        from cadastre.snap_geometry_to_geometry(rings[i], target_geom, snap_distance, change_target_if_needed) t;
+      if rec.snapped then
+        rings[i] = rec.geom_to_snap;
+        if rec.target_is_changed then
+          target_geom = rec.target_geom;
+          target_is_changed = true;
+        end if;
+        snapped = true;
+      end if;
+      i= i+1;
+    end loop;
+    if snapped then
+      geom_to_snap = ST_MakePolygon(rings[1], rings[2:nr_elements]);
+    end if;
+  end if;
+  return;
+END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION cadastre.snap_geometry_to_geometry(geometry, geometry, double precision, boolean)
+  OWNER TO postgres;
+COMMENT ON FUNCTION cadastre.snap_geometry_to_geometry(geometry, geometry, double precision, boolean) IS 'It snaps one geometry to the other. If points needs to be added they will be added.';
