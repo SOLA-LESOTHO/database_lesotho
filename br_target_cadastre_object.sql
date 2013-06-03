@@ -170,7 +170,7 @@ FROM cadastre.cadastre_object co
 WHERE transaction_id = #{id} ');
 
 insert into system.br_validation(br_id, severity_code, target_reg_moment, target_code, target_request_type_code, order_of_execution) 
-values('new-cadastre-objects-do-not-overlap', 'warning', 'pending', 'cadastre_object', 'cadastreChange', 60);
+values('new-cadastre-objects-do-not-overlap', 'critical', 'pending', 'cadastre_object', 'cadastreChange', 60);
 
 insert into system.br_validation(br_id, severity_code, target_reg_moment, target_code, target_request_type_code, order_of_execution) 
 values('new-cadastre-objects-do-not-overlap', 'medium', 'current', 'cadastre_object', 'cadastreChange', 480);
