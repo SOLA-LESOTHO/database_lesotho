@@ -75,28 +75,6 @@ INSERT INTO system.br_validation(br_id, target_code, target_service_moment, targ
 VALUES ('baunit-has-multiple-mortgages', 'service', 'complete', 'mortgage', 'warning', 670);
 
 ----------------------------------------------------------------------------------------------------
-
-insert into system.br(id, technical_type_code, feedback, technical_description) 
-values('mortgage-value-check', 'sql', 'For the Register Mortgage service, the new mortgage is for less than the reported value of property (at time application was received)::::Ipoteca superiore al valore riportato',
- '#{id}(application.service.id) is requested');
-
-insert into system.br_definition(br_id, active_from, active_until, body) 
-values('mortgage-value-check', now(), 'infinity', 
-'SELECT (ap.total_value < rrr.amount) AS vl 
-  from application.service s inner join application.application_property ap on s.application_id = ap.application_id 
- INNER JOIN administrative.ba_unit ba ON ap.ba_unit_id = ba.id
- INNER JOIN administrative.rrr ON rrr.ba_unit_id = ba.id
-WHERE s.id = #{id} and rrr.type_code= ''mortgage'' and rrr.status_code in (''pending'')
-order by 1
-limit 1');
-
-insert into system.br_validation(br_id, severity_code, target_service_moment, target_code, target_request_type_code, order_of_execution) 
-values('mortgage-value-check', 'warning', 'complete', 'service', 'mortgage', 700);
-
-insert into system.br_validation(br_id, severity_code, target_service_moment, target_code, target_request_type_code, order_of_execution) 
-values('mortgage-value-check', 'warning', 'complete', 'service', 'varyMortgage', 690);
-
-----------------------------------------------------------------------------------------------------
 INSERT INTO system.br(id, technical_type_code, feedback, technical_description) 
 VALUES('current-rrr-for-variation-or-cancellation-check', 'sql', 'For cancellation or variation of rights (or restrictions), there must be existing rights or restriction (in addition to the primary (ownership) right)::::Il titolo non include diritti o restrizioni correnti (oltre al diritto primario). Confermare la richiesta di variazione o cancellazione e verificare il titolo identificativo',
  '#{id}(application.service.id)');
