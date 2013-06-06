@@ -325,9 +325,9 @@
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
 		VALUES ('appForm', 'provideSpatialData');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'cadastreChange');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'cadastreChange');
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
 		VALUES ('appForm', 'caveat');
@@ -406,9 +406,9 @@
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
 		VALUES ('appForm', 'RegMiningLease');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'regNotDeedSer');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'regNotDeedSer');
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
 		VALUES ('appForm', 'examSurveyFiles');
@@ -455,4 +455,7 @@
 				source_type_code, request_type_code)
 		VALUES ('appForm', 'surveyPlanCopy');		
 
+	INSERT INTO application.request_type_requires_source_type(
+				source_type_code, request_type_code)
+		VALUES ('surveyReport', 'cadastreChange');
 		
