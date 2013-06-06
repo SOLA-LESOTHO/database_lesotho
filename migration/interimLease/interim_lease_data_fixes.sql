@@ -255,4 +255,29 @@ update lesotho_etl.lease_transaction
 SET  "BenOtherName" = 'ZAKHURA BROTHERS (PTY) LTD'
 WHERE "BenOtherName" LIKE 'ZAKHURA BROTHERS%';
 
+
+update lesotho_etl.lease_transaction
+set "ConsentConsiderationAmount" = replace("ConsentConsiderationAmount",'DEEDCANCELLED','0');
+
+update lesotho_etl.lease_transaction
+set "ConsentConsiderationAmount" = replace("ConsentConsiderationAmount",'NORENTALAMOUNT','0');
+
+update lesotho_etl.lease_transaction
+set "ConsentConsiderationAmount" = replace("ConsentConsiderationAmount",'M','');
+
+
+update lesotho_etl.lease_transaction
+set "ConsentConsiderationAmount" = replace("ConsentConsiderationAmount",' ','');
+
+update lesotho_etl.lease_transaction 
+set "ConsentConsiderationAmount" = trim("ConsentConsiderationAmount");
+
+update lesotho_etl.lease_transaction 
+set "ConsentConsiderationAmount" = substring("ConsentConsiderationAmount", 
+											position('(' in "ConsentConsiderationAmount") + 1, 
+											length("ConsentConsiderationAmount"));
+
+update lesotho_etl.lease_transaction
+set "ConsentConsiderationAmount" = replace("ConsentConsiderationAmount", ')','');
+
 ---end of lease transaction

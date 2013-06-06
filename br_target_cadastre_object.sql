@@ -235,5 +235,8 @@ VALUES ('area-check-percentage-newareas-oldareas', 'cadastre_object', 'current',
 
 ----------------------------------------------------------------------------------------------------
 
+	
+----------------------------------------------------------------------------------------------------
+
 update system.br set display_name = id where display_name !=id;
 

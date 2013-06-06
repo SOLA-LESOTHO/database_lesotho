@@ -2354,7 +2354,7 @@ DECLARE
 BEGIN
   target_is_changed = false;
   snapped = false;
-  if st_geometrytype(geom_to_snap) not in ('ST_Point', 'ST_LineString', 'ST_Polygon') then
+  if st_geometrytype(geom_to_snap) not in ('ST_Point', 'ST_LineString', 'ST_Polygon', 'ST_MultiPolygon') then
     raise exception 'geom_to_snap not supported. Only point, linestring and polygon is supported.';
   end if;
   if st_geometrytype(geom_to_snap) = 'ST_Point' then
@@ -5727,7 +5727,7 @@ CREATE TABLE party.party(
     ext_id varchar(255),
     type_code varchar(20) NOT NULL,
     name varchar(255),
-    last_name varchar(50),
+    last_name varchar(255),
     fathers_name varchar(50),
     fathers_last_name varchar(50),
     alias varchar(50),
@@ -5780,7 +5780,7 @@ CREATE TABLE party.party_historic
     ext_id varchar(255),
     type_code varchar(20),
     name varchar(255),
-    last_name varchar(50),
+    last_name varchar(255),
     fathers_name varchar(50),
     fathers_last_name varchar(50),
     alias varchar(50),
@@ -6365,7 +6365,7 @@ insert into application.request_type(code, request_category_code, display_value,
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('varyMortgage', 'registrationServices', 'Vary Mortgage::::Modifica ipoteca', 'c', 1, 5.00, 0.00, 0, 1, 'Change on the mortgage', 'mortgage', 'vary');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('newFreehold', 'registrationServices', 'New Freehold Title::::Nuovo Titolo', 'x', 5, 5.00, 0.00, 0, 1, 'Fee Simple Estate');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('serviceEnquiry', 'informationServices', 'Service Enquiry::::Richiesta Servizio', 'x', 1, 0.00, 0.00, 0, 0);
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnDeeds', 'registrationServices', 'Register Non Land Deed::::Registrazione Atto', 'c', 3, 1.00, 0.00, 0, 0);
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnDeeds', 'registrationServices', 'Deed Registration::::Registrazione Atto', 'c', 3, 1.00, 0.00, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnOnTitle', 'registrationServices', 'Registration on Title::::Registrazione di Titolo', 'x', 5, 5.00, 0.00, 0.01, 1);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnPowerOfAttorney', 'registrationServices', 'Registration of Power of Attorney::::Registrazione di Procura', 'x', 3, 5.00, 0.00, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnStandardDocument', 'registrationServices', 'Registration of Standard Document::::Documento di Documento Standard', 'x', 3, 5.00, 0.00, 0, 0);
@@ -6395,7 +6395,7 @@ insert into application.request_type(code, request_category_code, display_value,
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('newDigitalTitle', 'registrationServices', 'Convert to Digital Title::::Nuovo Titolo Digitale', 'x', 5, 0.00, 0.00, 0, 1, 'Title converted to digital format');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('newDigitalProperty', 'registrationServices', 'New Digital Property::::Nuova Proprieta Digitale', 'x', 5, 0.00, 0.00, 0, 1);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('removeRestriction', 'registrationServices', 'Remove Restriction (General)::::Rimozione restrizione (generica)', 'x', 5, 5.00, 0.00, 0, 1, '<restriction> <reference> cancelled', 'cancel');
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('cancelProperty', 'registrationServices', 'Surrender of a lease', 'x', 5, 5, 0, 0, 1, '', 'cancel');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('cancelProperty', 'registrationServices', 'Surrender of a lease', 'c', 5, 5, 0, 0, 1, '', 'cancel');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('varyCaveat', 'registrationServices', 'Vary caveat', 'x', 5, 5, 0, 0, 1, '<Caveat> <reference>', 'caveat', 'vary');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, type_action_code) values('cnclPowerOfAttorney', 'registrationServices', 'Cancel Power of Attorney', 'x', 1, 5.00, 0, 0, 0, 'cancel');
 insert into application.request_type(code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('cnclStandardDocument', 'registrationServices', 'Withdraw Standard Document', 'To withdraw from use any standard document (such as standard mortgage or standard lease)', 'x', 1, 5.00, 0, 0, 0);
