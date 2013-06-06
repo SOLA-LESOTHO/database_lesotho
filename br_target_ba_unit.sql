@@ -60,9 +60,7 @@ VALUES('ba_unit-has-cadastre-object', 'sql', 'Title must have an associated parc
 
 INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
 VALUES('ba_unit-has-cadastre-object', now(), 'infinity', 
-'SELECT count(*)>0 vl
-from administrative.ba_unit_contains_spatial_unit ba_s 
-WHERE ba_s.ba_unit_id = #{id}');
+'SELECT count(*)>0 vl from administrative.ba_unit ba WHERE ba.id = #{id} and ba.cadastre_object_id is not null');
 
 INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, severity_code, order_of_execution)
 VALUES ('ba_unit-has-cadastre-object', 'ba_unit', 'current', 'medium', 500);

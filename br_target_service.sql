@@ -1,18 +1,18 @@
 ﻿----------------------------------------------------------------------------------------------------
 
 insert into system.br(id, technical_type_code, feedback, technical_description) 
-values('application-baunit-has-parcels', 'sql', 'Title must have Parcels::::Titolo deve avere particelle',
+values('application-baunit-has-parcels', 'sql', 'Title must have parcel::::Titolo deve avere particelle',
  '#{id}(application.service.id) is requested');
 
 insert into system.br_definition(br_id, active_from, active_until, body) 
 values('application-baunit-has-parcels', now(), 'infinity', 
-'select (select count(*)>0 from administrative.ba_unit_contains_spatial_unit ba_su 
-		inner join cadastre.cadastre_object co on ba_su.spatial_unit_id= co.id
-	where co.status_code in (''current'') and co.geom_polygon is not null and ba_su.ba_unit_id= ba.id) as vl
+'select count(*)>0 as vl
 from application.service s 
-	inner join application.application_property ap on (s.application_id= ap.application_id)
-	INNER JOIN administrative.ba_unit ba ON ap.ba_unit_id = ba.id
-where s.id = #{id}
+	inner join application.application_property ap on s.application_id= ap.application_id
+	INNER JOIN (administrative.ba_unit ba 
+	INNER JOIN cadastre.cadastre_object co on ba.cadastre_object_id = co.id) 
+	ON ap.ba_unit_id = ba.id
+where s.id = #{id} and co.status_code = ''current'' and co.geom_polygon is not null
 order by 1
 limit 1');
 
