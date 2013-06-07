@@ -391,9 +391,9 @@
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
 		VALUES ('appForm', 'groundRentCalc');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'printSurveyApp');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'printSurveyApp');
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
 		VALUES ('appForm', 'printSurveyDiag');
@@ -458,4 +458,8 @@
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
 		VALUES ('surveyReport', 'cadastreChange');
+		
+	INSERT INTO application.request_type_requires_source_type(
+				source_type_code, request_type_code)
+		VALUES ('surveyReport', 'redefineCadastre');	
 		

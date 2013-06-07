@@ -6371,7 +6371,7 @@ insert into application.request_type(code, request_category_code, display_value,
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnStandardDocument', 'registrationServices', 'Registration of Standard Document::::Documento di Documento Standard', 'x', 3, 5.00, 0.00, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('titleSearch', 'informationServices', 'Title Search::::Ricerca Titolo', 'x', 1, 5.00, 0.00, 0, 1);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('surveyPlanCopy', 'informationServices', 'Survey Plan Copy::::Copia Piano Perizia', 'x', 1, 1.00, 0.00, 0, 0);
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('cadastrePrint', 'informationServices', 'Cadastre Map Print::::Stampa Catastale', 'c', 1, 0.50, 0.00, 0, 0);
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('cadastrePrint', 'informationServices', 'Cadastre Print::::Stampa Catastale', 'x', 1, 0.50, 0.00, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('cadastreExport', 'informationServices', 'Cadastre Export::::Export Catastale', 'x', 1, 0.00, 0.10, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('cadastreBulk', 'informationServices', 'Cadastre Bulk Export::::Export Carico Catastale', 'x', 5, 5.00, 0.10, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('registerLease', 'registrationServices', 'Register Lease::::Registrazione affitto', 'c', 5, 5.00, 0.00, 0.01, 1, 'Lease of nn years to <name>', 'lease', 'new');
@@ -6390,7 +6390,7 @@ insert into application.request_type(code, request_category_code, display_value,
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('historicOrder', 'registrationServices', 'Register Historic Preservation Order::::Registrazione ordine storico di precedenze', 'x', 5, 5.00, 0.00, 0, 1, 'Historic Preservation Order', 'noBuilding', 'new');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code) values('limitedRoadAccess', 'registrationServices', 'Register Limited Road Access::::registrazione limitazione accesso stradale', 'x', 5, 5.00, 0.00, 0, 1, 'Limited Road Access', 'limitedAccess');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('varyLease', 'registrationServices', 'Vary Lease::::Modifica affitto', 'c', 5, 5.00, 0.00, 0, 1, 'Variation of Lease <reference>', 'lease', 'vary');
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('varyRight', 'registrationServices', 'Vary Right (General)::::Modifica diritto (generico)', 'x', 5, 5.00, 0.00, 0, 1, 'Variation of <right> <reference>', 'vary');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('varyRight', 'registrationServices', 'Vary Right (General)::::Modifica diritto (generico)', 'c', 5, 5.00, 0.00, 0, 1, 'Variation of <right> <reference>', 'vary');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('removeRight', 'registrationServices', 'Termination of a lease', 'c', 5, 5.00, 0.00, 0, 1, '<right> <reference> cancelled', 'cancel');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('newDigitalTitle', 'registrationServices', 'Convert to Digital Title::::Nuovo Titolo Digitale', 'x', 5, 0.00, 0.00, 0, 1, 'Title converted to digital format');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('newDigitalProperty', 'registrationServices', 'New Digital Property::::Nuova Proprieta Digitale', 'x', 5, 0.00, 0.00, 0, 1);
@@ -6546,6 +6546,10 @@ CREATE TABLE administrative.rrr(
     mortgage_type_code varchar(20),
     status_change_date timestamp NOT NULL DEFAULT (now()),
     deed_type_code varchar(40),
+    stamp_duty numeric(29, 2) NOT NULL DEFAULT (0),
+    transfer_duty numeric(29, 2) NOT NULL DEFAULT (0),
+    registration_fee numeric(29, 0) NOT NULL DEFAULT (0),
+    service_fee numeric(29, 2) NOT NULL DEFAULT (0),
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -6597,6 +6601,10 @@ CREATE TABLE administrative.rrr_historic
     mortgage_type_code varchar(20),
     status_change_date timestamp,
     deed_type_code varchar(40),
+    stamp_duty numeric(29, 2),
+    transfer_duty numeric(29, 2),
+    registration_fee numeric(29, 0),
+    service_fee numeric(29, 2),
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),

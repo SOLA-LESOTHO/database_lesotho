@@ -235,7 +235,98 @@ VALUES ('area-check-percentage-newareas-oldareas', 'cadastre_object', 'current',
 
 ----------------------------------------------------------------------------------------------------
 
+INSERT INTO system.br (id, display_name, technical_type_code, feedback, description, technical_description) 
+VALUES ('newly-created-cadastre-object-should-not-overlap-existing',
+	'newly-created-cadastre-object-should-not-overlap-existing', 
+	'sql', 
+	'Newly created cadastre object should not overlap with any existing parcels::::...', 
+	NULL, 
+	'Checks that no parcels overlap');
+
+INSERT INTO system.br_definition (br_id, active_from, active_until, body) 
+VALUES ('newly-created-cadastre-object-should-not-overlap-existing', '2013-05-30', 'infinity', 
+'SELECT CASE
+	WHEN
+		(SELECT st_overlaps(co.geom_polygon, co2.geom_polygon)
+		AS vl
+		FROM cadastre.cadastre_object co, cadastre.cadastre_object co2
+		WHERE co.transaction_id = #{id}
+		AND co2.id NOT IN (SELECT cadastre_object_id FROM cadastre.cadastre_object_target)
+		AND st_overlaps(co.geom_polygon, co2.geom_polygon) LIMIT 1) THEN FALSE
+	ELSE TRUE
+END
+AS vl;');
+
+
+INSERT INTO system.br_validation (br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) 
+VALUES ('newly-created-cadastre-object-should-not-overlap-existing', 
+	'cadastre_object', 
+	NULL, 
+	NULL, 
+	'current', 
+	'cadastreChange', 
+	NULL, 
+	'critical', 
+	500);
+
+INSERT INTO system.br_validation (br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) 
+VALUES ('newly-created-cadastre-object-should-not-overlap-existing', 
+	'cadastre_object', 
+	NULL, 
+	NULL, 
+	'pending', 
+	'cadastreChange', 
+	NULL, 
+	'critical', 
+	60);
 	
+----------------------------------------------------------------------------------------------------
+
+INSERT INTO system.br (id, display_name, technical_type_code, feedback, description, technical_description) 
+VALUES ('redefined-cadastre-objects-do-not-overlap-existing-parcels',
+	'redefined-cadastre-objects-do-not-overlap-existing-parcels', 
+	'sql', 
+	'Redefined cadastre object should not overlap with any existing parcels::::...', 
+	NULL, 
+	'Checks that no parcels overlap');
+
+INSERT INTO system.br_definition (br_id, active_from, active_until, body) 
+VALUES ('redefined-cadastre-objects-do-not-overlap-existing-parcels', '2013-05-30', 'infinity', 'SELECT CASE
+	WHEN
+		(SELECT st_overlaps(co2.geom_polygon, cot.geom_polygon)
+		AS vl
+		FROM cadastre.cadastre_object_target cot, cadastre.cadastre_object co2
+		WHERE cot.transaction_id = #{id}
+		AND co2.status_code != ''historic''
+		AND co2.id != cot.cadastre_object_id
+		AND st_overlaps(cot.geom_polygon, co2.geom_polygon)) THEN FALSE
+	ELSE TRUE
+END
+AS vl;');
+
+
+INSERT INTO system.br_validation (br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) 
+VALUES ('redefined-cadastre-objects-do-not-overlap-existing-parcels', 
+	'cadastre_object', 
+	NULL, 
+	NULL, 
+	'current', 
+	'redefineCadastre', 
+	NULL, 
+	'critical', 
+	500);
+
+INSERT INTO system.br_validation (br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) 
+VALUES ('redefined-cadastre-objects-do-not-overlap-existing-parcels', 
+	'cadastre_object', 
+	NULL, 
+	NULL, 
+	'pending', 
+	'redefineCadastre', 
+	NULL, 
+	'critical', 
+	60);
+
 ----------------------------------------------------------------------------------------------------
 
 update system.br set display_name = id where display_name !=id;
