@@ -3152,6 +3152,7 @@ CREATE TABLE application.application_form(
     display_value varchar(255) NOT NULL,
     description varchar(255),
     status char(1) DEFAULT ('c'),
+    extension varchar(10) NOT NULL,
     content bytea,
 
     -- Internal constraints
