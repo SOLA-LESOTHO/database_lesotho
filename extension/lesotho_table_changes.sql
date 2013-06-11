@@ -344,3 +344,11 @@ $BODY$
 ALTER FUNCTION cadastre.snap_geometry_to_geometry(geometry, geometry, double precision, boolean)
   OWNER TO postgres;
 COMMENT ON FUNCTION cadastre.snap_geometry_to_geometry(geometry, geometry, double precision, boolean) IS 'It snaps one geometry to the other. If points needs to be added they will be added.';
+
+
+-- Add cadastre_object_id column to rrr table for subleases
+ALTER TABLE administrative.rrr ADD COLUMN cadastre_object_id character varying(40); 
+ALTER TABLE administrative.rrr_historic ADD COLUMN cadastre_object_id character varying(40); 
+ALTER TABLE administrative.rrr ADD  CONSTRAINT administrative_rrr_fk FOREIGN KEY (cadastre_object_id)
+      REFERENCES cadastre.spatial_unit (id) MATCH SIMPLE
+      ON UPDATE CASCADE ON DELETE RESTRICT; 

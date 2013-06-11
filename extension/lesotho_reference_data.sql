@@ -60,6 +60,10 @@
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('copyLease', 'Copy of Lease', 'c', NULL, false);
 
 
+	-- RRR Type
+	INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
+    VALUES ('subLease', 'rights', 'Sublease', FALSE, FALSE, TRUE, 'c', 'Indicates the property is subject to a sublease agreement.');
+	
 
 	--A Section with status 'c'
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regnReducMortgage', 'registrationServices', 'Register Reducible Mortgage', NULL, 'x', 5, 5.00, 1.00, 0.00, 1, NULL, NULL, 'vary');
@@ -89,7 +93,9 @@
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regNotGenBond', 'registrationServices', 'Register Notarial General Bond', NULL, 'x', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('RegMiningLease', 'registrationServices', 'Register Mining Lease::::Ngolisa Lease ea Mine', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	--insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('servitude', 'registrationServices', 'Register Servitude::::registrazione servitu', 'c', 5, 5.00, 0.00, 0, 1, 'Servitude over <parcel1> in favour of <parcel2>', 'servitude', 'new');
-	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regSublease', 'registrationServices', 'Register Sublease::::Ngolisa sublease', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, NULL, NULL);
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regSublease', 'registrationServices', 'Register Sublease::::Ngolisa sublease', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, 'subLease', 'new');
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('varySublease', 'registrationServices', 'Vary Sublease', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, 'subLease', 'vary');
+	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('canSublease', 'registrationServices', 'Cancel Sublease', NULL, 'c', 0, 5.00, 0.00, 0.00, 0, NULL, 'subLease', 'cancel');
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('foreignEntHoldTitle', 'registrationServices', 'Foreign Enterprise to Hold Title to Land', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	--INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regSurrenderLease', 'registrationServices', 'Register Surrender of a Lease', NULL, 'c', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('printAllocMap', 'informationServices', 'Print Allocation Maps::::Hatisa Mapa', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
@@ -113,4 +119,5 @@
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regCessionLease', 'registrationServices', 'Register Cession of Lease', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 
 
+	
 
