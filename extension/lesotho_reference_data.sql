@@ -58,12 +58,14 @@
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('certIncorp', 'Certificate of Incorporation', 'c', NULL, false);
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('taxClrCert', 'Tax Clearance Certificate', 'c', NULL, false);
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('copyLease', 'Copy of Lease', 'c', NULL, false);
-
+	-- Used to ensure the sublessee has consent for a mortgage from the lessee. 
+	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('lesseeConsent', 'Lessee Consent', 'c', NULL, false)
 
 	-- RRR Type
 	INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
     VALUES ('subLease', 'rights', 'Sublease', FALSE, FALSE, TRUE, 'c', 'Indicates the property is subject to a sublease agreement.');
-	
+	INSERT INTO administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status, description)
+    VALUES ('subLeaseMortgage', 'restrictions', 'Sublease Mortgage', FALSE, FALSE, FALSE, 'c', 'Indicates the property is subject to a sublease mortgage.');
 
 	--A Section with status 'c'
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regnReducMortgage', 'registrationServices', 'Register Reducible Mortgage', NULL, 'x', 5, 5.00, 1.00, 0.00, 1, NULL, NULL, 'vary');
@@ -117,7 +119,6 @@
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('LeaseEndoInherit', 'registrationServices', 'Register Lease Endorsement ', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('variationMortgage', 'registrationServices', 'Change Mortgage::::Phetoho ea Mortgage', 'Variation of Mortgage', 'x', 20, 100.00, 0.00, 0.00, 1, 'Variation of mortgage <reference>', 'mortgage', 'vary');
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regCessionLease', 'registrationServices', 'Register Cession of Lease', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
-
 
 	
 
