@@ -324,3 +324,5 @@ values('generate-dispute-nr', now(), 'infinity',
 'SELECT to_char(now(), ''yymm'') || trim(to_char(nextval(''administrative.dispute_nr_seq''), ''0000'')) AS vl');
 
 update system.br set display_name = id where display_name is null;
+
+----------------------------------------------------------------------------------------------------
