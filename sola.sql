@@ -4652,16 +4652,15 @@ insert into cadastre.dimension_type(code, display_value, status) values('liminal
 DROP TABLE IF EXISTS administrative.dispute CASCADE;
 CREATE TABLE administrative.dispute(
     id varchar(50) NOT NULL,
-    nr varchar(255) NOT NULL,
-    lodgement_date timestamp,
+    nr varchar(50) NOT NULL,
+    lodgement_date timestamp DEFAULT (now()),
     completion_date timestamp,
-    dispute_category_code varchar(40) NOT NULL,
-    dispute_type_code varchar(40) NOT NULL,
+    dispute_category_code varchar(40),
+    dispute_type_code varchar(40),
     status_code varchar(40) NOT NULL DEFAULT ('pending'),
-    rrr_id varchar(40) NOT NULL,
+    rrr_id varchar(40),
     plot_location varchar(200),
-    cadastre_object_id varchar(40) NOT NULL,
-    dispute_commentsid varchar(50) NOT NULL,
+    cadastre_object_id varchar(40),
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -4694,7 +4693,7 @@ DROP TABLE IF EXISTS administrative.dispute_historic CASCADE;
 CREATE TABLE administrative.dispute_historic
 (
     id varchar(50),
-    nr varchar(255),
+    nr varchar(50),
     lodgement_date timestamp,
     completion_date timestamp,
     dispute_category_code varchar(40),
@@ -4703,7 +4702,6 @@ CREATE TABLE administrative.dispute_historic
     rrr_id varchar(40),
     plot_location varchar(200),
     cadastre_object_id varchar(40),
-    dispute_commentsid varchar(50),
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),
@@ -4774,9 +4772,9 @@ insert into administrative.dispute_category(code, display_value, description, st
 DROP TABLE IF EXISTS administrative.dispute_comments CASCADE;
 CREATE TABLE administrative.dispute_comments(
     id varchar(50) NOT NULL,
-    dispute_nr varchar(40) NOT NULL,
-    dispute_action_code varchar(50) NOT NULL,
-    other_authorities_code varchar(40) NOT NULL,
+    dispute_nr varchar(50) NOT NULL,
+    dispute_action_code varchar(40) NOT NULL,
+    other_authorities_code varchar(40),
     update_date timestamp NOT NULL DEFAULT (now()),
     comments varchar(500),
     updated_by varchar(255),
@@ -4812,8 +4810,8 @@ DROP TABLE IF EXISTS administrative.dispute_comments_historic CASCADE;
 CREATE TABLE administrative.dispute_comments_historic
 (
     id varchar(50),
-    dispute_nr varchar(40),
-    dispute_action_code varchar(50),
+    dispute_nr varchar(50),
+    dispute_action_code varchar(40),
     other_authorities_code varchar(40),
     update_date timestamp,
     comments varchar(500),
@@ -4890,6 +4888,29 @@ CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
    ON administrative.dispute_party FOR EACH ROW
    EXECUTE PROCEDURE f_for_trg_track_history();
     
+--Table administrative.dispute_status ----
+DROP TABLE IF EXISTS administrative.dispute_status CASCADE;
+CREATE TABLE administrative.dispute_status(
+    code varchar(20) NOT NULL,
+    display_value varchar(250) NOT NULL,
+    description varchar(555),
+    status char(1) DEFAULT ('c'),
+
+    -- Internal constraints
+    
+    CONSTRAINT dispute_status_display_value_unique UNIQUE (display_value),
+    CONSTRAINT dispute_status_pkey PRIMARY KEY (code)
+);
+
+
+comment on table administrative.dispute_status is '';
+    
+ -- Data for the table administrative.dispute_status -- 
+insert into administrative.dispute_status(code, display_value, description, status) values('pending', 'Pending', '', 'c');
+insert into administrative.dispute_status(code, display_value, description, status) values('resolved', 'Resolved', ' ', 'c');
+
+
+
 --Table administrative.dispute_type ----
 DROP TABLE IF EXISTS administrative.dispute_type CASCADE;
 CREATE TABLE administrative.dispute_type(
@@ -5718,6 +5739,7 @@ insert into administrative.other_authorities(code, display_value, description, s
 insert into administrative.other_authorities(code, display_value, description, status) values('areachief', 'Area Chief', '', 'c');
 insert into administrative.other_authorities(code, display_value, description, status) values('police', 'Police', '', 'c');
 insert into administrative.other_authorities(code, display_value, description, status) values('other', 'Other Authorities', '', 'c');
+insert into administrative.other_authorities(code, display_value, description, status) values('laa', 'LAA', '', 'c');
 
 
 
@@ -6027,8 +6049,6 @@ insert into party.party_role_type(code, display_value, status, description) valu
 insert into party.party_role_type(code, display_value, status, description) values('transferor', 'Transferor (from)::::Dante Causa', 'c', 'Extension to LADM');
 insert into party.party_role_type(code, display_value, status, description) values('applicant', 'Applicant', 'c', 'Extension to LADM');
 insert into party.party_role_type(code, display_value, status, description) values('accountHolder', 'Lease account holder', 'c', 'The person who receives ground rent bills.');
-insert into party.party_role_type(code, display_value, status) values('complainant', 'Complainant', 'c');
-insert into party.party_role_type(code, display_value, status) values('respondant', 'respondant', 'c');
 
 
 
@@ -8448,236 +8468,240 @@ ALTER TABLE administrative.dispute ADD CONSTRAINT dispute_dispute_type_code_fk86
 CREATE INDEX dispute_dispute_type_code_fk86_ind ON administrative.dispute (dispute_type_code);
 
 ALTER TABLE administrative.dispute_comments ADD CONSTRAINT dispute_comments_dispute_nr_fk87 
-            FOREIGN KEY (dispute_nr) REFERENCES administrative.dispute_action(code) ON UPDATE CASCADE ON DELETE RESTRICT;
+            FOREIGN KEY (dispute_nr) REFERENCES administrative.dispute(nr) ON UPDATE CASCADE ON DELETE RESTRICT;
 CREATE INDEX dispute_comments_dispute_nr_fk87_ind ON administrative.dispute_comments (dispute_nr);
 
-ALTER TABLE administrative.dispute_comments ADD CONSTRAINT dispute_comments_other_authorities_code_fk88 
+ALTER TABLE administrative.dispute_comments ADD CONSTRAINT dispute_comments_dispute_action_code_fk88 
+            FOREIGN KEY (dispute_action_code) REFERENCES administrative.dispute_action(code) ON UPDATE CASCADE ON DELETE RESTRICT;
+CREATE INDEX dispute_comments_dispute_action_code_fk88_ind ON administrative.dispute_comments (dispute_action_code);
+
+ALTER TABLE administrative.dispute_comments ADD CONSTRAINT dispute_comments_other_authorities_code_fk89 
             FOREIGN KEY (other_authorities_code) REFERENCES administrative.other_authorities(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX dispute_comments_other_authorities_code_fk88_ind ON administrative.dispute_comments (other_authorities_code);
+CREATE INDEX dispute_comments_other_authorities_code_fk89_ind ON administrative.dispute_comments (other_authorities_code);
 
-ALTER TABLE cadastre.spatial_value_area ADD CONSTRAINT spatial_value_area_spatial_unit_id_fk89 
+ALTER TABLE cadastre.spatial_value_area ADD CONSTRAINT spatial_value_area_spatial_unit_id_fk90 
             FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.spatial_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX spatial_value_area_spatial_unit_id_fk89_ind ON cadastre.spatial_value_area (spatial_unit_id);
+CREATE INDEX spatial_value_area_spatial_unit_id_fk90_ind ON cadastre.spatial_value_area (spatial_unit_id);
 
-ALTER TABLE cadastre.spatial_value_area ADD CONSTRAINT spatial_value_area_type_code_fk90 
+ALTER TABLE cadastre.spatial_value_area ADD CONSTRAINT spatial_value_area_type_code_fk91 
             FOREIGN KEY (type_code) REFERENCES cadastre.area_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX spatial_value_area_type_code_fk90_ind ON cadastre.spatial_value_area (type_code);
+CREATE INDEX spatial_value_area_type_code_fk91_ind ON cadastre.spatial_value_area (type_code);
 
-ALTER TABLE cadastre.spatial_unit_address ADD CONSTRAINT spatial_unit_address_spatial_unit_id_fk91 
+ALTER TABLE cadastre.spatial_unit_address ADD CONSTRAINT spatial_unit_address_spatial_unit_id_fk92 
             FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.spatial_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX spatial_unit_address_spatial_unit_id_fk91_ind ON cadastre.spatial_unit_address (spatial_unit_id);
+CREATE INDEX spatial_unit_address_spatial_unit_id_fk92_ind ON cadastre.spatial_unit_address (spatial_unit_id);
 
-ALTER TABLE cadastre.spatial_unit_address ADD CONSTRAINT spatial_unit_address_address_id_fk92 
+ALTER TABLE cadastre.spatial_unit_address ADD CONSTRAINT spatial_unit_address_address_id_fk93 
             FOREIGN KEY (address_id) REFERENCES address.address(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX spatial_unit_address_address_id_fk92_ind ON cadastre.spatial_unit_address (address_id);
+CREATE INDEX spatial_unit_address_address_id_fk93_ind ON cadastre.spatial_unit_address (address_id);
 
-ALTER TABLE cadastre.spatial_unit_group ADD CONSTRAINT spatial_unit_group_found_in_spatial_unit_group_id_fk93 
+ALTER TABLE cadastre.spatial_unit_group ADD CONSTRAINT spatial_unit_group_found_in_spatial_unit_group_id_fk94 
             FOREIGN KEY (found_in_spatial_unit_group_id) REFERENCES cadastre.spatial_unit_group(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX spatial_unit_group_found_in_spatial_unit_group_id_fk93_ind ON cadastre.spatial_unit_group (found_in_spatial_unit_group_id);
+CREATE INDEX spatial_unit_group_found_in_spatial_unit_group_id_fk94_ind ON cadastre.spatial_unit_group (found_in_spatial_unit_group_id);
 
-ALTER TABLE cadastre.spatial_unit_in_group ADD CONSTRAINT spatial_unit_in_group_spatial_unit_group_id_fk94 
+ALTER TABLE cadastre.spatial_unit_in_group ADD CONSTRAINT spatial_unit_in_group_spatial_unit_group_id_fk95 
             FOREIGN KEY (spatial_unit_group_id) REFERENCES cadastre.spatial_unit_group(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX spatial_unit_in_group_spatial_unit_group_id_fk94_ind ON cadastre.spatial_unit_in_group (spatial_unit_group_id);
+CREATE INDEX spatial_unit_in_group_spatial_unit_group_id_fk95_ind ON cadastre.spatial_unit_in_group (spatial_unit_group_id);
 
-ALTER TABLE cadastre.spatial_unit_in_group ADD CONSTRAINT spatial_unit_in_group_spatial_unit_id_fk95 
+ALTER TABLE cadastre.spatial_unit_in_group ADD CONSTRAINT spatial_unit_in_group_spatial_unit_id_fk96 
             FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.spatial_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX spatial_unit_in_group_spatial_unit_id_fk95_ind ON cadastre.spatial_unit_in_group (spatial_unit_id);
+CREATE INDEX spatial_unit_in_group_spatial_unit_id_fk96_ind ON cadastre.spatial_unit_in_group (spatial_unit_id);
 
-ALTER TABLE cadastre.legal_space_utility_network ADD CONSTRAINT legal_space_utility_network_id_fk96 
+ALTER TABLE cadastre.legal_space_utility_network ADD CONSTRAINT legal_space_utility_network_id_fk97 
             FOREIGN KEY (id) REFERENCES cadastre.cadastre_object(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX legal_space_utility_network_id_fk96_ind ON cadastre.legal_space_utility_network (id);
+CREATE INDEX legal_space_utility_network_id_fk97_ind ON cadastre.legal_space_utility_network (id);
 
-ALTER TABLE cadastre.legal_space_utility_network ADD CONSTRAINT legal_space_utility_network_status_code_fk97 
+ALTER TABLE cadastre.legal_space_utility_network ADD CONSTRAINT legal_space_utility_network_status_code_fk98 
             FOREIGN KEY (status_code) REFERENCES cadastre.utility_network_status_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX legal_space_utility_network_status_code_fk97_ind ON cadastre.legal_space_utility_network (status_code);
+CREATE INDEX legal_space_utility_network_status_code_fk98_ind ON cadastre.legal_space_utility_network (status_code);
 
-ALTER TABLE cadastre.legal_space_utility_network ADD CONSTRAINT legal_space_utility_network_type_code_fk98 
+ALTER TABLE cadastre.legal_space_utility_network ADD CONSTRAINT legal_space_utility_network_type_code_fk99 
             FOREIGN KEY (type_code) REFERENCES cadastre.utility_network_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX legal_space_utility_network_type_code_fk98_ind ON cadastre.legal_space_utility_network (type_code);
+CREATE INDEX legal_space_utility_network_type_code_fk99_ind ON cadastre.legal_space_utility_network (type_code);
 
-ALTER TABLE administrative.ba_unit_contains_spatial_unit ADD CONSTRAINT ba_unit_contains_spatial_unit_ba_unit_id_fk99 
+ALTER TABLE administrative.ba_unit_contains_spatial_unit ADD CONSTRAINT ba_unit_contains_spatial_unit_ba_unit_id_fk100 
             FOREIGN KEY (ba_unit_id) REFERENCES administrative.ba_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX ba_unit_contains_spatial_unit_ba_unit_id_fk99_ind ON administrative.ba_unit_contains_spatial_unit (ba_unit_id);
-
-ALTER TABLE administrative.ba_unit_contains_spatial_unit ADD CONSTRAINT ba_unit_contains_spatial_unit_spatial_unit_id_fk100 
-            FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.spatial_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX ba_unit_contains_spatial_unit_spatial_unit_id_fk100_ind ON administrative.ba_unit_contains_spatial_unit (spatial_unit_id);
+CREATE INDEX ba_unit_contains_spatial_unit_ba_unit_id_fk100_ind ON administrative.ba_unit_contains_spatial_unit (ba_unit_id);
 
 ALTER TABLE administrative.ba_unit_contains_spatial_unit ADD CONSTRAINT ba_unit_contains_spatial_unit_spatial_unit_id_fk101 
-            FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.cadastre_object(id) ON UPDATE CASCADE ON DELETE CASCADE;
+            FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.spatial_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
 CREATE INDEX ba_unit_contains_spatial_unit_spatial_unit_id_fk101_ind ON administrative.ba_unit_contains_spatial_unit (spatial_unit_id);
 
-ALTER TABLE cadastre.cadastre_object_target ADD CONSTRAINT cadastre_object_target_cadastre_object_id_fk102 
-            FOREIGN KEY (cadastre_object_id) REFERENCES cadastre.cadastre_object(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX cadastre_object_target_cadastre_object_id_fk102_ind ON cadastre.cadastre_object_target (cadastre_object_id);
-
-ALTER TABLE cadastre.cadastre_object_target ADD CONSTRAINT cadastre_object_target_transaction_id_fk103 
-            FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX cadastre_object_target_transaction_id_fk103_ind ON cadastre.cadastre_object_target (transaction_id);
-
-ALTER TABLE cadastre.survey_point ADD CONSTRAINT survey_point_transaction_id_fk104 
-            FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX survey_point_transaction_id_fk104_ind ON cadastre.survey_point (transaction_id);
-
-ALTER TABLE transaction.transaction_source ADD CONSTRAINT transaction_source_transaction_id_fk105 
-            FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX transaction_source_transaction_id_fk105_ind ON transaction.transaction_source (transaction_id);
-
-ALTER TABLE transaction.transaction_source ADD CONSTRAINT transaction_source_source_id_fk106 
-            FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX transaction_source_source_id_fk106_ind ON transaction.transaction_source (source_id);
-
-ALTER TABLE cadastre.cadastre_object_node_target ADD CONSTRAINT cadastre_object_node_target_transaction_id_fk107 
-            FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX cadastre_object_node_target_transaction_id_fk107_ind ON cadastre.cadastre_object_node_target (transaction_id);
-
-ALTER TABLE cadastre.land_use_grade ADD CONSTRAINT land_use_grade_land_use_code_fk108 
-            FOREIGN KEY (land_use_code) REFERENCES cadastre.land_use_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX land_use_grade_land_use_code_fk108_ind ON cadastre.land_use_grade (land_use_code);
-
-ALTER TABLE cadastre.land_use_grade ADD CONSTRAINT land_use_grade_land_grade_code_fk109 
-            FOREIGN KEY (land_grade_code) REFERENCES cadastre.land_grade_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX land_use_grade_land_grade_code_fk109_ind ON cadastre.land_use_grade (land_grade_code);
-
-ALTER TABLE cadastre.ground_rent_multiplication_factor ADD CONSTRAINT ground_rent_multiplication_factor_land_use_code_fk110 
-            FOREIGN KEY (land_use_code) REFERENCES cadastre.land_use_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX ground_rent_multiplication_factor_land_use_code_fk110_ind ON cadastre.ground_rent_multiplication_factor (land_use_code);
-
-ALTER TABLE cadastre.ground_rent_multiplication_factor ADD CONSTRAINT ground_rent_multiplication_factor_land_grade_code_fk111 
-            FOREIGN KEY (land_grade_code) REFERENCES cadastre.land_grade_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX ground_rent_multiplication_factor_land_grade_code_fk111_ind ON cadastre.ground_rent_multiplication_factor (land_grade_code);
-
-ALTER TABLE cadastre.ground_rent_multiplication_factor ADD CONSTRAINT ground_rent_multiplication_factor_valuation_zone_fk112 
-            FOREIGN KEY (valuation_zone) REFERENCES cadastre.land_use_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX ground_rent_multiplication_factor_valuation_zone_fk112_ind ON cadastre.ground_rent_multiplication_factor (valuation_zone);
-
-ALTER TABLE application.application_property ADD CONSTRAINT application_property_application_id_fk113 
-            FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX application_property_application_id_fk113_ind ON application.application_property (application_id);
-
-ALTER TABLE application.application_property ADD CONSTRAINT application_property_ba_unit_id_fk114 
-            FOREIGN KEY (ba_unit_id) REFERENCES administrative.ba_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX application_property_ba_unit_id_fk114_ind ON application.application_property (ba_unit_id);
-
-ALTER TABLE application.application_uses_source ADD CONSTRAINT application_uses_source_application_id_fk115 
-            FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX application_uses_source_application_id_fk115_ind ON application.application_uses_source (application_id);
-
-ALTER TABLE application.application_uses_source ADD CONSTRAINT application_uses_source_source_id_fk116 
-            FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX application_uses_source_source_id_fk116_ind ON application.application_uses_source (source_id);
-
-ALTER TABLE application.request_type_requires_source_type ADD CONSTRAINT request_type_requires_source_type_source_type_code_fk117 
-            FOREIGN KEY (source_type_code) REFERENCES source.administrative_source_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX request_type_requires_source_type_source_type_code_fk117_ind ON application.request_type_requires_source_type (source_type_code);
-
-ALTER TABLE application.request_type_requires_source_type ADD CONSTRAINT request_type_requires_source_type_request_type_code_fk118 
-            FOREIGN KEY (request_type_code) REFERENCES application.request_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX request_type_requires_source_type_request_type_code_fk118_ind ON application.request_type_requires_source_type (request_type_code);
-
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_application_id_fk119 
-            FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX application_spatial_unit_application_id_fk119_ind ON application.application_spatial_unit (application_id);
-
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_spatial_unit_id_fk120 
+ALTER TABLE administrative.ba_unit_contains_spatial_unit ADD CONSTRAINT ba_unit_contains_spatial_unit_spatial_unit_id_fk102 
             FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.cadastre_object(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX application_spatial_unit_spatial_unit_id_fk120_ind ON application.application_spatial_unit (spatial_unit_id);
+CREATE INDEX ba_unit_contains_spatial_unit_spatial_unit_id_fk102_ind ON administrative.ba_unit_contains_spatial_unit (spatial_unit_id);
 
-ALTER TABLE application.admin_fee_rate ADD CONSTRAINT admin_fee_rate_fee_code_fk121 
+ALTER TABLE cadastre.cadastre_object_target ADD CONSTRAINT cadastre_object_target_cadastre_object_id_fk103 
+            FOREIGN KEY (cadastre_object_id) REFERENCES cadastre.cadastre_object(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX cadastre_object_target_cadastre_object_id_fk103_ind ON cadastre.cadastre_object_target (cadastre_object_id);
+
+ALTER TABLE cadastre.cadastre_object_target ADD CONSTRAINT cadastre_object_target_transaction_id_fk104 
+            FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX cadastre_object_target_transaction_id_fk104_ind ON cadastre.cadastre_object_target (transaction_id);
+
+ALTER TABLE cadastre.survey_point ADD CONSTRAINT survey_point_transaction_id_fk105 
+            FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX survey_point_transaction_id_fk105_ind ON cadastre.survey_point (transaction_id);
+
+ALTER TABLE transaction.transaction_source ADD CONSTRAINT transaction_source_transaction_id_fk106 
+            FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX transaction_source_transaction_id_fk106_ind ON transaction.transaction_source (transaction_id);
+
+ALTER TABLE transaction.transaction_source ADD CONSTRAINT transaction_source_source_id_fk107 
+            FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX transaction_source_source_id_fk107_ind ON transaction.transaction_source (source_id);
+
+ALTER TABLE cadastre.cadastre_object_node_target ADD CONSTRAINT cadastre_object_node_target_transaction_id_fk108 
+            FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX cadastre_object_node_target_transaction_id_fk108_ind ON cadastre.cadastre_object_node_target (transaction_id);
+
+ALTER TABLE cadastre.land_use_grade ADD CONSTRAINT land_use_grade_land_use_code_fk109 
+            FOREIGN KEY (land_use_code) REFERENCES cadastre.land_use_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX land_use_grade_land_use_code_fk109_ind ON cadastre.land_use_grade (land_use_code);
+
+ALTER TABLE cadastre.land_use_grade ADD CONSTRAINT land_use_grade_land_grade_code_fk110 
+            FOREIGN KEY (land_grade_code) REFERENCES cadastre.land_grade_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX land_use_grade_land_grade_code_fk110_ind ON cadastre.land_use_grade (land_grade_code);
+
+ALTER TABLE cadastre.ground_rent_multiplication_factor ADD CONSTRAINT ground_rent_multiplication_factor_land_use_code_fk111 
+            FOREIGN KEY (land_use_code) REFERENCES cadastre.land_use_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX ground_rent_multiplication_factor_land_use_code_fk111_ind ON cadastre.ground_rent_multiplication_factor (land_use_code);
+
+ALTER TABLE cadastre.ground_rent_multiplication_factor ADD CONSTRAINT ground_rent_multiplication_factor_land_grade_code_fk112 
+            FOREIGN KEY (land_grade_code) REFERENCES cadastre.land_grade_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX ground_rent_multiplication_factor_land_grade_code_fk112_ind ON cadastre.ground_rent_multiplication_factor (land_grade_code);
+
+ALTER TABLE cadastre.ground_rent_multiplication_factor ADD CONSTRAINT ground_rent_multiplication_factor_valuation_zone_fk113 
+            FOREIGN KEY (valuation_zone) REFERENCES cadastre.land_use_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX ground_rent_multiplication_factor_valuation_zone_fk113_ind ON cadastre.ground_rent_multiplication_factor (valuation_zone);
+
+ALTER TABLE application.application_property ADD CONSTRAINT application_property_application_id_fk114 
+            FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX application_property_application_id_fk114_ind ON application.application_property (application_id);
+
+ALTER TABLE application.application_property ADD CONSTRAINT application_property_ba_unit_id_fk115 
+            FOREIGN KEY (ba_unit_id) REFERENCES administrative.ba_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX application_property_ba_unit_id_fk115_ind ON application.application_property (ba_unit_id);
+
+ALTER TABLE application.application_uses_source ADD CONSTRAINT application_uses_source_application_id_fk116 
+            FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX application_uses_source_application_id_fk116_ind ON application.application_uses_source (application_id);
+
+ALTER TABLE application.application_uses_source ADD CONSTRAINT application_uses_source_source_id_fk117 
+            FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX application_uses_source_source_id_fk117_ind ON application.application_uses_source (source_id);
+
+ALTER TABLE application.request_type_requires_source_type ADD CONSTRAINT request_type_requires_source_type_source_type_code_fk118 
+            FOREIGN KEY (source_type_code) REFERENCES source.administrative_source_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX request_type_requires_source_type_source_type_code_fk118_ind ON application.request_type_requires_source_type (source_type_code);
+
+ALTER TABLE application.request_type_requires_source_type ADD CONSTRAINT request_type_requires_source_type_request_type_code_fk119 
+            FOREIGN KEY (request_type_code) REFERENCES application.request_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX request_type_requires_source_type_request_type_code_fk119_ind ON application.request_type_requires_source_type (request_type_code);
+
+ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_application_id_fk120 
+            FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX application_spatial_unit_application_id_fk120_ind ON application.application_spatial_unit (application_id);
+
+ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_spatial_unit_id_fk121 
+            FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.cadastre_object(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX application_spatial_unit_spatial_unit_id_fk121_ind ON application.application_spatial_unit (spatial_unit_id);
+
+ALTER TABLE application.admin_fee_rate ADD CONSTRAINT admin_fee_rate_fee_code_fk122 
             FOREIGN KEY (fee_code) REFERENCES application.admin_fee_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX admin_fee_rate_fee_code_fk121_ind ON application.admin_fee_rate (fee_code);
+CREATE INDEX admin_fee_rate_fee_code_fk122_ind ON application.admin_fee_rate (fee_code);
 
-ALTER TABLE application.admin_fee_rate ADD CONSTRAINT admin_fee_rate_rate_code_fk122 
+ALTER TABLE application.admin_fee_rate ADD CONSTRAINT admin_fee_rate_rate_code_fk123 
             FOREIGN KEY (rate_code) REFERENCES application.admin_rate_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX admin_fee_rate_rate_code_fk122_ind ON application.admin_fee_rate (rate_code);
+CREATE INDEX admin_fee_rate_rate_code_fk123_ind ON application.admin_fee_rate (rate_code);
 
-ALTER TABLE system.appuser_setting ADD CONSTRAINT appuser_setting_user_id_fk123 
+ALTER TABLE system.appuser_setting ADD CONSTRAINT appuser_setting_user_id_fk124 
             FOREIGN KEY (user_id) REFERENCES system.appuser(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX appuser_setting_user_id_fk123_ind ON system.appuser_setting (user_id);
+CREATE INDEX appuser_setting_user_id_fk124_ind ON system.appuser_setting (user_id);
 
-ALTER TABLE system.config_map_layer ADD CONSTRAINT config_map_layer_type_code_fk124 
+ALTER TABLE system.config_map_layer ADD CONSTRAINT config_map_layer_type_code_fk125 
             FOREIGN KEY (type_code) REFERENCES system.config_map_layer_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX config_map_layer_type_code_fk124_ind ON system.config_map_layer (type_code);
+CREATE INDEX config_map_layer_type_code_fk125_ind ON system.config_map_layer (type_code);
 
-ALTER TABLE system.config_map_layer ADD CONSTRAINT config_map_layer_pojo_query_name_fk125 
+ALTER TABLE system.config_map_layer ADD CONSTRAINT config_map_layer_pojo_query_name_fk126 
             FOREIGN KEY (pojo_query_name) REFERENCES system.query(name) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX config_map_layer_pojo_query_name_fk125_ind ON system.config_map_layer (pojo_query_name);
+CREATE INDEX config_map_layer_pojo_query_name_fk126_ind ON system.config_map_layer (pojo_query_name);
 
-ALTER TABLE system.config_map_layer ADD CONSTRAINT config_map_layer_pojo_query_name_for_select_fk126 
+ALTER TABLE system.config_map_layer ADD CONSTRAINT config_map_layer_pojo_query_name_for_select_fk127 
             FOREIGN KEY (pojo_query_name_for_select) REFERENCES system.query(name) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX config_map_layer_pojo_query_name_for_select_fk126_ind ON system.config_map_layer (pojo_query_name_for_select);
+CREATE INDEX config_map_layer_pojo_query_name_for_select_fk127_ind ON system.config_map_layer (pojo_query_name_for_select);
 
-ALTER TABLE system.br ADD CONSTRAINT br_technical_type_code_fk127 
+ALTER TABLE system.br ADD CONSTRAINT br_technical_type_code_fk128 
             FOREIGN KEY (technical_type_code) REFERENCES system.br_technical_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX br_technical_type_code_fk127_ind ON system.br (technical_type_code);
+CREATE INDEX br_technical_type_code_fk128_ind ON system.br (technical_type_code);
 
-ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_br_id_fk128 
+ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_br_id_fk129 
             FOREIGN KEY (br_id) REFERENCES system.br(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX br_validation_br_id_fk128_ind ON system.br_validation (br_id);
+CREATE INDEX br_validation_br_id_fk129_ind ON system.br_validation (br_id);
 
-ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_severity_code_fk129 
+ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_severity_code_fk130 
             FOREIGN KEY (severity_code) REFERENCES system.br_severity_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX br_validation_severity_code_fk129_ind ON system.br_validation (severity_code);
+CREATE INDEX br_validation_severity_code_fk130_ind ON system.br_validation (severity_code);
 
-ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_target_code_fk130 
+ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_target_code_fk131 
             FOREIGN KEY (target_code) REFERENCES system.br_validation_target_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX br_validation_target_code_fk130_ind ON system.br_validation (target_code);
+CREATE INDEX br_validation_target_code_fk131_ind ON system.br_validation (target_code);
 
-ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_target_request_type_code_fk131 
+ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_target_request_type_code_fk132 
             FOREIGN KEY (target_request_type_code) REFERENCES application.request_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX br_validation_target_request_type_code_fk131_ind ON system.br_validation (target_request_type_code);
+CREATE INDEX br_validation_target_request_type_code_fk132_ind ON system.br_validation (target_request_type_code);
 
-ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_target_rrr_type_code_fk132 
+ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_target_rrr_type_code_fk133 
             FOREIGN KEY (target_rrr_type_code) REFERENCES administrative.rrr_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX br_validation_target_rrr_type_code_fk132_ind ON system.br_validation (target_rrr_type_code);
+CREATE INDEX br_validation_target_rrr_type_code_fk133_ind ON system.br_validation (target_rrr_type_code);
 
-ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_target_application_moment_fk133 
+ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_target_application_moment_fk134 
             FOREIGN KEY (target_application_moment) REFERENCES application.application_action_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX br_validation_target_application_moment_fk133_ind ON system.br_validation (target_application_moment);
+CREATE INDEX br_validation_target_application_moment_fk134_ind ON system.br_validation (target_application_moment);
 
-ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_target_service_moment_fk134 
+ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_target_service_moment_fk135 
             FOREIGN KEY (target_service_moment) REFERENCES application.service_action_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX br_validation_target_service_moment_fk134_ind ON system.br_validation (target_service_moment);
+CREATE INDEX br_validation_target_service_moment_fk135_ind ON system.br_validation (target_service_moment);
 
-ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_target_reg_moment_fk135 
+ALTER TABLE system.br_validation ADD CONSTRAINT br_validation_target_reg_moment_fk136 
             FOREIGN KEY (target_reg_moment) REFERENCES transaction.reg_status_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX br_validation_target_reg_moment_fk135_ind ON system.br_validation (target_reg_moment);
+CREATE INDEX br_validation_target_reg_moment_fk136_ind ON system.br_validation (target_reg_moment);
 
-ALTER TABLE system.br_definition ADD CONSTRAINT br_definition_br_id_fk136 
+ALTER TABLE system.br_definition ADD CONSTRAINT br_definition_br_id_fk137 
             FOREIGN KEY (br_id) REFERENCES system.br(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX br_definition_br_id_fk136_ind ON system.br_definition (br_id);
+CREATE INDEX br_definition_br_id_fk137_ind ON system.br_definition (br_id);
 
-ALTER TABLE system.approle_appgroup ADD CONSTRAINT approle_appgroup_approle_code_fk137 
+ALTER TABLE system.approle_appgroup ADD CONSTRAINT approle_appgroup_approle_code_fk138 
             FOREIGN KEY (approle_code) REFERENCES system.approle(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX approle_appgroup_approle_code_fk137_ind ON system.approle_appgroup (approle_code);
+CREATE INDEX approle_appgroup_approle_code_fk138_ind ON system.approle_appgroup (approle_code);
 
-ALTER TABLE system.approle_appgroup ADD CONSTRAINT approle_appgroup_appgroup_id_fk138 
+ALTER TABLE system.approle_appgroup ADD CONSTRAINT approle_appgroup_appgroup_id_fk139 
             FOREIGN KEY (appgroup_id) REFERENCES system.appgroup(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX approle_appgroup_appgroup_id_fk138_ind ON system.approle_appgroup (appgroup_id);
+CREATE INDEX approle_appgroup_appgroup_id_fk139_ind ON system.approle_appgroup (appgroup_id);
 
-ALTER TABLE system.appuser_appgroup ADD CONSTRAINT appuser_appgroup_appuser_id_fk139 
+ALTER TABLE system.appuser_appgroup ADD CONSTRAINT appuser_appgroup_appuser_id_fk140 
             FOREIGN KEY (appuser_id) REFERENCES system.appuser(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX appuser_appgroup_appuser_id_fk139_ind ON system.appuser_appgroup (appuser_id);
+CREATE INDEX appuser_appgroup_appuser_id_fk140_ind ON system.appuser_appgroup (appuser_id);
 
-ALTER TABLE system.appuser_appgroup ADD CONSTRAINT appuser_appgroup_appgroup_id_fk140 
+ALTER TABLE system.appuser_appgroup ADD CONSTRAINT appuser_appgroup_appgroup_id_fk141 
             FOREIGN KEY (appgroup_id) REFERENCES system.appgroup(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX appuser_appgroup_appgroup_id_fk140_ind ON system.appuser_appgroup (appgroup_id);
+CREATE INDEX appuser_appgroup_appgroup_id_fk141_ind ON system.appuser_appgroup (appgroup_id);
 
-ALTER TABLE system.query_field ADD CONSTRAINT query_field_query_name_fk141 
+ALTER TABLE system.query_field ADD CONSTRAINT query_field_query_name_fk142 
             FOREIGN KEY (query_name) REFERENCES system.query(name) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX query_field_query_name_fk141_ind ON system.query_field (query_name);
+CREATE INDEX query_field_query_name_fk142_ind ON system.query_field (query_name);
 
-ALTER TABLE system.map_search_option ADD CONSTRAINT map_search_option_query_name_fk142 
+ALTER TABLE system.map_search_option ADD CONSTRAINT map_search_option_query_name_fk143 
             FOREIGN KEY (query_name) REFERENCES system.query(name) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX map_search_option_query_name_fk142_ind ON system.map_search_option (query_name);
+CREATE INDEX map_search_option_query_name_fk143_ind ON system.map_search_option (query_name);
 
-ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT spatial_unit_temporary_transaction_id_fk143 
+ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT spatial_unit_temporary_transaction_id_fk144 
             FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE Cascade;
-CREATE INDEX spatial_unit_temporary_transaction_id_fk143_ind ON bulk_operation.spatial_unit_temporary (transaction_id);
+CREATE INDEX spatial_unit_temporary_transaction_id_fk144_ind ON bulk_operation.spatial_unit_temporary (transaction_id);
 
-ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT spatial_unit_temporary_cadastre_object_type_code_fk144 
+ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT spatial_unit_temporary_cadastre_object_type_code_fk145 
             FOREIGN KEY (cadastre_object_type_code) REFERENCES cadastre.cadastre_object_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX spatial_unit_temporary_cadastre_object_type_code_fk144_ind ON bulk_operation.spatial_unit_temporary (cadastre_object_type_code);
+CREATE INDEX spatial_unit_temporary_cadastre_object_type_code_fk145_ind ON bulk_operation.spatial_unit_temporary (cadastre_object_type_code);
 --Generate triggers for tables --
 -- triggers for table cadastre.cadastre_object -- 
 
