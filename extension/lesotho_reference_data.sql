@@ -60,7 +60,7 @@
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('copyLease', 'Copy of Lease', 'c', NULL, false);
 
 	-- Used to ensure the sublessee has consent for a mortgage from the lessee. 
-	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('lesseeConsent', 'Lessee Consent', 'c', NULL, false)
+	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('lesseeConsent', 'Lessee Consent', 'c', NULL, false);
 
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('disputedoc', 'Dispute Document', 'c', NULL, false);
 
