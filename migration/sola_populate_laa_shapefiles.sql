@@ -18,31 +18,44 @@ INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_c
 	FROM interim_data.msuvalzones WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
 	
 
+	
 
 --INSERT VALUES FOR ROAD CENTRELINES
+-- roads Maseru area
 
 INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
-	SELECT uuid_generate_v1(), '2D', 'Access Road', 'onSurface', the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user
-	FROM interim_data.access_road 
+	SELECT uuid_generate_v1(), '2D', road_type_, 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user
+	FROM interim_data.msu_roads 
 	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
 	AND (st_ndims(the_geom) = 2);
 
+	--roads maputsoe area
+	
 INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
-	SELECT uuid_generate_v1(), '2D', 'Highway', 'onSurface', the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user 
-	FROM interim_data.highway_roads 
+	SELECT uuid_generate_v1(), '2D', road_type, 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user
+	FROM interim_data."Maputsoe_Rds"
 	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
 	AND (st_ndims(the_geom) = 2);
 
-INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
-	SELECT uuid_generate_v1(), '2D', 'Major Road', 'onSurface', the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user 
-	FROM interim_data.major_roads 
-	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
-	AND (st_ndims(the_geom) = 2);
+	
+	
+	
+--INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
+--	SELECT uuid_generate_v1(), '2D', 'Highway', 'onSurface', the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user 
+--	FROM interim_data.highway_roads 
+--	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
+--	AND (st_ndims(the_geom) = 2);
 
-INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
-	SELECT uuid_generate_v1(), '2D', 'Railway', 'onSurface', the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user 
-	FROM interim_data.railway WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
-	AND (st_ndims(the_geom) = 2);
+--INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
+--	SELECT uuid_generate_v1(), '2D', 'Major Road', 'onSurface', the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user 
+--	FROM interim_data.major_roads 
+--	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
+--	AND (st_ndims(the_geom) = 2);
+
+--INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
+--	SELECT uuid_generate_v1(), '2D', 'Railway', 'onSurface', the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user 
+--	FROM interim_data.railway WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
+--	AND (st_ndims(the_geom) = 2);
 		
 --INSERT VALUES FOR THE EXAMINED PLOTS
 
