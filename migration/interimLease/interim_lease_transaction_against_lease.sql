@@ -127,6 +127,17 @@ from administrative.rrr_share s
 inner join lesotho_etl.sola_mortgage m on m.sola_rrr_id = s.rrr_id
 inner join party.party p on m.lender = p.ext_id;
 
+--Add party role for lenders
+
+INSERT INTO party.party_role(party_id, type_code)
+SELECT 
+  distinct party_for_rrr.party_id, 'bank'
+FROM 
+  administrative.party_for_rrr, 
+  administrative.rrr
+WHERE 
+  party_for_rrr.rrr_id = rrr.id AND
+  rrr.type_code = 'mortgage';
 
 
  -- *** Transfer

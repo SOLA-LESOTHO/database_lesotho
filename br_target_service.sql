@@ -326,3 +326,73 @@ values('generate-dispute-nr', now(), 'infinity',
 update system.br set display_name = id where display_name is null;
 
 ----------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+INSERT INTO system.br(id, display_name, technical_type_code, feedback, description, technical_description)
+VALUES ('ba_unit-has-several-mortgages-from-different-lenders', 'ba_unit-has-several-mortgages-from-different-lenders', 'sql', 
+'The identified title should not have Mortgages from different lenders::::...', '', '');
+
+
+INSERT INTO system.br(id, display_name, technical_type_code, feedback, description, technical_description)
+VALUES ('ba_unit-has-mortgage-not-discharged', 'ba_unit-has-mortgage-not-discharged', 'sql', 
+'All existing mortgages on the title must be cancelled ::::...', '', '{id}(application_id) is requested');
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+INSERT INTO system.br_definition(br_id, active_from, active_until, body)
+    VALUES (
+'ba_unit-has-several-mortgages-from-different-lenders', '2013-06-17', 'infinity', 
+'SELECT count(distinct party_for_rrr.party_id) = 1 as vl
+FROM 
+  application.service sv, 
+  transaction.transaction, 
+  administrative.rrr pending_rrr, 
+  administrative.rrr current_rrr, 
+  administrative.party_for_rrr
+WHERE 
+  sv.id = transaction.from_service_id AND
+  transaction.id = pending_rrr.transaction_id AND
+  pending_rrr.ba_unit_id = current_rrr.ba_unit_id AND
+  current_rrr.id = party_for_rrr.rrr_id AND
+  sv.status_code = ''pending'' AND 
+  sv.request_type_code = ''mortgage'' AND 
+  current_rrr.type_code = ''mortgage'' AND 
+  current_rrr.status_code IN (''current'',''pending'') AND 
+  sv.id = #{id};');
+
+ INSERT INTO system.br_definition( br_id, active_from, active_until, body)
+ VALUES (
+ 'ba_unit-has-mortgage-not-discharged', '2013-06-17', 'infinity', 
+ 'SELECT  count(*) = 0 as vl 
+FROM 
+  application.service, 
+  administrative.ba_unit, 
+  administrative.rrr, 
+  application.application_property
+WHERE 
+  ba_unit.id = rrr.ba_unit_id AND
+  application_property.application_id = service.application_id AND
+  application_property.ba_unit_id = ba_unit.id AND
+  rrr.type_code = ''mortgage'' AND 
+  rrr.status_code = ''current'' AND
+  service.id = #{id};'); 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+	INSERT INTO system.br_validation(
+            id, br_id, target_code, target_application_moment, 
+			target_service_moment, target_reg_moment, target_request_type_code, 
+			target_rrr_type_code, severity_code, order_of_execution)
+    VALUES (uuid_generate_v1(), 'ba_unit-has-several-mortgages-from-different-lenders', 'service', NULL, 
+			'complete', NULL, 'mortgage', 
+			NULL, 'critical', 150);
+	
+	
+	INSERT INTO system.br_validation(
+            id, br_id, target_code, target_application_moment, 
+			target_service_moment, target_reg_moment, target_request_type_code, 
+			target_rrr_type_code, severity_code, order_of_execution)
+    VALUES (uuid_generate_v1(), 'ba_unit-has-mortgage-not-discharged', 'service', NULL, 
+			'start', NULL, 'cancelProperty', 
+			NULL, 'critical', 20);
+						
+	-------------------------------------------------------------------------------------------------------------------------------------------------
