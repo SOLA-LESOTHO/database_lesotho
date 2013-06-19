@@ -336,6 +336,10 @@ INSERT INTO system.br(id, display_name, technical_type_code, feedback, descripti
 VALUES ('ba_unit-has-mortgage-not-discharged', 'ba_unit-has-mortgage-not-discharged', 'sql', 
 'All existing mortgages on the title must be cancelled ::::...', '', '{id}(application_id) is requested');
 
+INSERT INTO system.br(id, display_name, technical_type_code, feedback, description, technical_description)
+VALUES ('ba_unit-has-mortgage-registered', 'ba_unit-has-mortgage-registered', 'sql', 
+'In order To start the selected service, the selected title should have a registered mortgage::::...', '', '{id}(service_id) is requested');
+
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
 INSERT INTO system.br_definition(br_id, active_from, active_until, body)
@@ -375,6 +379,24 @@ WHERE
   rrr.type_code = ''mortgage'' AND 
   rrr.status_code = ''current'' AND
   service.id = #{id};'); 
+  
+  INSERT INTO system.br_definition( br_id, active_from, active_until, body)
+ VALUES (
+ 'ba_unit-has-mortgage-registered', '2013-06-17', 'infinity', 
+ 'SELECT 
+  count(*) > 0 as vl
+FROM 
+  application.service sv, 
+  application.application_property ap, 
+  administrative.ba_unit ba, 
+  administrative.rrr rr
+WHERE 
+  sv.application_id = ap.application_id AND
+  ba.id = ap.ba_unit_id AND
+  ba.id = rr.ba_unit_id AND
+  rr.type_code = ''mortgage'' AND 
+  rr.status_code = ''current'' AND 
+  sv.id = #{id};');
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -393,6 +415,14 @@ WHERE
 			target_rrr_type_code, severity_code, order_of_execution)
     VALUES (uuid_generate_v1(), 'ba_unit-has-mortgage-not-discharged', 'service', NULL, 
 			'start', NULL, 'cancelProperty', 
+			NULL, 'critical', 20);
+			
+	INSERT INTO system.br_validation(
+            id, br_id, target_code, target_application_moment, 
+			target_service_moment, target_reg_moment, target_request_type_code, 
+			target_rrr_type_code, severity_code, order_of_execution)
+    VALUES (uuid_generate_v1(), 'ba_unit-has-mortgage-registered', 'service', NULL, 
+			'start', NULL, 'cancelMortBonds', 
 			NULL, 'critical', 20);
 						
 	-------------------------------------------------------------------------------------------------------------------------------------------------
