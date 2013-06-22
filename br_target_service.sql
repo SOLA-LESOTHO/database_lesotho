@@ -17,10 +17,10 @@ order by 1
 limit 1');
 
 INSERT INTO system.br_validation(br_id, target_code, target_service_moment, target_request_type_code, severity_code, order_of_execution)
-VALUES ('application-baunit-has-parcels', 'service', 'complete', 'cadastreChange', 'critical', 130);
+VALUES ('application-baunit-has-parcels', 'service', 'complete', 'cadastreChange', 'warning', 130);
 
 INSERT INTO system.br_validation(br_id, target_code, target_service_moment, target_request_type_code, severity_code, order_of_execution)
-VALUES ('application-baunit-has-parcels', 'service', 'complete', 'redefineCadastre', 'critical', 140);
+VALUES ('application-baunit-has-parcels', 'service', 'complete', 'redefineCadastre', 'warning', 140);
 
 ---------------------------------------------------------------------------------------------------------------------
 insert into system.br(id, technical_type_code, feedback) 

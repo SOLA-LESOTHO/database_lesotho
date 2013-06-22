@@ -133,6 +133,7 @@ insert into system.br(id, technical_type_code, feedback, technical_description)
 values('new-cadastre-objects-do-not-overlap', 'sql', 'The new parcel polygons must not overlap::::I nuovi oggetti catastali non devono sovrapporsi',
  '#{id}(transaction_id) is requested. Check the union of new co has the same area as the sum of all areas of new co-s, which means the new co-s don''t overlap');
 
+ -- AM Only check parcels and ignore subplots as these do overlap parcels. 
 INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
 VALUES('new-cadastre-objects-do-not-overlap', now(), 'infinity', 
  'WITH tolerance AS (SELECT CAST(ABS(LOG((CAST (vl AS NUMERIC)^2))) AS INT) AS area FROM system.setting where name = ''map-tolerance'' LIMIT 1)
@@ -141,7 +142,8 @@ SELECT COALESCE(ROUND(CAST (ST_AREA(ST_UNION(co.geom_polygon))AS NUMERIC), (SELE
 		ROUND(CAST(SUM(ST_AREA(co.geom_polygon))AS NUMERIC), (SELECT area FROM tolerance)), 
 		TRUE) AS vl
 FROM cadastre.cadastre_object co 
-WHERE transaction_id = #{id} ');
+WHERE transaction_id = #{id} 
+AND   co.type_code = ''parcel''');
 
 insert into system.br_validation(br_id, severity_code, target_reg_moment, target_code, target_request_type_code, order_of_execution) 
 values('new-cadastre-objects-do-not-overlap', 'critical', 'pending', 'cadastre_object', 'cadastreChange', 60);
@@ -157,13 +159,14 @@ il valore della nuova area ufficiale in percentuale non dovrebbe essere superior
  '#{id}(cadastre.cadastre_object.id) is requested. 
  Check new official area - calculated new area / new official area in percentage (Give in WARNING description, percentage & parcel if percentage > 1%)');
 
+-- AM Only check parcels and ignore subplots as these do overlap parcels.
 insert into system.br_definition(br_id, active_from, active_until, body) 
 values('area-check-percentage-newofficialarea-calculatednewarea', now(), 'infinity', 
 'select count(*) = 0 as vl
 from cadastre.cadastre_object co 
   left join cadastre.spatial_value_area sa_calc on (co.id= sa_calc.spatial_unit_id and sa_calc.type_code =''calculatedArea'')
   left join cadastre.spatial_value_area sa_official on (co.id= sa_official.spatial_unit_id and sa_official.type_code =''officialArea'')
-where co.transaction_id = #{id} and
+where co.transaction_id = #{id} and co.type_code = ''parcel'' and
 (abs(coalesce(sa_official.size, 0) - coalesce(sa_calc.size, 0)) 
 / 
 (case when sa_official.size is null or sa_official.size = 0 then 1 else sa_official.size end)) > 0.01');
@@ -185,7 +188,7 @@ insert into system.br_definition(br_id, active_from, active_until, body)
 values('cadastre-object-check-name', now(), 'infinity', 
 'Select cadastre.cadastre_object_name_is_valid(name_firstpart, name_lastpart) as vl 
 FROM cadastre.cadastre_object
-WHERE transaction_id = #{id} and type_code = ''parcel''
+WHERE transaction_id = #{id}
 order by 1
 limit 1');
 
@@ -209,7 +212,8 @@ values('area-check-percentage-newareas-oldareas', now(), 'infinity',
         and a.spatial_unit_id in (
 	   select co_new.id
 		from cadastre.cadastre_object co_new 
-		where co_new.transaction_id = #{id}))
+		where co_new.transaction_id = #{id}
+		and co_new.type_code = ''parcel''))
  -
    (select cast(sum(a.size)as float)
 	from cadastre.spatial_value_area a
@@ -243,6 +247,7 @@ VALUES ('newly-created-cadastre-object-should-not-overlap-existing',
 	NULL, 
 	'Checks that no parcels overlap');
 
+-- AM limit check to parcels only to avoid false positive failures for subplots
 INSERT INTO system.br_definition (br_id, active_from, active_until, body) 
 VALUES ('newly-created-cadastre-object-should-not-overlap-existing', '2013-05-30', 'infinity', 
 'SELECT CASE
@@ -251,11 +256,13 @@ VALUES ('newly-created-cadastre-object-should-not-overlap-existing', '2013-05-30
 		AS vl
 		FROM cadastre.cadastre_object co, cadastre.cadastre_object co2
 		WHERE co.transaction_id = #{id}
+		AND co.type_code = ''parcel''
 		AND co2.id NOT IN (SELECT cadastre_object_id FROM cadastre.cadastre_object_target)
+		AND co2.type_code = ''parcel''
 		AND st_overlaps(co.geom_polygon, co2.geom_polygon) LIMIT 1) THEN FALSE
 	ELSE TRUE
 END
-AS vl;');
+AS vl');
 
 
 INSERT INTO system.br_validation (br_id, target_code, target_application_moment, target_service_moment, target_reg_moment, target_request_type_code, target_rrr_type_code, severity_code, order_of_execution) 
@@ -331,3 +338,99 @@ VALUES ('redefined-cadastre-objects-do-not-overlap-existing-parcels',
 
 update system.br set display_name = id where display_name !=id;
 
+
+----------------------------------------------------------------------------------------------------
+-- New business rule for Lesotho to check a subplot is wholly within the area of its parent parcel
+insert into system.br(id, technical_type_code, feedback, technical_description) 
+values('subplot-not-contained-by-lease-plot', 'sql', 'The subplot extends beyond the boundary of the lease plot.',
+ '#{id}(transaction id) is requested');
+
+insert into system.br_definition(br_id, active_from, active_until, body) 
+values('subplot-not-contained-by-lease-plot', now(), 'infinity', 
+'SELECT CASE WHEN EXISTS ( 
+    SELECT co.name_lastpart
+    FROM   cadastre.cadastre_object co,
+	       cadastre.cadastre_object co2
+    WHERE  co.transaction_id = #{id}
+    AND    co.type_code = ''subplot''
+	AND    co2.type_code = ''parcel''
+	AND    co2.name_firstpart || ''-'' || co2.name_lastpart = co.name_firstpart
+	AND NOT st_contains(st_buffer(co2.geom_polygon,system.get_setting(''map-tolerance'')::double precision), co.geom_polygon))
+	THEN FALSE ELSE TRUE END as vl');
+
+INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_request_type_code, severity_code, order_of_execution)
+VALUES ('subplot-not-contained-by-lease-plot', 'cadastre_object', 'current', 'cadastreChange', 'medium', 680);
+
+INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_request_type_code, severity_code, order_of_execution)
+VALUES ('subplot-not-contained-by-lease-plot', 'cadastre_object', 'pending', 'cadastreChange', 'medium', 690);
+
+----------------------------------------------------------------------------------------------------
+-- New business rule for Lesotho to check a subplots do not overlap
+insert into system.br(id, technical_type_code, feedback, technical_description) 
+values('new-subplots-do-not-overlap', 'sql', 'New subplots overlap each other',
+ '#{id}(transaction id) is requested');
+
+insert into system.br_definition(br_id, active_from, active_until, body) 
+values('new-subplots-do-not-overlap', now(), 'infinity', 
+ 'WITH tolerance AS (SELECT CAST(ABS(LOG((CAST (vl AS NUMERIC)^2))) AS INT) AS area FROM system.setting where name = ''map-tolerance'' LIMIT 1)
+
+SELECT COALESCE(ROUND(CAST (ST_AREA(ST_UNION(co.geom_polygon))AS NUMERIC), (SELECT area FROM tolerance)) = 
+		ROUND(CAST(SUM(ST_AREA(co.geom_polygon))AS NUMERIC), (SELECT area FROM tolerance)), 
+		TRUE) AS vl
+FROM cadastre.cadastre_object co 
+WHERE transaction_id = #{id} 
+AND   co.type_code = ''subplot''');
+
+INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_request_type_code, severity_code, order_of_execution)
+VALUES ('new-subplots-do-not-overlap', 'cadastre_object', 'current', 'cadastreChange', 'medium', 700);
+
+INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_request_type_code, severity_code, order_of_execution)
+VALUES ('new-subplots-do-not-overlap', 'cadastre_object', 'pending', 'cadastreChange', 'medium', 710);
+
+----------------------------------------------------------------------------------------------------
+-- New business rule for Lesotho to check a subplots do not overlap
+insert into system.br(id, technical_type_code, feedback, technical_description) 
+values('subplots-overlap-existing-subplots', 'sql', 'New subplots overlap existing subplots',
+ '#{id}(transaction id) is requested');
+
+insert into system.br_definition(br_id, active_from, active_until, body) 
+values('subplots-overlap-existing-subplots', now(), 'infinity', 
+ 'SELECT CASE
+	WHEN
+		(SELECT st_overlaps(co.geom_polygon, co2.geom_polygon)
+		AS vl
+		FROM cadastre.cadastre_object co, cadastre.cadastre_object co2
+		WHERE co.transaction_id = #{id}
+		AND co.type_code = ''subplot''
+		AND COALESCE(co2.transaction_id, ''0'') != co.transaction_id
+		AND co2.type_code = ''subplot''
+		AND st_overlaps(co.geom_polygon, co2.geom_polygon) LIMIT 1) THEN FALSE
+	ELSE TRUE
+END
+AS vl');
+
+INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_request_type_code, severity_code, order_of_execution)
+VALUES ('subplots-overlap-existing-subplots', 'cadastre_object', 'current', 'cadastreChange', 'medium', 720);
+
+INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_request_type_code, severity_code, order_of_execution)
+VALUES ('subplots-overlap-existing-subplots', 'cadastre_object', 'pending', 'cadastreChange', 'medium', 730);
+
+----------------------------------------------------------------------------------------------------
+-- Warn the user that the target parcel will be made historic when the application is approved
+insert into system.br(id, technical_type_code, feedback, technical_description) 
+values('warn-target-parcel-selected', 'sql', 'There are no new parcels to replace the target parcel. The target parcel will be made historic when the application is approved',
+ '#{id}(transaction id) is requested');
+
+insert into system.br_definition(br_id, active_from, active_until, body) 
+values('warn-target-parcel-selected', now(), 'infinity', 
+ 'SELECT FALSE AS vl
+  WHERE (SELECT count(*) FROM cadastre.cadastre_object_target WHERE transaction_id = #{id}) > 0
+  AND   (SELECT count(*) FROM cadastre.cadastre_object 
+         WHERE transaction_id = #{id}
+		 AND   type_code = ''parcel'') = 0');
+
+INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_request_type_code, severity_code, order_of_execution)
+VALUES ('warn-target-parcel-selected', 'cadastre_object', 'current', 'cadastreChange', 'medium', 740);
+
+INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_request_type_code, severity_code, order_of_execution)
+VALUES ('warn-target-parcel-selected', 'cadastre_object', 'pending', 'cadastreChange', 'medium', 750);
