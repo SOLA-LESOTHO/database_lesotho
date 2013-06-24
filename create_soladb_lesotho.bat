@@ -86,8 +86,8 @@ echo Loading Lesotho Grids... >> build.log 2>&1
 echo Loading roads and zones data... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\sola_populate_laa_shapefiles.sql >> build.log 2>&1
 
-echo Parcel numbering trigger >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\system_query_localised_parcel_numbering.sql >> build.log 2>&1
+rem -- echo Parcel numbering trigger >> build.log 2>&1
+rem -- %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\system_query_localised_parcel_numbering.sql >> build.log 2>&1
 
 echo Parcel numbering >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=extension\trigger_new_cadastre_object.sql >> build.log 2>&1
