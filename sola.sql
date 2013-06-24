@@ -5224,7 +5224,7 @@ CREATE TABLE cadastre.land_use_grade(
     land_grade_code varchar(20) NOT NULL,
     admin_fee numeric(29, 2) NOT NULL DEFAULT (0),
     ground_rent_rate numeric(20, 2),
-    duty_on_ground_rent integer NOT NULL DEFAULT (0),
+    duty_on_ground_rent numeric(29, 2) NOT NULL DEFAULT (0),
 
     -- Internal constraints
     
@@ -6484,9 +6484,9 @@ insert into application.request_type(code, request_category_code, display_value,
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('varyMortgage', 'registrationServices', 'Vary Mortgage::::Modifica ipoteca', 'c', 1, 5.00, 0.00, 0, 1, 'Change on the mortgage', 'mortgage', 'vary');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('newFreehold', 'registrationServices', 'New Freehold Title::::Nuovo Titolo', 'x', 5, 5.00, 0.00, 0, 1, 'Fee Simple Estate');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('serviceEnquiry', 'informationServices', 'Service Enquiry::::Richiesta Servizio', 'x', 1, 0.00, 0.00, 0, 0);
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnDeeds', 'registrationServices', 'Register Bond::::Registrazione Atto', 'c', 3, 1.00, 0.00, 0, 0);
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnDeeds', 'registrationServices', 'Deed Registration::::Registrazione Atto', 'c', 3, 1.00, 0.00, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnOnTitle', 'registrationServices', 'Registration on Title::::Registrazione di Titolo', 'x', 5, 5.00, 0.00, 0.01, 1);
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnPowerOfAttorney', 'registrationServices', 'Registration of Power of Attorney::::Registrazione di Procura', 'c', 3, 5.00, 0.00, 0, 0);
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnPowerOfAttorney', 'registrationServices', 'Registration of Power of Attorney::::Registrazione di Procura', 'x', 3, 5.00, 0.00, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnStandardDocument', 'registrationServices', 'Registration of Standard Document::::Documento di Documento Standard', 'x', 3, 5.00, 0.00, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('titleSearch', 'informationServices', 'Title Search::::Ricerca Titolo', 'x', 1, 5.00, 0.00, 0, 1);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('surveyPlanCopy', 'informationServices', 'Survey Plan Copy::::Copia Piano Perizia', 'x', 1, 1.00, 0.00, 0, 0);
@@ -8556,7 +8556,7 @@ ALTER TABLE administrative.ba_unit_target ADD CONSTRAINT ba_unit_target_transact
 CREATE INDEX ba_unit_target_transaction_id_fk83_ind ON administrative.ba_unit_target (transaction_id);
 
 ALTER TABLE administrative.lease_special_condition ADD CONSTRAINT lease_special_condition_lease_id_fk84 
-            FOREIGN KEY (lease_id) REFERENCES administrative.lease(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+            FOREIGN KEY (lease_id) REFERENCES administrative.lease(id) ON UPDATE CASCADE ON DELETE Cascade;
 CREATE INDEX lease_special_condition_lease_id_fk84_ind ON administrative.lease_special_condition (lease_id);
 
 ALTER TABLE administrative.lease ADD CONSTRAINT lease_cadastre_object_id_fk85 
