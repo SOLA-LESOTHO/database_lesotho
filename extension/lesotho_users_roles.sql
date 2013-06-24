@@ -105,6 +105,12 @@ where appgroup_id = 'legal-id';
 
 --system.approle_appgroup
 --this is the basic lot of an application processing department
+DELETE FROM system.approle_appgroup WHERE approle_code='regSublease' and appgroup_id='super-group-id';
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('regSublease', 'super-group-id');  
+DELETE FROM system.approle_appgroup WHERE approle_code='regnDeeds' and appgroup_id='super-group-id';
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('regnDeeds', 'super-group-id'); 
+
+
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ApplnAssignSelf', 'legal-id');  
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ApplnStatus', 'legal-id'); 
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('DashbrdViewAssign', 'legal-id');
