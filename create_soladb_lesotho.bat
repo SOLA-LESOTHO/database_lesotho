@@ -154,6 +154,10 @@ echo loading transactions against a lease...
 echo loading transactions against a lease... >> build.log 2>&1
 %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_transaction_against_lease.sql >> build.log 2>&1
 
+echo migrating into lease table...
+echo migrating into lease table... >> build.log 2>&1
+%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_lease.sql >> build.log 2>&1
+
 echo HOUSE KEEPING... >> build.log 2>&1
 REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=house_keeper.sql >> build.log 2>&1
 

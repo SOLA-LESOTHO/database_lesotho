@@ -461,5 +461,16 @@
 		
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
-		VALUES ('surveyReport', 'redefineCadastre');	
+		VALUES ('surveyReport', 'redefineCadastre');
+
+	INSERT INTO application.request_type_requires_source_type(
+				source_type_code, request_type_code)
+		VALUES ('consentCert', 'cancelMortBonds');
 		
+	
+	insert into application.request_type_requires_source_type(source_type_code, request_type_code) 
+    values('appForm', 'servitudeConsent');
+    insert into application.request_type_requires_source_type(source_type_code, request_type_code) 
+    values('appForm', 'transferConsent');
+    insert into application.request_type_requires_source_type(source_type_code, request_type_code) 
+    values('appForm', 'subleaseConsent');	

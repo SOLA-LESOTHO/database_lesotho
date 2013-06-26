@@ -45,7 +45,7 @@
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('swornAffdt', 'Sworn Affidavit', 'c', NULL, false);
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('propertyMarktRep', 'Property Market Value Report', 'c', NULL, false);
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('changeUseApp', 'Change of Use Approval', 'c', NULL, false);
-	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('consentCert', 'Consent of Certificate', 'c', NULL, false);
+	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('consentCert', 'Consent Certificate', 'c', NULL, false);
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('deathCert', 'Death Certificate', 'c', NULL, false);
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('ministerialCons', 'Ministerial Consent', 'c', NULL, false);
 	INSERT INTO source.administrative_source_type(code,display_value,status,description,is_for_registration) VALUES ('leaseCopy', 'Copy of lease', 'c', NULL, false);
@@ -125,5 +125,12 @@
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('variationMortgage', 'registrationServices', 'Change Mortgage::::Phetoho ea Mortgage', 'Variation of Mortgage', 'x', 20, 100.00, 0.00, 0.00, 1, 'Variation of mortgage <reference>', 'mortgage', 'vary');
 	INSERT INTO application.request_type(code,request_category_code,display_value,description,status,nr_days_to_complete,base_fee,area_base_fee,value_base_fee,nr_properties_required,notation_template,rrr_type_code,type_action_code) VALUES ('regCessionLease', 'registrationServices', 'Register Cession of Lease', NULL, 'x', 0, 0.00, 0.00, 0.00, 0, NULL, NULL, NULL);
 
+	insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) 
+    values('servitudeConsent', 'registrationServices', 'Consent to Private Servitude', 'c', 0, 25.00, 0.10, 0, 1);
+    insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) 
+    values('transferConsent', 'registrationServices', 'Consent to Transfer', 'c', 0, 25.00, 0.10, 0, 1);
+    insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) 
+    values('subleaseConsent', 'registrationServices', 'Consent to Sublease', 'c', 0, 25.00, 0.10, 0, 1);
+	
 	
 
