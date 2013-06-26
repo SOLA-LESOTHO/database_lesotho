@@ -3467,6 +3467,7 @@ insert into system.approle(code, display_value, status, description) values('Dis
 insert into system.approle(code, display_value, status, description) values('DisputeCommentsSave', 'Dispute Comments Save', 'c', 'Allows to add changes to dispute comments service');
 insert into system.approle(code, display_value, status, description) values('DisputeSearch', 'Dispute Search', 'c', 'Allows to search dispute Service');
 insert into system.approle(code, display_value, status, description) values('DisputePartySave', 'Dispute Party Search', 'c', 'Allows to save disputing parties');
+insert into system.approle(code, display_value, status, description) values('DisputeView', 'Lodge Disputes and Court Cases', 'c', 'Allows to create new disputes and court cases');
 
 
 
@@ -3505,6 +3506,7 @@ insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeSa
 insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeCommentsSave', 'super-group-id');
 insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeSearch', 'super-group-id');
 insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputePartySave', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeView', 'super-group-id');
 
 
 
@@ -4661,6 +4663,9 @@ CREATE TABLE administrative.dispute(
     rrr_id varchar(40),
     plot_location varchar(200),
     cadastre_object_id varchar(40),
+	casetype           varchar(100),
+	action_required    varchar(555),
+	primary_respondent bool NOT NULL DEFAULT (false),
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -4702,6 +4707,9 @@ CREATE TABLE administrative.dispute_historic
     rrr_id varchar(40),
     plot_location varchar(200),
     cadastre_object_id varchar(40),
+	casetype           varchar(100),
+	action_required    varchar(555),
+	primary_respondent bool,
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),
