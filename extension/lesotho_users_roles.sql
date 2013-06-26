@@ -450,6 +450,7 @@ INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('RevertSe
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('SourceSave', 'cust-reps-id');  
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ParcelSave', 'cust-reps-id'); 
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ApplnApprove', 'cust-reps-id');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('DisputeView', 'legal-id');
 
 --legal
 
@@ -485,8 +486,16 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id)
    FROM system.appuser u
    JOIN system.appuser_appgroup ug ON (u.id = ug.appuser_id and u.active)
    JOIN system.approle_appgroup rg ON ug.appgroup_id = rg.appgroup_id;
+---
 
 
+---
+insert into system.approle_appgroup(approle_code, appgroup_id) 
+values('servitudeConsent', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) 
+values('transferConsent', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) 
+values('subleaseConsent', 'super-group-id');
 
 
 
