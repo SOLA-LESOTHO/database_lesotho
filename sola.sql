@@ -3467,11 +3467,7 @@ insert into system.approle(code, display_value, status, description) values('Dis
 insert into system.approle(code, display_value, status, description) values('DisputeCommentsSave', 'Dispute Comments Save', 'c', 'Allows to add changes to dispute comments service');
 insert into system.approle(code, display_value, status, description) values('DisputeSearch', 'Dispute Search', 'c', 'Allows to search dispute Service');
 insert into system.approle(code, display_value, status, description) values('DisputePartySave', 'Dispute Party Search', 'c', 'Allows to save disputing parties');
-<<<<<<< HEAD
-insert into system.approle(code, display_value, status, description) values('DisputeView', 'Dispute View', 'c', 'Allows to view disputes');
-=======
 insert into system.approle(code, display_value, status, description) values('DisputeView', 'Lodge Disputes and Court Cases', 'c', 'Allows to create new disputes and court cases');
->>>>>>> working
 
 
 
