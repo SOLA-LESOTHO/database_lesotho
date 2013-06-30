@@ -37,7 +37,7 @@ SELECT c.id, (c.name_firstpart || '-' || c.name_lastpart) AS parcel_code, c.geom
 lu.code AS land_use_code, c.status_code,
 (SELECT size FROM cadastre.spatial_value_area WHERE spatial_unit_id = c.id AND type_code = 'officialArea' LIMIT 1) AS official_area
 FROM cadastre.cadastre_object c LEFT JOIN cadastre.land_use_type lu ON c.land_use_code = lu.code 
-WHERE c.geom_polygon IS NOT NULL AND ST_SRID(c.geom_polygon) = 22287;
+WHERE c.type_code= 'parcel' AND c.geom_polygon IS NOT NULL AND ST_SRID(c.geom_polygon) = 22287;
 
 -- Create view to expose plots in Lo29 zone
 CREATE OR REPLACE VIEW cadastre.plots29
@@ -47,7 +47,7 @@ SELECT c.id, (c.name_firstpart || '-' || c.name_lastpart) AS parcel_code, c.geom
 lu.code AS land_use_code, c.status_code,
 (SELECT size FROM cadastre.spatial_value_area WHERE spatial_unit_id = c.id AND type_code = 'officialArea' LIMIT 1) AS official_area
 FROM cadastre.cadastre_object c LEFT JOIN cadastre.land_use_type lu ON c.land_use_code = lu.code 
-WHERE c.geom_polygon IS NOT NULL AND ST_SRID(c.geom_polygon) = 22289;
+WHERE c.type_code= 'parcel' AND c.geom_polygon IS NOT NULL AND ST_SRID(c.geom_polygon) = 22289;
 
 -- Create view to expose all plots
 CREATE OR REPLACE VIEW cadastre.all_plots
@@ -57,7 +57,7 @@ SELECT c.id, (c.name_firstpart || '-' || c.name_lastpart) AS parcel_code, c.geom
 lu.code AS land_use_code, c.status_code,
 (SELECT size FROM cadastre.spatial_value_area WHERE spatial_unit_id = c.id AND type_code = 'officialArea' LIMIT 1) AS official_area
 FROM cadastre.cadastre_object c LEFT JOIN cadastre.land_use_type lu ON c.land_use_code = lu.code 
-WHERE c.geom_polygon IS NOT NULL;
+WHERE c.type_code= 'parcel' AND c.geom_polygon IS NOT NULL;
 
 -- Create view to expose all plots transormed into Lo27 zone
 CREATE OR REPLACE VIEW cadastre.all_plots27
@@ -69,7 +69,7 @@ get_translation(lu.display_value, null) AS land_use,
 lu.code AS land_use_code, c.status_code,
 (SELECT size FROM cadastre.spatial_value_area WHERE spatial_unit_id = c.id AND type_code = 'officialArea' LIMIT 1) AS official_area
 FROM cadastre.cadastre_object c LEFT JOIN cadastre.land_use_type lu ON c.land_use_code = lu.code 
-WHERE c.geom_polygon IS NOT NULL;
+WHERE c.type_code= 'parcel' AND c.geom_polygon IS NOT NULL;
 
 -- Create view to expose all plots transormed into Lo29 zone
 CREATE OR REPLACE VIEW cadastre.all_plots29
@@ -81,7 +81,7 @@ get_translation(lu.display_value, null) AS land_use,
 lu.code AS land_use_code, c.status_code,
 (SELECT size FROM cadastre.spatial_value_area WHERE spatial_unit_id = c.id AND type_code = 'officialArea' LIMIT 1) AS official_area
 FROM cadastre.cadastre_object c LEFT JOIN cadastre.land_use_type lu ON c.land_use_code = lu.code 
-WHERE c.geom_polygon IS NOT NULL;
+WHERE c.type_code= 'parcel' AND c.geom_polygon IS NOT NULL;
 
 -- Grant user with minimum required privileges to query the data
 GRANT USAGE ON schema cadastre TO sola_reader;
