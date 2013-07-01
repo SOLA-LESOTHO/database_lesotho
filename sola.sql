@@ -8548,7 +8548,7 @@ ALTER TABLE administrative.lease ADD CONSTRAINT lease_status_code_fk85
 CREATE INDEX lease_status_code_fk85_ind ON administrative.lease (status_code);
 
 ALTER TABLE administrative.lease ADD CONSTRAINT lease_transaction_id_fk86 
-            FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+            FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE Cascade;
 CREATE INDEX lease_transaction_id_fk86_ind ON administrative.lease (transaction_id);
 
 ALTER TABLE administrative.dispute ADD CONSTRAINT dispute_dispute_category_code_fk87 

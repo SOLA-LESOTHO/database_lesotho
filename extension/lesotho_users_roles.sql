@@ -140,7 +140,7 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('varyRight
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('PartySave', 'legal-id');
 
 --Bundle Specific to Legal
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('courtProcess', 'legal-id');
+--INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('courtProcess', 'legal-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('lodgeObjection', 'legal-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('dispute', 'legal-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('serviceEnquiry', 'legal-id');
@@ -490,12 +490,7 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id)
 
 
 ---
-insert into system.approle_appgroup(approle_code, appgroup_id) 
-values('servitudeConsent', 'super-group-id');
-insert into system.approle_appgroup(approle_code, appgroup_id) 
-values('transferConsent', 'super-group-id');
-insert into system.approle_appgroup(approle_code, appgroup_id) 
-values('subleaseConsent', 'super-group-id');
+INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('consentApplication', 'super-group-id');
 
 
 

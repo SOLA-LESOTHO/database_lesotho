@@ -349,9 +349,9 @@
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
 	--	VALUES ('appForm', 'counterClaim');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'courtProcess');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'courtProcess');
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
 	--	VALUES ('appForm', 'disputeReg');
@@ -468,9 +468,6 @@
 		VALUES ('consentCert', 'cancelMortBonds');
 		
 	
-	insert into application.request_type_requires_source_type(source_type_code, request_type_code) 
-    values('appForm', 'servitudeConsent');
-    insert into application.request_type_requires_source_type(source_type_code, request_type_code) 
-    values('appForm', 'transferConsent');
-    insert into application.request_type_requires_source_type(source_type_code, request_type_code) 
-    values('appForm', 'subleaseConsent');	
+	INSERT INTO application.request_type_requires_source_type(
+				source_type_code, request_type_code) 
+		VALUES('appForm', 'consentApplication');
