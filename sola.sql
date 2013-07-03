@@ -3467,7 +3467,7 @@ insert into system.approle(code, display_value, status, description) values('Dis
 insert into system.approle(code, display_value, status, description) values('DisputeCommentsSave', 'Dispute Comments Save', 'c', 'Allows to add changes to dispute comments service');
 insert into system.approle(code, display_value, status, description) values('DisputeSearch', 'Dispute Search', 'c', 'Allows to search dispute Service');
 insert into system.approle(code, display_value, status, description) values('DisputePartySave', 'Dispute Party Search', 'c', 'Allows to save disputing parties');
-insert into system.approle(code, display_value, status, description) values('DisputeView', 'Lodge Disputes and Court Cases', 'c', 'Allows to create new disputes and court cases');
+insert into system.approle(code, display_value, status, description) values('DisputeView', 'Dispute View', 'c', 'Allows to view disputes');
 
 
 
@@ -3506,7 +3506,6 @@ insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeSa
 insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeCommentsSave', 'super-group-id');
 insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeSearch', 'super-group-id');
 insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputePartySave', 'super-group-id');
-insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeView', 'super-group-id');
 
 
 
@@ -4640,9 +4639,9 @@ CREATE TABLE administrative.dispute(
     rrr_id varchar(40),
     plot_location varchar(200),
     cadastre_object_id varchar(40),
-	casetype           varchar(100),
-	action_required    varchar(555),
-	primary_respondent bool NOT NULL DEFAULT (false),
+    casetype varchar(100),
+    action_required varchar(555),
+    primary_respondent bool NOT NULL DEFAULT ('false'),
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -4684,9 +4683,9 @@ CREATE TABLE administrative.dispute_historic
     rrr_id varchar(40),
     plot_location varchar(200),
     cadastre_object_id varchar(40),
-	casetype           varchar(100),
-	action_required    varchar(555),
-	primary_respondent bool,
+    casetype varchar(100),
+    action_required varchar(555),
+    primary_respondent bool,
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),
@@ -5118,35 +5117,6 @@ CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
    ON party.group_party FOR EACH ROW
    EXECUTE PROCEDURE f_for_trg_track_history();
     
---Table party.group_party_type ----
-DROP TABLE IF EXISTS party.group_party_type CASCADE;
-CREATE TABLE party.group_party_type(
-    code varchar(20) NOT NULL,
-    display_value varchar(250) NOT NULL,
-    status char(1) NOT NULL DEFAULT ('t'),
-    description varchar(555),
-
-    -- Internal constraints
-    
-    CONSTRAINT group_party_type_display_value_unique UNIQUE (display_value),
-    CONSTRAINT group_party_type_pkey PRIMARY KEY (code)
-);
-
-
-comment on table party.group_party_type is 'Reference Table / Code list to identify different types of groups being a party to some form of land office transaction
-LADM Reference Object 
-LA_
-LADM Definition
-Not Defined';
-    
- -- Data for the table party.group_party_type -- 
-insert into party.group_party_type(code, display_value, status) values('tribe', 'Tribe::::Tribu', 'x');
-insert into party.group_party_type(code, display_value, status) values('association', 'Association::::Associazione', 'c');
-insert into party.group_party_type(code, display_value, status) values('family', 'Family::::Famiglia', 'c');
-insert into party.group_party_type(code, display_value, status) values('baunitGroup', 'Basic Administrative Unit Group::::Unita Gruppo Amministrativo di Base', 'x');
-
-
-
 --Table party.id_type ----
 DROP TABLE IF EXISTS party.id_type CASCADE;
 CREATE TABLE party.id_type(
@@ -5445,6 +5415,36 @@ CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
    ON cadastre.legal_space_utility_network FOR EACH ROW
    EXECUTE PROCEDURE f_for_trg_track_history();
     
+--Table party.legal_type ----
+DROP TABLE IF EXISTS party.legal_type CASCADE;
+CREATE TABLE party.legal_type(
+    code varchar(20) NOT NULL,
+    display_value varchar(250) NOT NULL,
+    status char(1) NOT NULL DEFAULT ('t'),
+    description varchar(555),
+
+    -- Internal constraints
+    
+    CONSTRAINT legal_type_display_value_unique UNIQUE (display_value),
+    CONSTRAINT legal_type_pkey PRIMARY KEY (code)
+);
+
+
+comment on table party.legal_type is 'Introduced in Lesotho project.
+Contains various legal types like marital status or company type or guardianship type.';
+    
+ -- Data for the table party.legal_type -- 
+insert into party.legal_type(code, display_value, status) values('guardian', 'In Trust For xxxx - Widowed', 'c');
+insert into party.legal_type(code, display_value, status) values('divorced', 'Divorced', 'c');
+insert into party.legal_type(code, display_value, status) values('marriedInCom', 'Married in community of property', 'c');
+insert into party.legal_type(code, display_value, status) values('marriedOut', 'Married out of community of property', 'c');
+insert into party.legal_type(code, display_value, status) values('unmarried', 'Unmarried', 'c');
+insert into party.legal_type(code, display_value, status) values('widowed', 'Widowed', 'c');
+insert into party.legal_type(code, display_value, status) values('regSoc1966', 'REGISTERED SOCIETY UNDER SOCIETIES ACT OF 1966', 'c');
+insert into party.legal_type(code, display_value, status) values('separated', 'Separated', 'c');
+
+
+
 --Table cadastre.level ----
 DROP TABLE IF EXISTS cadastre.level CASCADE;
 CREATE TABLE cadastre.level(
@@ -5707,6 +5707,7 @@ CREATE TABLE party.party(
     last_name varchar(255),
     fathers_name varchar(50),
     fathers_last_name varchar(50),
+    legal_type varchar(255),
     alias varchar(50),
     gender_code varchar(20),
     birth_date date,
@@ -5760,6 +5761,7 @@ CREATE TABLE party.party_historic
     last_name varchar(255),
     fathers_name varchar(50),
     fathers_last_name varchar(50),
+    legal_type varchar(255),
     alias varchar(50),
     gender_code varchar(20),
     birth_date date,
@@ -6523,12 +6525,13 @@ CREATE TABLE administrative.rrr(
     mortgage_interest_rate numeric(5, 2),
     mortgage_ranking integer,
     mortgage_type_code varchar(20),
-    status_change_date timestamp NOT NULL DEFAULT (now()),
-    stamp_duty numeric(29, 2) NOT NULL DEFAULT (0),
-    transfer_duty numeric(29, 2) NOT NULL DEFAULT (0),
-    registration_fee numeric(29, 0) NOT NULL DEFAULT (0),
-    service_fee numeric(29, 2) NOT NULL DEFAULT (0),
+    stamp_duty numeric(29, 2) DEFAULT (0),
+    transfer_duty numeric(29, 2) DEFAULT (0),
+    registration_fee numeric(29, 0) DEFAULT (0),
+    service_fee numeric(29, 2) DEFAULT (0),
+    ground_rent numeric(29, 2),
     cadastre_object_id varchar(40),
+    status_change_date timestamp NOT NULL DEFAULT (now()),
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -6581,12 +6584,13 @@ CREATE TABLE administrative.rrr_historic
     mortgage_interest_rate numeric(5, 2),
     mortgage_ranking integer,
     mortgage_type_code varchar(20),
-    status_change_date timestamp,
     stamp_duty numeric(29, 2),
     transfer_duty numeric(29, 2),
     registration_fee numeric(29, 0),
     service_fee numeric(29, 2),
+    ground_rent numeric(29, 2),
     cadastre_object_id varchar(40),
+    status_change_date timestamp,
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),
@@ -8213,7 +8217,7 @@ ALTER TABLE party.group_party ADD CONSTRAINT group_party_id_fk32
 CREATE INDEX group_party_id_fk32_ind ON party.group_party (id);
 
 ALTER TABLE party.group_party ADD CONSTRAINT group_party_type_code_fk33 
-            FOREIGN KEY (type_code) REFERENCES party.group_party_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
+            FOREIGN KEY (type_code) REFERENCES party.legal_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
 CREATE INDEX group_party_type_code_fk33_ind ON party.group_party (type_code);
 
 ALTER TABLE party.party_member ADD CONSTRAINT party_member_party_id_fk34 
