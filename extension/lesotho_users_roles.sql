@@ -5,7 +5,7 @@ insert into system.appgroup(id, name, description) values('deeds-manager-id', 'D
 insert into system.appgroup(id, name, description) values('deeds-reps-id', 'Deeds Assistant Registrar group', 'This is a group of Deeds Assistant Registrars');
 insert into system.appgroup(id, name, description) values('lease-id', 'Lease Services group', 'This is a group of users who process leases.');
 insert into system.appgroup(id, name, description) values('surveymapp-id', 'Survey and Mapping group', 'This is a group of Survey and Mapping.');
-insert into system.appgroup(id, name, description) values('legal-id', 'Legal group', 'This is a group of Survey and Mapping.');
+insert into system.appgroup(id, name, description) values('legal-id', 'Legal group', 'This is a group for Legal Representatives.');
 insert into system.appgroup(id, name, description) values('administrator-id', 'System group', 'This is a group of system administrators that has right in all activities.');
 
 
