@@ -1,3 +1,10 @@
+﻿-- DROP GEMERTY columns registration from geometry_columns table
+DELETE FROM geometry_columns WHERE f_table_schema = 'cadastre' AND f_table_name='plots27' AND f_geometry_column = 'geom_polygon';
+DELETE FROM geometry_columns WHERE f_table_schema = 'cadastre' AND f_table_name='plots29' AND f_geometry_column = 'geom_polygon';
+DELETE FROM geometry_columns WHERE f_table_schema = 'cadastre' AND f_table_name='all_plots27' AND f_geometry_column = 'geom_polygon';
+DELETE FROM geometry_columns WHERE f_table_schema = 'cadastre' AND f_table_name='all_plots29' AND f_geometry_column = 'geom_polygon';
+DELETE FROM geometry_columns WHERE f_table_schema = 'cadastre' AND f_table_name='all_plots' AND f_geometry_column = 'geom_polygon';
+
 -- Drop views if they exist
 DROP VIEW IF EXISTS cadastre.plots27;
 DROP VIEW IF EXISTS cadastre.plots29;
@@ -82,6 +89,27 @@ lu.code AS land_use_code, c.status_code,
 (SELECT size FROM cadastre.spatial_value_area WHERE spatial_unit_id = c.id AND type_code = 'officialArea' LIMIT 1) AS official_area
 FROM cadastre.cadastre_object c LEFT JOIN cadastre.land_use_type lu ON c.land_use_code = lu.code 
 WHERE c.type_code= 'parcel' AND c.geom_polygon IS NOT NULL;
+
+-- Register GEOMETRY columns from the views
+INSERT INTO geometry_columns(f_table_catalog, f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, "type")
+SELECT '', 'cadastre', 'plots27', 'geom_polygon', ST_CoordDim(geom_polygon), ST_SRID(geom_polygon), GeometryType(geom_polygon)
+FROM cadastre.plots27 LIMIT 1;
+
+INSERT INTO geometry_columns(f_table_catalog, f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, "type")
+SELECT '', 'cadastre', 'plots29', 'geom_polygon', ST_CoordDim(geom_polygon), ST_SRID(geom_polygon), GeometryType(geom_polygon)
+FROM cadastre.plots29 LIMIT 1;
+
+INSERT INTO geometry_columns(f_table_catalog, f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, "type")
+SELECT '', 'cadastre', 'all_plots27', 'geom_polygon', ST_CoordDim(geom_polygon), ST_SRID(geom_polygon), GeometryType(geom_polygon)
+FROM cadastre.all_plots27 LIMIT 1;
+
+INSERT INTO geometry_columns(f_table_catalog, f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, "type")
+SELECT '', 'cadastre', 'all_plots29', 'geom_polygon', ST_CoordDim(geom_polygon), ST_SRID(geom_polygon), GeometryType(geom_polygon)
+FROM cadastre.all_plots29 LIMIT 1;
+
+INSERT INTO geometry_columns(f_table_catalog, f_table_schema, f_table_name, f_geometry_column, coord_dimension, srid, "type")
+SELECT '', 'cadastre', 'all_plots', 'geom_polygon', ST_CoordDim(geom_polygon), ST_SRID(geom_polygon), GeometryType(geom_polygon)
+FROM cadastre.all_plots LIMIT 1;
 
 -- Grant user with minimum required privileges to query the data
 GRANT USAGE ON schema cadastre TO sola_reader;
