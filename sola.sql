@@ -3468,6 +3468,8 @@ insert into system.approle(code, display_value, status, description) values('Dis
 insert into system.approle(code, display_value, status, description) values('DisputeSearch', 'Dispute Search', 'c', 'Allows to search dispute Service');
 insert into system.approle(code, display_value, status, description) values('DisputePartySave', 'Dispute Party Search', 'c', 'Allows to save disputing parties');
 insert into system.approle(code, display_value, status, description) values('DisputeView', 'Dispute View', 'c', 'Allows to view disputes');
+insert into system.approle(code, display_value, status, description) values('manageLease', 'Manage lease', 'c', 'Allows to prepare or vary lease');
+insert into system.approle(code, display_value, status, description) values('regLease', 'Register lease', 'c', 'Allows to do lease registration including registration of variation');
 
 
 
@@ -3506,6 +3508,8 @@ insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeSa
 insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeCommentsSave', 'super-group-id');
 insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeSearch', 'super-group-id');
 insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputePartySave', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) values('manageLease', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) values('regLease', 'super-group-id');
 
 
 
