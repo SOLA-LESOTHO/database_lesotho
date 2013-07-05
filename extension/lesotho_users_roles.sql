@@ -491,8 +491,14 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id)
 
 ---
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('consentApplication', 'super-group-id');
-
-
+--
+INSERT INTO system.approle_appgroup VALUES('regNotBond','deeds-manager-id');
+INSERT INTO system.approle_appgroup VALUES('regNotBond','deeds-reps-id');
+INSERT INTO system.approle_appgroup VALUES('regNotBond','super-group-id');
+--
+INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclNotBond','deeds-manager-id');
+INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclNotBond','deeds-reps-id');
+INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclNotBond','super-group-id');
 
 
 
