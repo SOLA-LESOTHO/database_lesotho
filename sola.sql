@@ -3744,7 +3744,7 @@ DROP TABLE IF EXISTS administrative.ba_unit CASCADE;
 CREATE TABLE administrative.ba_unit(
     id varchar(40) NOT NULL,
     type_code varchar(20) NOT NULL DEFAULT ('basicPropertyUnit'),
-    cadastre_object_id varchar(40) NOT NULL,
+    cadastre_object_id varchar(40),
     name varchar(255),
     name_firstpart varchar(20) NOT NULL,
     name_lastpart varchar(50) NOT NULL,
@@ -3760,7 +3760,6 @@ CREATE TABLE administrative.ba_unit(
 
     -- Internal constraints
     
-    CONSTRAINT ba_unit_cadastre_object_id_unique UNIQUE (cadastre_object_id),
     CONSTRAINT ba_unit_pkey PRIMARY KEY (id)
 );
 
@@ -8700,6 +8699,30 @@ ALTER TABLE bulk_operation.spatial_unit_temporary ADD CONSTRAINT spatial_unit_te
             FOREIGN KEY (cadastre_object_type_code) REFERENCES cadastre.cadastre_object_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
 CREATE INDEX spatial_unit_temporary_cadastre_object_type_code_fk145_ind ON bulk_operation.spatial_unit_temporary (cadastre_object_type_code);
 --Generate triggers for tables --
+-- triggers for table administrative.ba_unit -- 
+
+ 
+
+CREATE OR REPLACE FUNCTION administrative.f_for_tbl_ba_unit_trg_check_cadastre_object() RETURNS TRIGGER 
+AS $$
+begin
+   IF new.cadastre_object_id is null and new.status_code is not null and new.status_code != 'pending' THEN
+	raise exception 'Cadastre object can''t be null';
+   END IF;
+   
+   IF (select count(1) from administrative.ba_unit b 
+       where b.id!=new.id and b.cadastre_object_id = new.cadastre_object_id and 
+       b.status_code in ('pending', 'current') and new.status_code in ('pending', 'current')) > 0 THEN
+      raise exception 'Selected cadastre object already bound to the lease.';
+   END IF;
+   return new;
+end
+$$ LANGUAGE plpgsql;
+DROP TRIGGER IF EXISTS trg_check_cadastre_object ON administrative.ba_unit CASCADE;
+CREATE TRIGGER trg_check_cadastre_object before insert or update
+   ON administrative.ba_unit FOR EACH ROW
+   EXECUTE PROCEDURE administrative.f_for_tbl_ba_unit_trg_check_cadastre_object();
+    
 -- triggers for table cadastre.cadastre_object -- 
 
  

@@ -143,23 +143,17 @@ VALUES('target-ba_unit-check-if-pending', 'critical', 'current', 'ba_unit', 280)
 ----------------------------------------------------------------------------------------------------
 
 INSERT INTO system.br(id, technical_type_code, feedback, technical_description) 
-VALUES('ba_unit-has-a-valid-primary-right', 'sql', 
-'A title must have a valid primary right::::Un titolo deve avere un diritto primario',
- '#{id}(baunit_id) is requested.');
---delete from system.br_definition where br_id = 'ba_unit-has-a-valid-primary-right'
+VALUES('ba_unit-has-lease', 'sql', 
+'Property must have a lease', '#{id}(baunit_id) is requested.');
+
 INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
-VALUES('ba_unit-has-a-valid-primary-right', now(), 'infinity', 
-'SELECT (COUNT(*) = 1) AS vl FROM administrative.rrr rr1 
-	 INNER JOIN administrative.ba_unit ba ON (rr1.ba_unit_id = ba.id)
-	 INNER JOIN transaction.transaction tn ON (rr1.transaction_id = tn.id)
-	 INNER JOIN application.service sv ON ((tn.from_service_id = sv.id) AND (sv.request_type_code != ''cancelProperty''))
- WHERE ba.id = #{id}
- AND rr1.status_code != ''cancelled''
- AND rr1.is_primary
- AND rr1.type_code IN (''ownership'', ''apartment'', ''stateOwnership'', ''lease'')');
+VALUES('ba_unit-has-lease', now(), 'infinity', 
+'SELECT count(1)>0 as vl
+FROM administrative.ba_unit ba inner join administrative.rrr r on ba.id= r.ba_unit_id
+WHERE ba.id = #{id} and r.type_code = ''lease'' and r.status_code in (''pending'', ''current'')');
 
 INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, severity_code, order_of_execution)
-VALUES ('ba_unit-has-a-valid-primary-right', 'ba_unit', 'current', 'critical', 20);
+VALUES ('ba_unit-has-lease', 'ba_unit', 'current', 'critical', 20);
 
 ----------------------------------------------------------------------------------------------------
 

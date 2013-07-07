@@ -123,6 +123,23 @@ insert into system.br_validation(br_id, severity_code, target_reg_moment, target
 values('rrr-has-pending', 'critical', 'current', 'rrr', 290);
 
 ----------------------------------------------------------------------------------------------------
+INSERT INTO system.br(id, technical_type_code, feedback, description, technical_description)
+VALUES ('rrr-must-have-regnumber-and-date', 'sql', 
+'Right registration record must have registration number and date. Registration date must be less or equal to the current date', 'Checks registration date and number to be filled in.', '');
+
+insert into system.br_definition(br_id, active_from, active_until, body) 
+values('rrr-must-have-regnumber-and-date', now(), 'infinity', 
+'select count(*)>0 as vl
+from administrative.rrr r 
+where r.id = #{id} and length(coalesce(r.registration_number, '''')) > 0 and 
+r.registration_date is not null and coalesce(r.registration_date, now()) <= now()');
+
+INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, severity_code, order_of_execution)
+VALUES ('rrr-must-have-regnumber-and-date', 'rrr', 'current', 'critical', 1);
+
+INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, severity_code, order_of_execution)
+VALUES ('rrr-must-have-regnumber-and-date', 'rrr', 'historic', 'critical', 2);
+----------------------------------------------------------------------------------------------------
 
 update system.br set display_name = id where display_name !=id;
 

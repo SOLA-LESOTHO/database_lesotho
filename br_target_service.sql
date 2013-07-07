@@ -1,4 +1,5 @@
-﻿----------------------------------------------------------------------------------------------------
+﻿
+----------------------------------------------------------------------------------------------------
 
 insert into system.br(id, technical_type_code, feedback, technical_description) 
 values('application-baunit-has-parcels', 'sql', 'Title must have parcel::::Titolo deve avere particelle',
@@ -426,20 +427,27 @@ WHERE
 			NULL, 'critical', 20);
 						
 -------------------------------------------------------------------------------------------------------------------------------------------------
---INSERT INTO system.br(id, display_name, technical_type_code, feedback, description, technical_description)
---VALUES ('service-new-lease-complete', 'service-new-lease-complete', 'sql', 
---'Scanned lease document must be attached on the application', 'Run checks prior to the new lease service completion', '');
+INSERT INTO system.br(id, display_name, technical_type_code, feedback, description, technical_description)
+VALUES ('service-new-lease-complete', 'service-new-lease-complete', 'sql', 
+'Scanned lease document must be attached on the registration form', 'Run checks prior to the lease registration service completion', '');
 
---insert into system.br_definition(br_id, active_from, active_until, body) 
---values('service-new-lease-complete', now(), 'infinity', 
---'select count(*)>0 as vl
---from application.service s 
---  inner join (application.application_uses_source aus 
---    inner join source.source sr on aus.source_id = sr.id) 
---  on s.application_id = aus.application_id
---where s.id = #{id} and sr.type_code = ''lease'' and sr.ext_archive_id is not null');
---
---INSERT INTO system.br_validation(br_id, target_code, target_service_moment, target_request_type_code, severity_code, order_of_execution)
---VALUES ('service-new-lease-complete', 'service', 'complete', 'newLease', 'critical', 1);
+insert into system.br_definition(br_id, active_from, active_until, body) 
+values('service-new-lease-complete', now(), 'infinity', 
+'select count(*)>0 as vl
+from application.service s 
+  inner join (transaction.transaction t 
+    inner join (administrative.rrr r 
+      inner join (administrative.source_describes_rrr sdr 
+        inner join source.source sr on sdr.source_id = sr.id)
+      on r.id = sdr.rrr_id) 
+    on t.id = r.transaction_id)
+  on s.id = t.from_service_id
+where s.id = #{id} and sr.type_code = ''lease'' and sr.ext_archive_id is not null');
+
+INSERT INTO system.br_validation(br_id, target_code, target_service_moment, target_request_type_code, severity_code, order_of_execution)
+VALUES ('service-new-lease-complete', 'service', 'complete', 'newLease', 'critical', 1);
+
+INSERT INTO system.br_validation(br_id, target_code, target_service_moment, target_request_type_code, severity_code, order_of_execution)
+VALUES ('service-new-lease-complete', 'service', 'complete', 'registerLease', 'critical', 2);
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------
