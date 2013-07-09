@@ -140,6 +140,27 @@ VALUES ('rrr-must-have-regnumber-and-date', 'rrr', 'current', 'critical', 1);
 INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, severity_code, order_of_execution)
 VALUES ('rrr-must-have-regnumber-and-date', 'rrr', 'historic', 'critical', 2);
 ----------------------------------------------------------------------------------------------------
+INSERT INTO system.br(id, technical_type_code, feedback, description, technical_description)
+VALUES ('ba_unit-to-terminate-must-not-have-current-rights', 'sql', 
+'To terminate the lease all existing rights must be terminated first', 'Checks for current rights before lease termination.', '');
+
+insert into system.br_definition(br_id, active_from, active_until, body) 
+values('ba_unit-to-terminate-must-not-have-current-rights', now(), 'infinity', 
+'with currentRrr as (select id, nr, ba_unit_id, transaction_id from administrative.rrr where id = #{id}),
+transactionedRrrs as (select id, nr from administrative.rrr where transaction_id in (select transaction_id from currentRrr) 
+and nr not in (select nr from currentRrr) and ba_unit_id in (select ba_unit_id from currentRrr) and status_code=''pending'')
+
+select count(1)<1 as vl 
+from administrative.rrr r 
+where r.ba_unit_id in (select ba_unit_id from currentRrr) 
+and r.id <> #{id}
+and r.nr not in (select nr from currentRrr) 
+and r.status_code=''current''
+and r.nr not in (select nr from transactionedRrrs);');
+
+INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_rrr_type_code, severity_code, order_of_execution)
+VALUES ('ba_unit-to-terminate-must-not-have-current-rights', 'rrr', 'historic', 'lease', 'critical', 2);
+----------------------------------------------------------------------------------------------------
 
 update system.br set display_name = id where display_name !=id;
 
