@@ -364,9 +364,9 @@
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
 		VALUES ('appForm', 'documentCopy');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'copyLostDeed');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'copyLostDeed');
 	INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
 		VALUES ('appForm', 'serviceEnquiry');

@@ -3003,14 +3003,10 @@ CREATE TABLE application.application(
         CONSTRAINT enforce_srid_location CHECK (st_srid(location) = 2193),
         CONSTRAINT enforce_valid_location CHECK (st_isvalid(location)),
         CONSTRAINT enforce_geotype_location CHECK (geometrytype(location) = 'MULTIPOINT'::text OR location IS NULL),
-    ground_rent numeric(29, 2) NOT NULL DEFAULT (0),
-    registration_fee numeric(29, 2) NOT NULL DEFAULT (0),
     services_fee numeric(20, 2) NOT NULL DEFAULT (0),
-    stamp_duty numeric(29, 2) NOT NULL DEFAULT (0),
     tax numeric(20, 2) NOT NULL DEFAULT (0),
     total_fee numeric(20, 2) NOT NULL DEFAULT (0),
     total_amount_paid numeric(20, 2) NOT NULL DEFAULT (0),
-    transfer_duty numeric(29, 2) NOT NULL DEFAULT (0),
     fee_paid bool NOT NULL DEFAULT (false),
     action_code varchar(20) NOT NULL DEFAULT ('lodge'),
     action_notes varchar(255),
@@ -3066,14 +3062,10 @@ CREATE TABLE application.application_historic
         CONSTRAINT enforce_srid_location CHECK (st_srid(location) = 2193),
         CONSTRAINT enforce_valid_location CHECK (st_isvalid(location)),
         CONSTRAINT enforce_geotype_location CHECK (geometrytype(location) = 'MULTIPOINT'::text OR location IS NULL),
-    ground_rent numeric(29, 2),
-    registration_fee numeric(29, 2),
     services_fee numeric(20, 2),
-    stamp_duty numeric(29, 2),
     tax numeric(20, 2),
     total_fee numeric(20, 2),
     total_amount_paid numeric(20, 2),
-    transfer_duty numeric(29, 2),
     fee_paid bool,
     action_code varchar(20),
     action_notes varchar(255),
@@ -4249,7 +4241,7 @@ CREATE TABLE cadastre.cadastre_object(
     surveyor varchar(255),
     survey_date date,
     survey_fee numeric(29, 2),
-    road_class_code varchar(20),
+    road_class_code varchar(20) DEFAULT ('minor_surfaced'),
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -5029,36 +5021,36 @@ CREATE TABLE cadastre.ground_rent_multiplication_factor(
 comment on table cadastre.ground_rent_multiplication_factor is '';
     
  -- Data for the table cadastre.ground_rent_multiplication_factor -- 
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('commercial', 'grade1', '', 1.80);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('commercial', 'grade2', '', 1.70);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('commercial', 'grade3', '', 1.60);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('commercial', 'grade4', '', 1.50);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('commercial', 'grade5', '', 1.40);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('commercial', 'grade6', '', 1.30);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('industrial', 'grade1', '', 1.80);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('industrial', 'grade2', '', 1.70);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('industrial', 'grade3', '', 1.60);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('industrial', 'grade4', '', 1.50);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('industrial', 'grade5', '', 1.40);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('industrial', 'grade6', '', 1.30);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('petroleum', 'grade1', '', 1.80);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('petroleum', 'grade2', '', 1.70);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('petroleum', 'grade3', '', 1.60);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('petroleum', 'grade4', '', 1.50);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('petroleum', 'grade5', '', 1.40);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('petroleum', 'grade6', '', 1.30);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('warehouse', 'grade1', '', 1.80);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('warehouse', 'grade2', '', 1.70);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('warehouse', 'grade3', '', 1.60);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('warehouse', 'grade4', '', 1.50);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('warehouse', 'grade5', '', 1.40);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('warehouse', 'grade6', '', 1.30);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('residential', 'grade1', '', 0.62);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('residential', 'grade2', '', 0.75);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('residential', 'grade3', '', 0.85);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('residential', 'grade1', '', 0.62);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('residential', 'grade2', '', 0.75);
-insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('residential', 'grade3', '', 0.85);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('commercial', 'grade1', 'residential', 1.80);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('commercial', 'grade2', 'residential', 1.70);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('commercial', 'grade3', 'residential', 1.60);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('commercial', 'grade4', 'residential', 1.50);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('commercial', 'grade5', 'residential', 1.40);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('commercial', 'grade6', 'residential', 1.30);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('industrial', 'grade1', 'residential', 1.80);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('industrial', 'grade2', 'residential', 1.70);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('industrial', 'grade3', 'residential', 1.60);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('industrial', 'grade4', 'residential', 1.50);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('industrial', 'grade5', 'residential', 1.40);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('industrial', 'grade6', 'residential', 1.30);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('petroleum', 'grade1', 'residential', 1.80);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('petroleum', 'grade2', 'residential', 1.70);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('petroleum', 'grade3', 'residential', 1.60);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('petroleum', 'grade4', 'residential', 1.50);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('petroleum', 'grade5', 'residential', 1.40);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('petroleum', 'grade6', 'residential', 1.30);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('warehouse', 'grade1', 'residential', 1.80);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('warehouse', 'grade2', 'residential', 1.70);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('warehouse', 'grade3', 'residential', 1.60);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('warehouse', 'grade4', 'residential', 1.50);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('warehouse', 'grade5', 'residential', 1.40);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('warehouse', 'grade6', 'residential', 1.30);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('residential', 'grade1', 'commercial', 0.62);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('residential', 'grade2', 'commercial', 0.75);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('residential', 'grade3', 'commercial', 0.85);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('residential', 'grade1', 'industrial', 0.62);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('residential', 'grade2', 'industrial', 0.75);
+insert into cadastre.ground_rent_multiplication_factor(land_use_code, land_grade_code, valuation_zone, multiplication_factor) values('residential', 'grade3', 'industrial', 0.85);
 
 
 
@@ -6345,18 +6337,18 @@ insert into application.request_type(code, request_category_code, display_value,
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('varyMortgage', 'registrationServices', 'Vary Mortgage::::Modifica ipoteca', 'c', 1, 5.00, 0.00, 0, 1, 'Change on the mortgage', 'mortgage', 'vary');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('newFreehold', 'registrationServices', 'New Freehold Title::::Nuovo Titolo', 'x', 5, 5.00, 0.00, 0, 1, 'Fee Simple Estate');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('serviceEnquiry', 'informationServices', 'Service Enquiry::::Richiesta Servizio', 'x', 1, 0.00, 0.00, 0, 0);
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnDeeds', 'registrationServices', 'Deed Registration::::Registrazione Atto', 'c', 3, 1.00, 0.00, 0, 0);
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnDeeds', 'registrationServices', 'Register Notorial Bond::::Registrazione Atto', 'c', 3, 1.00, 0.00, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnOnTitle', 'registrationServices', 'Registration on Title::::Registrazione di Titolo', 'x', 5, 5.00, 0.00, 0.01, 1);
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnPowerOfAttorney', 'registrationServices', 'Registration of Power of Attorney::::Registrazione di Procura', 'x', 3, 5.00, 0.00, 0, 0);
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnPowerOfAttorney', 'registrationServices', 'Register Power of Attorney::::Registrazione di Procura', 'c', 3, 5.00, 0.00, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnStandardDocument', 'registrationServices', 'Registration of Standard Document::::Documento di Documento Standard', 'x', 3, 5.00, 0.00, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('titleSearch', 'informationServices', 'Title Search::::Ricerca Titolo', 'x', 1, 5.00, 0.00, 0, 1);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('surveyPlanCopy', 'informationServices', 'Survey Plan Copy::::Copia Piano Perizia', 'x', 1, 1.00, 0.00, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('cadastrePrint', 'informationServices', 'Cadastre Print::::Stampa Catastale', 'x', 1, 0.50, 0.00, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('cadastreExport', 'informationServices', 'Cadastre Export::::Export Catastale', 'x', 1, 0.00, 0.10, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('cadastreBulk', 'informationServices', 'Cadastre Bulk Export::::Export Carico Catastale', 'x', 5, 5.00, 0.10, 0, 0);
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('registerLease', 'registrationServices', 'Register Lease::::Registrazione affitto', 'c', 5, 5.00, 0.00, 0.01, 1, 'Lease of nn years to <name>', 'lease', 'new');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('registerLease', 'registrationServices', 'Grant of New Lease::::Registrazione affitto', 'c', 5, 5.00, 0.00, 0.01, 1, 'Lease of nn years to <name>', 'lease', 'new');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('noteOccupation', 'registrationServices', 'Occupation Noted::::Nota occupazione', 'x', 5, 5.00, 0.00, 0.01, 1, 'Occupation by <name> recorded');
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('newOwnership', 'registrationServices', 'Change of Ownership::::Cambio proprieta', 'x', 5, 5.00, 0.00, 0.02, 1, 'Transfer to <name>', 'ownership', 'vary');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('newOwnership', 'registrationServices', 'Transfer of Lease::::Cambio proprieta', 'c', 5, 5.00, 0.00, 0.02, 1, 'Transfer to <name>', 'ownership', 'vary');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('usufruct', 'registrationServices', 'Register Usufruct::::Registrazione usufrutto', 'x', 5, 5.00, 0.00, 0, 1, '<usufruct> right granted to <name>', 'usufruct', 'new');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('waterRights', 'registrationServices', 'Register Water Rights::::Registrazione diritti di acqua''', 'x', 5, 5.00, 0.01, 0, 1, 'Water Rights granted to <name>', 'waterrights', 'new');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('mortgage', 'registrationServices', 'Register Mortgage::::Registrazione ipoteca', 'c', 5, 5.00, 0.00, 0, 1, 'Mortgage to <lender>', 'mortgage', 'new');
@@ -6370,21 +6362,21 @@ insert into application.request_type(code, request_category_code, display_value,
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('historicOrder', 'registrationServices', 'Register Historic Preservation Order::::Registrazione ordine storico di precedenze', 'x', 5, 5.00, 0.00, 0, 1, 'Historic Preservation Order', 'noBuilding', 'new');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code) values('limitedRoadAccess', 'registrationServices', 'Register Limited Road Access::::registrazione limitazione accesso stradale', 'x', 5, 5.00, 0.00, 0, 1, 'Limited Road Access', 'limitedAccess');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('varyLease', 'registrationServices', 'Vary Lease::::Modifica affitto', 'c', 5, 5.00, 0.00, 0, 1, 'Variation of Lease <reference>', 'lease', 'vary');
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('varyRight', 'registrationServices', 'Vary Right (General)::::Modifica diritto (generico)', 'c', 5, 5.00, 0.00, 0, 1, 'Variation of <right> <reference>', 'vary');
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('removeRight', 'registrationServices', 'Termination of a lease', 'c', 5, 5.00, 0.00, 0, 1, '<right> <reference> cancelled', 'cancel');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('varyRight', 'registrationServices', 'Vary Right (General)::::Modifica diritto (generico)', 'x', 5, 5.00, 0.00, 0, 1, 'Variation of <right> <reference>', 'vary');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('removeRight', 'registrationServices', 'Terminate lease', 'c', 5, 5.00, 0.00, 0, 1, '<right> <reference> cancelled', 'cancel');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('newDigitalTitle', 'registrationServices', 'Convert to Digital Title::::Nuovo Titolo Digitale', 'x', 5, 0.00, 0.00, 0, 1, 'Title converted to digital format');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('newDigitalProperty', 'registrationServices', 'New Digital Property::::Nuova Proprieta Digitale', 'x', 5, 0.00, 0.00, 0, 1);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('removeRestriction', 'registrationServices', 'Remove Restriction (General)::::Rimozione restrizione (generica)', 'x', 5, 5.00, 0.00, 0, 1, '<restriction> <reference> cancelled', 'cancel');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('cancelProperty', 'registrationServices', 'Surrender of a lease', 'c', 5, 5, 0, 0, 1, '', 'cancel');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('varyCaveat', 'registrationServices', 'Vary caveat', 'x', 5, 5, 0, 0, 1, '<Caveat> <reference>', 'caveat', 'vary');
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, type_action_code) values('cnclPowerOfAttorney', 'registrationServices', 'Cancel Power of Attorney', 'x', 1, 5.00, 0, 0, 0, 'cancel');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, type_action_code) values('cnclPowerOfAttorney', 'registrationServices', 'Cancel Power of Attorney', 'c', 1, 5.00, 0, 0, 0, 'cancel');
 insert into application.request_type(code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('cnclStandardDocument', 'registrationServices', 'Withdraw Standard Document', 'To withdraw from use any standard document (such as standard mortgage or standard lease)', 'x', 1, 5.00, 0, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('systematicRegn', 'registrationServices', 'Systematic Registration Claim::::Registrazione Sistematica', 'x', 90, 50.00, 0, 0, 1, 'Title issued at completion of systematic registration', 'ownership', 'new');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('lodgeObjection', 'legalServices', 'Lodge Objection::::Obiezioni', 'c', 90, 5.00, 0, 0, 1);
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('newLease', 'registrationServices', 'New Lease', 'c', 10, 25, 0, 0, 0, 'Lease for <Person name>');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('newLease', 'registrationServices', 'New Lease', 'x', 10, 25, 0, 0, 0, 'Lease for <Person name>');
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('leaseTransfer', 'registrationServices', 'Consent to Transfer a Lease', 'x', 0, 0, 0, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('examSurveyFiles', 'registrationServices', 'Examination of Survey Files', 'x', 0, 0, 0, 0, 0);
-insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('cancelMortBonds', 'registrationServices', 'Cancel Mortage', 'c', 0, 0, 0, 0, 0, 'Cancellation of Mortgage', 'mortgage', 'cancel');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('cancelMortBonds', 'registrationServices', 'Cancel Mortgage', 'c', 0, 0, 0, 0, 0, 'Cancellation of Mortgage', 'mortgage', 'cancel');
 
 
 
@@ -6807,10 +6799,7 @@ CREATE TABLE application.service(
     base_fee numeric(20, 2) NOT NULL DEFAULT (0),
     area_fee numeric(20, 2) NOT NULL DEFAULT (0),
     value_fee numeric(20, 2) NOT NULL DEFAULT (0),
-    ground_rent numeric(20, 2) NOT NULL DEFAULT (0),
     service_fee numeric(29, 2) NOT NULL DEFAULT (0),
-    stamp_duty numeric(20, 2) NOT NULL DEFAULT (0),
-    transfer_duty numeric(20, 2),
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -6856,10 +6845,7 @@ CREATE TABLE application.service_historic
     base_fee numeric(20, 2),
     area_fee numeric(20, 2),
     value_fee numeric(20, 2),
-    ground_rent numeric(20, 2),
     service_fee numeric(29, 2),
-    stamp_duty numeric(20, 2),
-    transfer_duty numeric(20, 2),
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),

@@ -353,7 +353,7 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('BulkAppli
 --INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regSurrenderLease', 'deeds-reps-id');
 --INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regVarLease', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cancelMortBonds', 'deeds-reps-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('copyLostDeed', 'deeds-reps-id');
+--INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('copyLostDeed', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('documentSearch', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regDeedTransfer', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('RegMiningLease', 'deeds-reps-id');
@@ -492,7 +492,14 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id)
 ---
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('consentApplication', 'super-group-id');
 
-
+--
+INSERT INTO system.approle_appgroup VALUES('regNotBond','deeds-manager-id');
+INSERT INTO system.approle_appgroup VALUES('regNotBond','deeds-reps-id');
+INSERT INTO system.approle_appgroup VALUES('regNotBond','super-group-id');
+INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclNotBond','deeds-manager-id');
+INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclNotBond','deeds-reps-id');
+INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclNotBond','super-group-id');
+--
 
 
 
