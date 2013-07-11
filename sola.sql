@@ -2929,40 +2929,40 @@ LADM Definition
 Not Defined';
     
  -- Data for the table source.administrative_source_type -- 
-insert into source.administrative_source_type(code, display_value, status) values('agriConsent', 'Agricultural Consent::::Permesso Agricolo', 'x');
-insert into source.administrative_source_type(code, display_value, status) values('agriLease', 'Agricultural Lease::::Contratto Affitto Agricolo', 'x');
-insert into source.administrative_source_type(code, display_value, status) values('agriNotaryStatement', 'Agricultural Notary Statement::::Dichiarazione Agricola Notaio', 'x');
 insert into source.administrative_source_type(code, display_value, status) values('deed', 'Deed', 'c');
-insert into source.administrative_source_type(code, display_value, status) values('lease', 'Lease::::Affitto', 'c');
-insert into source.administrative_source_type(code, display_value, status) values('mortgage', 'Mortgage::::Ipoteca', 'c');
-insert into source.administrative_source_type(code, display_value, status) values('title', 'Title::::Titolo', 'c');
-insert into source.administrative_source_type(code, display_value, status, description) values('proclamation', 'Proclamation::::Bando', 'c', 'Extension to LADM');
-insert into source.administrative_source_type(code, display_value, status, description) values('courtOrder', 'Court Order::::Ordine Tribunale', 'c', 'Extension to LADM');
-insert into source.administrative_source_type(code, display_value, status, description) values('agreement', 'Agreement::::Accordo', 'c', 'Extension to LADM');
-insert into source.administrative_source_type(code, display_value, status, description) values('contractForSale', 'Contract for Sale::::Contratto di vendita', 'c', 'Extension to LADM');
-insert into source.administrative_source_type(code, display_value, status, description) values('will', 'Will::::Testamento', 'c', 'Extension to LADM');
-insert into source.administrative_source_type(code, display_value, status, description, is_for_registration) values('powerOfAttorney', 'Power of Attorney::::Procura', 'c', 'Extension to LADM', true);
-insert into source.administrative_source_type(code, display_value, status, description, is_for_registration) values('standardDocument', 'Standard Document::::Documento Standard', 'c', 'Extension to LADM', true);
-insert into source.administrative_source_type(code, display_value, status, description) values('cadastralMap', 'Cadastral Map::::Mappa Catastale', 'c', 'Extension to LADM');
-insert into source.administrative_source_type(code, display_value, status, description) values('cadastralSurvey', 'Cadastral Survey::::Rilevamento Catastale', 'c', 'Extension to LADM');
-insert into source.administrative_source_type(code, display_value, status, description) values('waiver', 'Waiver to Caveat or other requirement', 'c', 'Extension to LADM');
-insert into source.administrative_source_type(code, display_value, status, description) values('idVerification', 'Form of Identification including Personal ID', 'c', 'Extension to LADM');
-insert into source.administrative_source_type(code, display_value, status, description) values('caveat', 'Caveat::::', 'c', 'Extension to LADM');
-insert into source.administrative_source_type(code, display_value, status, description) values('publicNotification', 'Public Notification for Systematic Registration::::Pubblica notifica per registrazione sistematica', 'c', 'Extension to LADM');
-insert into source.administrative_source_type(code, display_value, status, description) values('systematicRegn', 'Systematic Registration Application::::Registrazione sistematica', 'c', 'Extension to LADM');
-insert into source.administrative_source_type(code, display_value, status, description) values('objection', 'Objection  document::::Obiezione', 'c', 'Extension to LADM');
+insert into source.administrative_source_type(code, display_value, status) values('lease', 'Lease', 'c');
+insert into source.administrative_source_type(code, display_value, status, description) values('courtOrder', 'Court Paper', 'c', 'Extension to LADM');
+insert into source.administrative_source_type(code, display_value, status, description) values('agreement', 'Agreement', 'c', 'Extension to LADM');
+insert into source.administrative_source_type(code, display_value, status, description) values('contractForSale', 'Contract for Sale', 'c', 'Extension to LADM');
+insert into source.administrative_source_type(code, display_value, status, description) values('will', 'Will and Last Testament', 'c', 'Extension to LADM');
+insert into source.administrative_source_type(code, display_value, status, description, is_for_registration) values('powerOfAttorney', 'Power of Attorney', 'c', 'Extension to LADM', true);
+insert into source.administrative_source_type(code, display_value, status, description) values('cadastralSurvey', 'Plan of Survey (S10)', 'c', 'Extension to LADM');
+insert into source.administrative_source_type(code, display_value, status, description) values('idVerification', 'Identification Document', 'c', 'Extension to LADM');
 insert into source.administrative_source_type(code, display_value, status) values('pdf', 'Pdf Scanned Document', 'x');
 insert into source.administrative_source_type(code, display_value, status) values('tiff', 'Tiff Scanned Document', 'x');
 insert into source.administrative_source_type(code, display_value, status) values('jpg', 'Jpg Scanned Document', 'x');
 insert into source.administrative_source_type(code, display_value, status) values('tif', 'Tif Scanned Document', 'x');
 insert into source.administrative_source_type(code, display_value, status) values('valuationReport', 'Property Valuation Report', 'c');
 insert into source.administrative_source_type(code, display_value, status) values('offPaymentRecpt', 'Official Payment Receipt', 'c');
-insert into source.administrative_source_type(code, display_value, status) values('groundRentExemp', 'Ground Rent Exemption Application', 'c');
-insert into source.administrative_source_type(code, display_value, status) values('letterCouncil', 'Letter from Council', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('groundRentExemp', 'Ground Rent Exemption Certificate', 'c');
 insert into source.administrative_source_type(code, display_value, status) values('declareLandHold', 'Declaration of Land Holdings', 'c');
-insert into source.administrative_source_type(code, display_value, status) values('consentCert', 'Consent of Certificate', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('consentCert', 'Consent Certificate', 'c');
 insert into source.administrative_source_type(code, display_value, status) values('marriageCert', 'Marriage Certificate', 'c');
 insert into source.administrative_source_type(code, display_value, status, description, is_for_registration) values('disputedoc', 'Dispute Document', 'c', '', false);
+insert into source.administrative_source_type(code, display_value, status, is_for_registration) values('appForm', 'Application Form', 'c', true);
+insert into source.administrative_source_type(code, display_value, status) values('surveyReport', 'Complete Survey Report', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('certIncorp', 'Certificate of Incorporation', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('changeUseApp', 'Change of Use Approval', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('deathCert', 'Death Certificate', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('landUseCert', 'Land Use Certificate', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('memoArticles', 'Memorandum of Articles', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('memoAssoc', 'Memorandum of Association', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('otherDocument', 'Other Documents', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('swornAffdt', 'Sworn Affidavit', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('taxClrCert', 'Tax Clearance Certificate', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('titleDeed', 'Title Deed', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('trust', 'Trust', 'c');
+insert into source.administrative_source_type(code, display_value, status) values('bond', 'Bond', 'c');
 
 
 
@@ -5210,6 +5210,32 @@ insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, g
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('residential', 'grade4', 50, 0.17, 8);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('residential', 'grade5', 50, 0.12, 8);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('residential', 'grade6', 50, 0, 8);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('recreational', 'grade1', 0, 500, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('charitable', 'grade1', 0, 200, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('hospital', 'grade1', 0, 200, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('educational', 'grade1', 0, 200, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('religious', 'grade1', 0, 20, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('recreational', 'grade2', 0, 200, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricIrrigated', 'grade1', 0, 105, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricIrrigated', 'grade2', 0, 80, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricIrrigated', 'grade3', 0, 52, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricIrrigated', 'grade4', 0, 31, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricIrrigated', 'grade5', 0, 21, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricNonIrrigated', 'grade1', 0, 21, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricNonIrrigated', 'grade2', 0, 16, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricNonIrrigated', 'grade3', 0, 11, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricNonIrrigated', 'grade4', 0, 9, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricNonIrrigated', 'grade5', 0, 6, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricRangeGrazing', 'grade1', 0, 6, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricRangeGrazing', 'grade2', 0, 3, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricRangeGrazing', 'grade3', 0, 5, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricRangeGrazing', 'grade4', 0, 3, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricRangeGrazing', 'grade5', 0, 1, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricOther', 'grade1', 0, 105, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricOther', 'grade2', 0, 84, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricOther', 'grade3', 0, 63, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricOther', 'grade4', 0, 31, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricOther', 'grade5', 0, 10, 0);
 
 
 
@@ -5238,7 +5264,6 @@ Not Defined';
 insert into cadastre.land_use_type(code, display_value, status) values('commercial', 'Commercial', 'c');
 insert into cadastre.land_use_type(code, display_value, status) values('residential', 'Residential', 'c');
 insert into cadastre.land_use_type(code, display_value, status) values('industrial', 'Industrial', 'c');
-insert into cadastre.land_use_type(code, display_value, status) values('agricultural', 'Agricultural', 'c');
 insert into cadastre.land_use_type(code, display_value, status) values('hotel', 'Hotel', 'c');
 insert into cadastre.land_use_type(code, display_value, status) values('petroleum', 'Petroleum', 'c');
 insert into cadastre.land_use_type(code, display_value, status) values('retail', 'Retail', 'c');
@@ -5247,6 +5272,13 @@ insert into cadastre.land_use_type(code, display_value, status) values('charitab
 insert into cadastre.land_use_type(code, display_value, status) values('hospital', 'Hospital', 'c');
 insert into cadastre.land_use_type(code, display_value, status) values('religious', 'Religious', 'c');
 insert into cadastre.land_use_type(code, display_value, status) values('educational', 'Educational', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('recreational', 'Recreational', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('institutional', 'Institutional', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('agricIrrigated', 'Irrigated Agriculture', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('agricNonIrrigated', 'Non-irrigated Agriculture', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('agricRangeGrazing', 'Range Grazing or Forestry', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('agricOther', 'Other Agricultural Use', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('agricIntensive', 'Livestock, Poultry, or Horticulture', 'c');
 
 
 
@@ -6331,6 +6363,7 @@ LADM Definition
 Not Applicable';
     
  -- Data for the table application.request_type -- 
+<<<<<<< HEAD
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('cadastreChange', 'registrationServices', 'Change to Cadastre::::Cambio del Catasto', 'c', 30, 25.00, 0.10, 0, 1);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('redefineCadastre', 'registrationServices', 'Redefine Cadastre::::Redefinizione catasto', 'c', 30, 25.00, 0.10, 0, 1);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('documentCopy', 'informationServices', 'Document Copy::::Copia Documento', 'x', 1, 0.50, 0.00, 0, 0);
@@ -6377,6 +6410,37 @@ insert into application.request_type(code, request_category_code, display_value,
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('leaseTransfer', 'registrationServices', 'Consent to Transfer a Lease', 'x', 0, 0, 0, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('examSurveyFiles', 'registrationServices', 'Examination of Survey Files', 'x', 0, 0, 0, 0, 0);
 insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('cancelMortBonds', 'registrationServices', 'Cancel Mortgage', 'c', 0, 0, 0, 0, 0, 'Cancellation of Mortgage', 'mortgage', 'cancel');
+=======
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('cadastreChange', 'registrationServices', 'Change to Cadastre', 'c', 30, 50.00, 0.10, 0, 1);
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('redefineCadastre', 'registrationServices', 'Redefine Cadastre', 'c', 30, 50.00, 0.10, 0, 1);
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('documentCopy', 'informationServices', 'Copy of Lost Deed', 'c', 1, 0, 0.00, 0, 0);
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('varyMortgage', 'registrationServices', 'Cession of Mortgage', 'c', 1, 0, 0.00, 0, 1, 'Change on the mortgage', 'mortgage', 'vary');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnDeeds', 'registrationServices', 'Deed Registration', 'c', 3, 0, 0.00, 0, 0);
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('regnPowerOfAttorney', 'registrationServices', 'Registration of Power of Attorney', 'c', 3, 0, 0.00, 0, 0);
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('surveyPlanCopy', 'informationServices', 'Print Survey Diagram', 'c', 1, 0, 0.00, 0, 0);
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required) values('cadastrePrint', 'informationServices', 'Print Location Map', 'c', 1, 0, 0.00, 0, 0);
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('registerLease', 'registrationServices', 'Register Lease', 'c', 5, 0, 0.00, 0, 1, 'Lease of nn years to <name>', 'lease', 'new');
+insert into application.request_type(code, request_category_code, display_value, description, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('newOwnership', 'registrationServices', 'Transfer Lease', 'New Ownership through sale or inheritance of property', 'c', 5, 0, 0.00, 0.02, 1, 'Transfer to <name>', 'lease', 'vary');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('mortgage', 'registrationServices', 'Register Mortgage', 'c', 5, 0, 0.00, 0, 1, 'Mortgage to <lender>', 'mortgage', 'new');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('servitude', 'registrationServices', 'Register Servitude', 'c', 5, 0, 0.00, 0, 1, 'Servitude over <parcel1> in favour of <parcel2>', 'servitude', 'new');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('varyLease', 'registrationServices', 'Vary Lease', 'c', 5, 50.00, 0.00, 0, 1, 'Variation of Lease <reference>', 'lease', 'vary');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('removeRight', 'registrationServices', 'Termination of a lease', 'c', 5, 0, 0.00, 0, 1, '<right> <reference> cancelled', 'cancel');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('cancelProperty', 'registrationServices', 'Surrender of a lease', 'c', 5, 50, 0, 0, 1, '', 'cancel');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, type_action_code) values('cnclPowerOfAttorney', 'registrationServices', 'Cancel Power of Attorney', 'c', 1, 5.00, 0, 0, 0, 'cancel');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('cancelMortBonds', 'registrationServices', 'Cancel Mortage', 'c', 0, 0, 0, 0, 0, 'Cancellation of Mortgage', 'mortgage', 'cancel');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, type_action_code) values('cnclNotBond', 'registrationServices', 'Cancel Notarial Bond', 'c', 0, 0, 0, 0, 0, '', 'cancel');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('regSublease', 'registrationServices', 'New Sub-Lease', 'c', 0, 50, 0, 0, 0, 'Sublease In faovour of <name>', 'subLease', 'new');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('cnclSublease', 'registrationServices', 'Cancel Sub-Lease', 'c', 0, 0, 0, 0, 0, ' ', 'subLease', 'cancel');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('consentApplication', 'registrationServices', 'Consent Application', 'c', 0, 50, 0, 0, 1, '');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code, type_action_code) values('varySublease', 'registrationServices', 'Vary Sublease', 'c', 0, 0, 0, 0, 1, ' ', 'subLease', 'vary');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('endorseRight', 'informationServices', 'Endorsement', 'c', 0, 0, 0, 0, 0, ' ');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template, rrr_type_code) values('renewLease', 'registrationServices', 'Renewal of Lease', 'c', 0, 0, 0, 0, 1, '', 'lease');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('groundRentExemp', 'informationServices', 'Ground Rent Exemption Application', 'c', 0, 0, 0, 0, 1, ' ');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('nameChange', 'informationServices', 'Change of Lessee name(s)', 'c', 0, 0, 0, 0, 0, ' ');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('mapSale', 'informationServices', 'Map Sale', 'c', 0, 0, 0, 0, 0, ' ');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('cadastreImport', 'registrationServices', 'Cadastre Import', 'c', 0, 0, 0, 0, 0, ' ');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('DisputeView', 'informationServices', 'Dispute and Court Cases', 'c', 0, 0, 0, 0, 0, ' ');
+insert into application.request_type(code, request_category_code, display_value, status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, nr_properties_required, notation_template) values('regNotBond', 'registrationServices', 'Register Notarial Bond', 'c', 0, 0, 0, 0, 0, ' ');
 
 
 
@@ -6399,42 +6463,21 @@ LADM Definition
 Not Applicable';
     
  -- Data for the table application.request_type_requires_source_type -- 
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('cadastralSurvey', 'cadastreChange');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('cadastralSurvey', 'redefineCadastre');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('mortgage', 'varyMortgage');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('title', 'varyMortgage');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('title', 'regnOnTitle');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'regnDeeds');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('lease', 'registerLease');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('powerOfAttorney', 'regnPowerOfAttorney');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('standardDocument', 'regnStandardDocument');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('title', 'noteOccupation');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'noteOccupation');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'usufruct');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'waterRights');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('mortgage', 'mortgage');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'buildingRestriction');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'servitude');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('title', 'lifeEstate');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'lifeEstate');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'newApartment');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'newState');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('title', 'caveat');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'removeCaveat');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('title', 'removeCaveat');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'historicOrder');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'limitedRoadAccess');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('lease', 'varyLease');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'varyLease');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('title', 'varyRight');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'varyRight');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'removeRight');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('title', 'removeRight');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'removeRestriction');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('title', 'removeRestriction');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'cnclPowerOfAttorney');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'cnclStandardDocument');
-insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('caveat', 'caveat');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('surveyReport', 'cadastreChange');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('surveyReport', 'redefineCadastre');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('appForm', 'registerLease');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('idVerification', 'registerLease');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('consentCert', 'newOwnership');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('lease', 'newOwnership');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('consentCert', 'servitude');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('cadastralSurvey', 'servitude');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'mortgage');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('appForm', 'mortgage');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('consentCert', 'varyMortgage');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('deed', 'varyMortgage');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('consentCert', 'cancelMortBonds');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('consentCert', 'regSublease');
+insert into application.request_type_requires_source_type(source_type_code, request_type_code) values('appForm', 'newOwnership');
 
 
 
@@ -6753,34 +6796,12 @@ LADM Definition
 The type of right/restriction/responsibility';
     
  -- Data for the table administrative.rrr_type -- 
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('agriActivity', 'rights', 'Agriculture Activity::::Attivita Agricola', false, true, true, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('commonOwnership', 'rights', 'Common Ownership::::Proprieta Comune', false, true, true, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('customaryType', 'rights', 'Customary Right::::Diritto Abituale', false, true, true, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('firewood', 'rights', 'Firewood Collection::::Collezione legna da ardere', false, true, true, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('fishing', 'rights', 'Fishing Right::::Diritto di Pesca', false, true, true, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('grazing', 'rights', 'Grazing Right::::Diritto di Pascolo', false, true, true, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('informalOccupation', 'rights', 'Informal Occupation::::Occupazione informale', false, false, false, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('lease', 'rights', 'Lease::::Affitto', false, true, true, 'c');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('occupation', 'rights', 'Occupation::::Occupazione', false, true, true, 'c');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('ownership', 'rights', 'Ownership::::Proprieta', true, true, true, 'c');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('ownershipAssumed', 'rights', 'Ownership Assumed::::Proprieta Assunta', true, true, true, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('superficies', 'rights', 'Superficies::::Superficie', false, true, true, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('tenancy', 'rights', 'Tenancy::::Locazione', true, true, true, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('usufruct', 'rights', 'Usufruct::::Usufrutto', false, true, true, 'c');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('waterrights', 'rights', 'Water Right::::Servitu di Acqua', false, true, true, 'c');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('adminPublicServitude', 'restrictions', 'Administrative Public Servitude::::Servitu  Amministrazione Pubblica', false, true, true, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('monument', 'restrictions', 'Monument::::Monumento', false, true, true, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('mortgage', 'restrictions', 'Mortgage::::Ipoteca', false, true, true, 'c');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('noBuilding', 'restrictions', 'Building Restriction::::Restrizione di Costruzione', false, false, false, 'c');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('servitude', 'restrictions', 'Servitude::::Servitu', false, false, false, 'c');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('monumentMaintenance', 'responsibilities', 'Monument Maintenance::::Mantenimento Monumenti', false, false, false, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('waterwayMaintenance', 'responsibilities', 'Waterway Maintenance::::Mantenimento Acqurdotti', false, false, false, 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, description, status) values('lifeEstate', 'rights', 'Life Estate::::Patrimonio vita', true, true, true, 'Extension to LADM', 'x');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, description, status) values('apartment', 'rights', 'Apartment Ownership::::Proprieta Appartamento', true, true, true, 'Extension to LADM', 'c');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, description, status) values('stateOwnership', 'rights', 'State Ownership::::Proprieta di Stato', true, false, false, 'Extension to LADM', 'c');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, description, status) values('caveat', 'restrictions', 'Caveat::::Ammonizione', false, true, true, 'Extension to LADM', 'c');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, description, status) values('historicPreservation', 'restrictions', 'Historic Preservation::::Conservazione Storica', false, false, false, 'Extension to LADM', 'c');
-insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, description, status) values('limitedAccess', 'restrictions', 'Limited Access (to Road)::::Accesso limitato (su strada)', false, false, false, 'Extension to LADM', 'c');
+insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('lease', 'rights', 'Lease', false, true, true, 'c');
+insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('mortgage', 'restrictions', 'Mortgage', false, true, true, 'c');
+insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, status) values('servitude', 'restrictions', 'Servitude', false, false, false, 'c');
+insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, description, status) values('subLease', 'rights', 'Sub Lease', false, false, true, 'Indicates the property is subject to a sublease agreement', 'c');
+insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, description, status) values('subLeaseMortgage', 'rights', 'Sublease Mortgage', false, false, false, 'Indicates the property is subject to a sublease mortgage', 'c');
+insert into administrative.rrr_type(code, rrr_group_type_code, display_value, is_primary, share_check, party_required, description, status) values('tenancy', 'rights', 'tenancy', false, false, false, 'for migration purposes only', 'x');
 
 
 

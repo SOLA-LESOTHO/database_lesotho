@@ -1,6 +1,6 @@
 	-- Attach required document types per application service
 
-	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'leaseTransfer';
+	--DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'leaseTransfer';
 
 	
 	--INSERT INTO application.request_type_requires_source_type(
@@ -26,7 +26,7 @@
 	--	VALUES ('contractForSale', 'leaseTransfer');	
 		
 
-	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'registerLease';
+	--DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'registerLease';
 
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
@@ -51,7 +51,7 @@
 	--	VALUES ('landUseCert', 'registerLease');	
 		
 		
-	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'regSublease';
+	--DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'regSublease';
 
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
@@ -91,7 +91,7 @@
 	--			source_type_code, request_type_code)
 	--	VALUES ('groundRentExemp', 'varyLease');	
 		
-	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'leaseTrans';
+	--DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'leaseTrans';
 
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
@@ -117,7 +117,7 @@
 
 
 
-	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'leaseSubdiv';
+	--DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'leaseSubdiv';
 
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
@@ -145,7 +145,7 @@
 	--	VALUES ('groundRentExemp', 'leaseSubdiv');
 
 		
-	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'transmitJointLease';
+	--DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'transmitJointLease';
 
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
@@ -161,11 +161,11 @@
 	--	VALUES ('lease', 'transmitJointLease');
 		
 		
-	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'mortgage';
+	--DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'mortgage';
 
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('deed', 'mortgage');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('deed', 'mortgage');
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
 	--	VALUES ('consentCert', 'mortgage');
@@ -182,7 +182,7 @@
 	--			source_type_code, request_type_code)
 	--	VALUES ('appForm', 'mortgage');
 		
-	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'cancelMortBonds';
+	--DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'cancelMortBonds';
 
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
@@ -203,7 +203,7 @@
 	--			source_type_code, request_type_code)
 	--	VALUES ('appForm', 'cancelMortBonds');	
 		
-	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'cedeMortgage';
+	--DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'cedeMortgage';
 
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
@@ -225,7 +225,7 @@
 	--	VALUES ('appForm', 'cedeMortgage');
 
 
-	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'lostLease';
+	--DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'lostLease';
 
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
@@ -243,7 +243,7 @@
 	--			source_type_code, request_type_code)
 	--	VALUES ('courtOrder', 'lostLease');
 		
-	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'transferMortgage';
+	--DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'transferMortgage';
 
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
@@ -266,7 +266,7 @@
 
 		
 		
-	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'ministrialConsent';
+	--DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.request_type_code LIKE 'ministrialConsent';
 
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
@@ -305,47 +305,47 @@
 		
 
 	--Attach an Application form to every service provided by LAA
-	DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.source_type_code LIKE 'appForm';
+	--DELETE FROM application.request_type_requires_source_type WHERE application.request_type_requires_source_type.source_type_code LIKE 'appForm';
 
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'regnReducMortgage');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'cancServitude');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'regnDeeds');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'cnclPowerOfAttorney');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'cnclDocument');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'provideSpatialData');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'regnReducMortgage');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'cancServitude');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'regnDeeds');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'cnclPowerOfAttorney');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'cnclDocument');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'provideSpatialData');
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
 	--	VALUES ('appForm', 'cadastreChange');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'caveat');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'documentSearch');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'servitude');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'cancelMortBonds');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'leaseTransfer');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'regRedMortBond');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'caveat');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'documentSearch');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'servitude');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'cancelMortBonds');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'leaseTransfer');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'regRedMortBond');
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
 	--	VALUES ('appForm', 'counterClaim');
@@ -358,16 +358,16 @@
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
 	--	VALUES ('appForm', 'disputeSpdic');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'exemptionApp');
-	INSERT INTO application.request_type_requires_source_type(
-				source_type_code, request_type_code)
-		VALUES ('appForm', 'documentCopy');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'exemptionApp');
+	--INSERT INTO application.request_type_requires_source_type(
+	--			source_type_code, request_type_code)
+	--	VALUES ('appForm', 'documentCopy');
 	--INSERT INTO application.request_type_requires_source_type(
 	--			source_type_code, request_type_code)
 	--	VALUES ('appForm', 'copyLostDeed');
-	INSERT INTO application.request_type_requires_source_type(
+	--INSERT INTO application.request_type_requires_source_type(
 				source_type_code, request_type_code)
 		VALUES ('appForm', 'serviceEnquiry');
 	INSERT INTO application.request_type_requires_source_type(

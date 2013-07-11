@@ -52,8 +52,8 @@ WHERE s.id = #{id}
 order by 1 desc
 limit 1');
 
-insert into system.br_validation(br_id, severity_code, target_service_moment, target_code, target_request_type_code, order_of_execution) 
-values('service-check-no-previous-digital-title-service', 'warning', 'complete', 'service', 'newDigitalTitle', 720);
+--insert into system.br_validation(br_id, severity_code, target_service_moment, target_code, target_request_type_code, order_of_execution) 
+--values('service-check-no-previous-digital-title-service', 'warning', 'complete', 'service', 'newDigitalTitle', 720);
 
 ----------------------------------------------------------------------------------------------------
 INSERT INTO system.br(id, technical_type_code, feedback, technical_description) 
@@ -444,10 +444,54 @@ from application.service s
   on s.id = t.from_service_id
 where s.id = #{id} and sr.type_code = ''lease'' and sr.ext_archive_id is not null');
 
-INSERT INTO system.br_validation(br_id, target_code, target_service_moment, target_request_type_code, severity_code, order_of_execution)
-VALUES ('service-new-lease-complete', 'service', 'complete', 'newLease', 'critical', 1);
+--INSERT INTO system.br_validation(br_id, target_code, target_service_moment, target_request_type_code, severity_code, order_of_execution)
+--VALUES ('service-new-lease-complete', 'service', 'complete', 'newLease', 'critical', 1);
 
 INSERT INTO system.br_validation(br_id, target_code, target_service_moment, target_request_type_code, severity_code, order_of_execution)
 VALUES ('service-new-lease-complete', 'service', 'complete', 'registerLease', 'critical', 2);
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+INSERT INTO system.br(id, display_name, technical_type_code, feedback, description, technical_description)
+VALUES ('mortgage-lender-is-varied', 'mortgage-lender-is-varied', 'sql', 
+'mortgagee must be varied/changed', 'Run checks prior to the variation of mortgage service completion', '');
+
+INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
+values('mortgage-lender-is-varied', now(), 'infinity', 
+'WITH rrr_list AS
+(SELECT 
+  party_for_rrr.party_id 
+FROM 
+  application.service sv, 
+  transaction.transaction tx, 
+  administrative.rrr pending_rrr, 
+  administrative.rrr, 
+  administrative.party_for_rrr
+WHERE 
+  sv.id = tx.from_service_id AND
+  tx.id = pending_rrr.transaction_id AND
+  pending_rrr.ba_unit_id = rrr.ba_unit_id AND
+  rrr.id = party_for_rrr.rrr_id AND
+  sv.id = #{id} AND 
+  rrr.type_code = ''mortgage'' AND 
+  rrr.status_code = ''current''
+UNION  
+SELECT  
+  party_for_rrr.party_id
+FROM 
+  application.service sv, 
+  transaction.transaction tx, 
+  administrative.rrr pending_rrr, 
+  administrative.party_for_rrr
+WHERE 
+  sv.id = tx.from_service_id AND
+  tx.id = pending_rrr.transaction_id AND
+  pending_rrr.id = party_for_rrr.rrr_id AND
+  sv.id = #{id})
+  SELECT COUNT(DISTINCT party_id) > 1 AS vl
+  from rrr_list');
+
+INSERT INTO system.br_validation(br_id, target_code, target_service_moment, target_request_type_code, severity_code, order_of_execution)
+VALUES ('mortgage-lender-is-varied', 'service', 'complete', 'varyMortgage', 'critical', 1);
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------

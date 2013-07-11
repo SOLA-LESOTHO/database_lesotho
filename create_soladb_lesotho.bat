@@ -54,14 +54,9 @@ echo Loading SOLA business rules... >> build.log 2>&1
 
 echo Loading Lesotho Extensions...
 echo Loading Lesotho Extensions... >> build.log 2>&1
-echo Loading Reference Data... >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\lesotho_reference_data.sql >> build.log 2>&1
 echo Loading Lesotho Business Rules... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\lesotho_business_rules.sql >> build.log 2>&1
-echo Loading documents required per service >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\InsertDocumentsPerService.sql >> build.log 2>&1
 
-REM Loading Users and Roles
 echo Loading Users and Roles... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\lesotho_users_roles.sql >> build.log 2>&1
 echo Loading Lodging Agents... >> build.log 2>&1
