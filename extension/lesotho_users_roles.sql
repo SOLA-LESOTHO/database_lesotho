@@ -140,7 +140,6 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('varyRight
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('PartySave', 'legal-id');
 
 --Bundle Specific to Legal
---INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('courtProcess', 'legal-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('lodgeObjection', 'legal-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('dispute', 'legal-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('serviceEnquiry', 'legal-id');
@@ -164,7 +163,6 @@ INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ApplnReq
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ApplnResubmit','surveymapp-id');
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ApplnDispatch', 'surveymapp-id');  
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ApplnView', 'surveymapp-id');  
-
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('BaunitParcelSave', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('BauunitrrrSave', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('BaunitNotatSave', 'surveymapp-id');
@@ -179,7 +177,6 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cancelPro
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('CancelService', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclStandardDocument', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('historicOrder', 'surveymapp-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('limitedRoadAccess', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('newApartment', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('newFreehold', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('newOwnership', 'surveymapp-id');
@@ -187,7 +184,6 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regnStand
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('removeRight', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('ReportGenerate', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('RevertService', 'surveymapp-id');
-
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('SourcePrint', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('SourceSave', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('SourceSearch', 'surveymapp-id');
@@ -204,11 +200,7 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cadastreP
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('BulkApplication', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cadastreChange', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('PrintMap', 'surveymapp-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('printAllocMap', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('surveyPlanCopy', 'surveymapp-id');
---INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('printSurveyApp', 'surveymapp-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('printSurveyDiag', 'surveymapp-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('provideSpatialData', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('mapSale', 'surveymapp-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('serviceEnquiry', 'surveymapp-id');
 
@@ -247,7 +239,6 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('caveat', 
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclPowerOfAttorney', 'lease-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclStandardDocument', 'lease-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('historicOrder', 'lease-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('limitedRoadAccess', 'lease-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('newApartment', 'lease-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('newFreehold', 'lease-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('newOwnership', 'lease-id');
@@ -276,12 +267,6 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('PartySave
 
 --Bundle Specific to Lease
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('BulkApplication', 'lease-id');
---INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regSurrenderLease', 'lease-id');
---INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('applyRegTrans', 'lease-id');
---INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regVarLease', 'lease-id');
---INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('consentApp', 'lease-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('foreignEntHoldTitle', 'lease-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('groundRentCalc', 'lease-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regSublease', 'lease-id');
 
 --Deeds
@@ -319,7 +304,6 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('caveat', 
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclPowerOfAttorney', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclStandardDocument', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('historicOrder', 'deeds-reps-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('limitedRoadAccess', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('newApartment', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('newFreehold', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('newOwnership', 'deeds-reps-id');
@@ -350,23 +334,13 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('PartySave
 
 --Bundle Specific to Deeds
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('BulkApplication', 'deeds-reps-id');
---INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regSurrenderLease', 'deeds-reps-id');
---INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regVarLease', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cancelMortBonds', 'deeds-reps-id');
---INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('copyLostDeed', 'deeds-reps-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('documentSearch', 'deeds-reps-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regDeedTransfer', 'deeds-reps-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('RegMiningLease', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('mortgage', 'deeds-reps-id');
---INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regNotDeedSer', 'deeds-reps-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regNotGenBond', 'deeds-reps-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regRedMortBond', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('servitude', 'deeds-reps-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regSpecNotBond', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regSublease', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regnOnTitle', 'deeds-reps-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regnDeeds', 'deeds-reps-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('regNotarSuretyBond', 'deeds-reps-id');
+
 
 -- Insert similar roles for Deeds management
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) 
@@ -419,9 +393,7 @@ INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ApplnApp
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) Values('ApplnEdit', 'cust-reps-id');  
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('TransactionCommit', 'cust-reps-id');   
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ApplnArchive', 'cust-reps-id');  
-INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ArchiveApps', 'cust-reps-id');    
---INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ApplnAssignSelf', 'cust-reps-id');  
---INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('CancelService', 'cust-reps-id');  
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ArchiveApps', 'cust-reps-id');     
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('CompleteService', 'cust-reps-id');  
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ApplnDispatch', 'cust-reps-id');    
 INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('ApplnStatus', 'cust-reps-id');  
