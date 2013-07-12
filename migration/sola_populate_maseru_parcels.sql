@@ -12,7 +12,11 @@ ALTER TABLE cadastre.cadastre_object DROP CONSTRAINT IF EXISTS enforce_valid_geo
 ALTER TABLE cadastre.cadastre_object_historic DROP CONSTRAINT IF EXISTS enforce_srid_geom_polygon;
 ALTER TABLE cadastre.cadastre_object_historic DROP CONSTRAINT IF EXISTS enforce_valid_geom_polygon;
 ALTER TABLE cadastre.spatial_value_area DROP CONSTRAINT IF EXISTS spatial_value_area_spatial_unit_id_fk83;
+ALTER TABLE administrative.ba_unit DROP CONSTRAINT IF EXISTS ba_unit_cadastre_object_id_fk41;
 
+---Disable triggers on cadastre object
+ALTER TABLE cadastre.cadastre_object DISABLE TRIGGER ALL;
+---------------------------------------------------------
 
 
 DROP SCHEMA IF EXISTS test_etl2 CASCADE;
@@ -31,9 +35,28 @@ BEGIN
     delete from transaction.transaction where id = transaction_id_vl;
     insert into transaction.transaction(id, status_code, approval_datetime, change_user) values(transaction_id_vl, 'approved', now(), 'test-id');
 
-    FOR rec IN EXECUTE 'SELECT id, plotnumber AS appellatio, partplotnu AS last_part, plotnumber, areai AS area, 
-        ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, partplotnu AS parcel_int,  ''current'' AS parcel_status FROM interim_data."DST27 DEFAULT _Areas plus Maseru Default" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL) and st_isvalid(the_geom)=TRUE'
-	LOOP
+	----Load 22289 Lesotho parcels---LO29
+	
+	FOR rec IN EXECUTE 'SELECT id, plotnumber,areai AS area, 
+			ST_SetSRID(ST_GeometryN(the_geom, 1),22289) AS the_geom,  ''current'' AS parcel_status FROM interim_data."ExaminedPlots_ Lo29" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL) and st_isvalid(the_geom)=TRUE and length(plotnumber)>0'
+		LOOP
+		
+                        first_part = left(rec.plotnumber,position('-' in rec.plotnumber)-1);
+			            last_part = right(rec.plotnumber,length(trim(rec.plotnumber))-position('-' in rec.plotnumber));
+	               
+
+			DELETE FROM cadastre.cadastre_object where name_firstpart=first_part and name_lastpart=last_part;
+			
+			INSERT INTO cadastre.cadastre_object (id, transaction_id, name_firstpart, name_lastpart, geom_polygon, status_code, change_user)
+				VALUES (rec.id, transaction_id_vl, first_part, last_part, rec.the_geom, rec.parcel_status, 'test');  
+		
+		END LOOP;
+
+ ----Load 22287 Lesotho parcels---LO27
+ 
+	FOR rec IN EXECUTE 'SELECT id, plotnumber AS appellatio, partplotnu AS last_part, plotnumber, areai AS area, 
+		ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, partplotnu AS parcel_int,  ''current'' AS parcel_status FROM interim_data."DST27 DEFAULT _Areas plus Maseru Default" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL) and st_isvalid(the_geom)=TRUE'
+		LOOP
 		IF rec.parcel_int not in ('Hydro', 'Road') THEN
 			IF POSITION(rec.last_part in rec.appellatio) > 0 THEN
 				first_part = TRIM(SUBSTRING(rec.appellatio FROM 1 FOR CHAR_LENGTH(rec.appellatio) - (CHAR_LENGTH(rec.last_part) + 1)));
@@ -56,7 +79,9 @@ BEGIN
 			INSERT INTO cadastre.cadastre_object (id, transaction_id, name_firstpart, name_lastpart, geom_polygon, status_code, change_user)
 				VALUES (rec.id, transaction_id_vl, first_part, last_part, rec.the_geom, rec.parcel_status, 'test');  
 		END IF;
-	END LOOP;
+		END LOOP;
+
+		
     RETURN 'ok';
 END;
 $BODY$
@@ -65,23 +90,27 @@ LANGUAGE plpgsql;
 
 
 delete from cadastre.spatial_unit AS su WHERE su.level_id= (select cl.id from cadastre.level as cl WHERE cl.name='Parcels');
- --delete from cadastre.spatial_unit;
+
 
  INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, level_id, change_user) 
 	SELECT id, '2D', plotnumber, 'onSurface',  
 	(SELECT id FROM cadastre.level WHERE name='Parcels') As l_id, 'test' AS ch_user
 	FROM interim_data."DST27 DEFAULT _Areas plus Maseru Default" WHERE ST_GeometryN(the_geom, 1) IS NOT NULL;
 
+INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, level_id, change_user) 
+	SELECT id, '2D', plotnumber, 'onSurface',  
+	(SELECT id FROM cadastre.level WHERE name='Parcels') As l_id, 'test' AS ch_user
+	FROM interim_data."ExaminedPlots_ Lo29" WHERE ST_GeometryN(the_geom, 1) IS NOT NULL;
+
+
 DELETE FROM cadastre.cadastre_object;
+
 SELECT test_etl2.load_parcel();
 
 UPDATE cadastre.spatial_unit SET level_id = (SELECT id FROM cadastre.level WHERE name = 'Parcels') 
 			WHERE (level_id IS NULL);
 
 	
-	
---INSERT INTO cadastre.spatial_value_area (spatial_unit_id, type_code, size, change_user)
-	--SELECT 	id, 'officialArea', areai, 'test' AS ch_user FROM interim_data."DST27 DEFAULT _Areas plus Maseru Default";
 	
 DELETE FROM cadastre.spatial_value_area;
 
@@ -92,5 +121,9 @@ INSERT INTO cadastre.spatial_value_area (spatial_unit_id, type_code, size, chang
 
 INSERT INTO cadastre.spatial_value_area (spatial_unit_id, type_code, size, change_user)
 	SELECT 	co.id, 'calculatedArea', st_area(co.geom_polygon), 'test' AS ch_user FROM cadastre.cadastre_object as co, cadastre.spatial_unit as su where co.id=su.id;
+
+---Enable triggers on cadastre object
+ALTER TABLE cadastre.cadastre_object ENABLE TRIGGER ALL;
+--------------------------------------------------------
 
 DROP SCHEMA IF EXISTS test_etl2 CASCADE;
