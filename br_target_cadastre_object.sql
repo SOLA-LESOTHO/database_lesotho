@@ -299,13 +299,13 @@ VALUES ('redefined-cadastre-objects-do-not-overlap-existing-parcels',
 
 INSERT INTO system.br_definition (br_id, active_from, active_until, body) 
 VALUES ('redefined-cadastre-objects-do-not-overlap-existing-parcels', '2013-05-30', 'infinity', 'SELECT CASE
-	WHEN
-		(SELECT st_overlaps(co2.geom_polygon, cot.geom_polygon)
-		AS vl
+	WHEN EXISTS 
+		(SELECT co2.id
 		FROM cadastre.cadastre_object_target cot, cadastre.cadastre_object co2
 		WHERE cot.transaction_id = #{id}
 		AND co2.status_code != ''historic''
-		AND co2.id != cot.cadastre_object_id
+		AND co2.id NOT IN (SELECT cot2.cadastre_object_id FROM cadastre.cadastre_object_target cot2
+                           WHERE cot.transaction_id = cot.transaction_id)
 		AND st_overlaps(cot.geom_polygon, co2.geom_polygon)) THEN FALSE
 	ELSE TRUE
 END
