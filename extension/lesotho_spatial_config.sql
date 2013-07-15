@@ -12,10 +12,10 @@ INSERT INTO public.spatial_ref_sys(srid, auth_name, auth_srid, srtext, proj4text
 -- This change is required for GeoTools 
 UPDATE public.spatial_ref_sys set srtext = 
 	'PROJCS["Cape / Lo27",GEOGCS["Cape",DATUM["Cape",SPHEROID["Clarke 1880 (Arc)",6378249.145,293.4663077,AUTHORITY["EPSG","7013"]],TOWGS84[-136,-108,-292,0,0,0,0],AUTHORITY["EPSG","6222"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4222"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse Mercator (South Orientated)"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",27],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],AUTHORITY["EPSG","22287"],AXIS["Y",WEST],AXIS["X",SOUTH]]'
-   	srid = 22287;  
+ WHERE srid = 22287;  
 UPDATE public.spatial_ref_sys set proj4text = 
 	'+proj=tmerc +lat_0=0 +lon_0=27 +k=1 +x_0=0 +y_0=0 +axis=wsu +a=6378249.145 +b=6356514.966398753 +towgs84=-136,-108,-292,0,0,0,0 +units=m +no_defs'
-   	srid = 22287;
+ WHERE srid = 22287;
 	
 	
 -- Change the projection name for Lo29 from Transverse_Mercator_South_Orientated to Transverse Mercator (South Orientated).
