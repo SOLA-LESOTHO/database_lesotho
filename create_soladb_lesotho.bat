@@ -59,8 +59,6 @@ echo Loading Lesotho Business Rules... >> build.log 2>&1
 
 echo Loading Users and Roles... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\lesotho_users_roles.sql >> build.log 2>&1
-echo Loading Lodging Agents... >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\lesotho_agents.sql >> build.log 2>&1
 
 
 REM  Loading laa spatial data section
@@ -103,9 +101,9 @@ REM end of loading laa spatial data section
 
 REM loading lease data section
 
-echo Loading lease and deeds documents
-echo Loading lease and deeds documents >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=..\laa_data\document.sql >> build.log 2>&1
+REM echo Loading lease and deeds documents
+REMecho Loading lease and deeds documents >> build.log 2>&1
+REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=..\laa_data\document.sql >> build.log 2>&1
 
 REM echo Creating temporary schema and tables...
 REM echo Creating temporary schema and tables... >> build.log 2>&1
