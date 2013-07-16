@@ -161,6 +161,19 @@ and r.nr not in (select nr from transactionedRrrs);');
 INSERT INTO system.br_validation(br_id, target_code, target_reg_moment, target_rrr_type_code, severity_code, order_of_execution)
 VALUES ('ba_unit-to-terminate-must-not-have-current-rights', 'rrr', 'historic', 'lease', 'critical', 2);
 ----------------------------------------------------------------------------------------------------
+INSERT INTO system.br(id, technical_type_code, feedback, description, technical_description)
+VALUES ('lease-must-have-account-holder', 'sql', 
+'Lease must have one lessee with "Lease account holder" role (payor)', 'Checks lease to have one payor.', '');
+
+insert into system.br_definition(br_id, active_from, active_until, body) 
+values('lease-must-have-account-holder', now(), 'infinity', 
+'select count(*)>0 as vl
+from administrative.rrr r inner join (administrative.party_for_rrr pr inner join party.party_role pro on pr.party_id = pro.party_id) on r.id = pr.rrr_id
+where pro.type_code = ''accountHolder'' and r.id = #{id}');
+
+INSERT INTO system.br_validation(br_id, target_code, target_rrr_type_code, target_reg_moment, severity_code, order_of_execution)
+VALUES ('lease-must-have-account-holder', 'rrr', 'lease', 'current', 'critical', 1);
+----------------------------------------------------------------------------------------------------
 
 update system.br set display_name = id where display_name !=id;
 
