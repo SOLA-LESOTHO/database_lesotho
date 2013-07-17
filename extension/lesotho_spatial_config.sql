@@ -48,7 +48,7 @@ WHERE "name" = 'parcels';
 
 UPDATE system.config_map_layer
 SET item_order = 35,
-    title = 'Historic plots with current leases'
+    title = 'Historic plots with registered leases'
 WHERE "name" = 'parcels-historic-current-ba';
 
 UPDATE system.config_map_layer
