@@ -15,16 +15,17 @@ INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_c
 	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
 	
 
-delete from system.config_map_layer where name='grid';
-delete from system.query where name='SpatialResult.getGrids';
-delete from system.query where name='dynamic.informationtool.get_grids';
+-- Layers must be configured in lesotho_spatial_config.sql and nowhere else!
+--delete from system.config_map_layer where name='grid';
+--delete from system.query where name='SpatialResult.getGrids';
+--delete from system.query where name='dynamic.informationtool.get_grids';
 	
-insert into system.query (name,sql) values('SpatialResult.getGrids','select su.id, su.label,  st_asewkb(su.geom) as the_geom from cadastre.spatial_unit su, cadastre.level l where su.level_id = l.id and l."name" = ''Grids'' ');
-insert into system.query (name,sql) values('dynamic.informationtool.get_grids','select su.id, su.label, st_asewkb(su.geom) as the_geom from cadastre.spatial_unit su, cadastre.level l where su.level_id = l.id and l."name" = ''Grids'' and ST_Intersects(su.geom, ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid}))');
+--insert into system.query (name,sql) values('SpatialResult.getGrids','select su.id, su.label,  st_asewkb(su.geom) as the_geom from cadastre.spatial_unit su, cadastre.level l where su.level_id = l.id and l."name" = ''Grids'' ');
+--insert into system.query (name,sql) values('dynamic.informationtool.get_grids','select su.id, su.label, st_asewkb(su.geom) as the_geom from cadastre.spatial_unit su, cadastre.level l where su.level_id = l.id and l."name" = ''Grids'' and ST_Intersects(su.geom, ST_SetSRID(ST_GeomFromWKB(#{wkb_geom}), #{srid}))');
 
-delete from system.query_field where query_name='dynamic.informationtool.get_grids';
-delete from system.config_map_layer where name='grid';
-insert into system.query_field (query_name, index_in_query,name) values('dynamic.informationtool.get_grids', 0, 'id');
-insert into system.query_field (query_name, index_in_query,name,display_value) values('dynamic.informationtool.get_grids', 1, 'label', 'Grid Number');
-insert into system.query_field (query_name, index_in_query,name) values('dynamic.informationtool.get_grids', 2, 'the_geom');
-insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('grid', 'Grids::::Particelle', 'pojo', true, true, 20, 'parcel.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getGrids', 'dynamic.informationtool.get_grids');
+--delete from system.query_field where query_name='dynamic.informationtool.get_grids';
+--delete from system.config_map_layer where name='grid';
+--insert into system.query_field (query_name, index_in_query,name) values('dynamic.informationtool.get_grids', 0, 'id');
+--insert into system.query_field (query_name, index_in_query,name,display_value) values('dynamic.informationtool.get_grids', 1, 'label', 'Grid Number');
+--insert into system.query_field (query_name, index_in_query,name) values('dynamic.informationtool.get_grids', 2, 'the_geom');
+--insert into system.config_map_layer(name, title, type_code, active, visible_in_start, item_order, style, pojo_structure, pojo_query_name, pojo_query_name_for_select) values('grid', 'Grids::::Particelle', 'pojo', true, true, 20, 'parcel.xml', 'theGeom:Polygon,label:""', 'SpatialResult.getGrids', 'dynamic.informationtool.get_grids');

@@ -70,9 +70,6 @@ REM  %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbn
 echo Loading spatial config... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\lesotho_spatial_config.sql >> build.log 2>&1
 
-echo Loading Lesotho map layer... >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\config_map_layer_lesotho.sql >> build.log 2>&1
-
 echo Loading Maseru Parcels ... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\sola_populate_maseru_parcels.sql >> build.log 2>&1
 
@@ -82,17 +79,11 @@ echo Loading Lesotho Grids... >> build.log 2>&1
 echo Loading roads and zones data... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\sola_populate_laa_shapefiles.sql >> build.log 2>&1
 
-rem -- echo Parcel numbering trigger >> build.log 2>&1
-rem -- %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\system_query_localised_parcel_numbering.sql >> build.log 2>&1
-
 echo Parcel numbering >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\trigger_new_cadastre_object.sql >> build.log 2>&1
 
 echo Renaming Zones >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\update_spatial_unit_zones.sql >> build.log 2>&1
-
-echo Updating Layer Precedence >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\system_config_layer_precedence.sql >> build.log 2>&1
 
 REM end of loading laa spatial data section
 

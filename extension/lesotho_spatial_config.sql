@@ -28,42 +28,43 @@ UPDATE public.spatial_ref_sys set proj4text =
 	'+proj=tmerc +lat_0=0 +lon_0=29 +k=1 +x_0=0 +y_0=0 +axis=wsu +a=6378249.145 +b=6356514.966398753 +towgs84=-136,-108,-292,0,0,0,0 +units=m +no_defs'
 WHERE srid = 22289;
 ----- Existing Layer Updates ----
--- Remove layers from core SOLA that are not used by Lesotho
---DELETE FROM system.config_map_layer WHERE "name" IN ('place-names', 'survey-controls', 'roads'); 
 
----- Update existing layers to use correct sytles and item_order ----- 
-
--- Disable this map layer for the time being. LAA have requested 
--- orhtophotos, but this layer needs further configuration before
--- it is made availalbe.  
-
+-- Disable / hide Generic SOLA layers that are not used by LAA
 UPDATE system.config_map_layer
-SET item_order = 10, 
-    visible_in_start = FALSE,
+SET visible_in_start = FALSE,
 	active = FALSE
-WHERE "name" = 'orthophoto';
+WHERE "name" IN ('orthophoto', 'applications', 'place-names', 'survey-controls', 'public-display-parcels', 'public-display-parcels-next');
 
+-- Update Generic SOLA layers so they are not visible by default
 UPDATE system.config_map_layer
-SET item_order = 10, 
-    visible_in_start = FALSE,
-	active = FALSE
-WHERE "name" = 'place_name';
-
-UPDATE system.config_map_layer
-SET item_order = 10, 
-    visible_in_start = FALSE,
-	active = FALSE
-WHERE "name" = 'survey_control';
+SET visible_in_start = FALSE
+WHERE "name" IN ('parcel-nodes', 'parcels-historic-current-ba', 'pending-parcels', 'roads');
 
 UPDATE system.config_map_layer
 SET style = 'parcel.xml', 
-    item_order = 30,
+    item_order = 25,
     title = 'Plots'
-WHERE "name" = 'parcels'; 
+WHERE "name" = 'parcels';
 
 UPDATE system.config_map_layer
-SET pojo_structure = 'theGeom:LineString,label:""'
+SET item_order = 35,
+    title = 'Historic plots with registered leases'
+WHERE "name" = 'parcels-historic-current-ba';
+
+UPDATE system.config_map_layer
+SET item_order = 40,
+    title = 'Pending plots'
+WHERE "name" = 'pending-parcels';
+
+UPDATE system.config_map_layer
+SET pojo_structure = 'theGeom:LineString,label:""',
+    item_order = 45
 WHERE "name" = 'roads'; 
+
+UPDATE system.config_map_layer
+SET item_order = 50,
+    title = 'Plot nodes'
+WHERE "name" = 'parcel-nodes';
 
 
 -- Setup Spatial Config for Lesotho
@@ -108,10 +109,7 @@ INSERT INTO system.query("name", sql)
  VALUES ('SpatialResult.getSridZones',
 'SELECT ''1'' as id, ''Cape / Lo27'' AS label, st_asewkb(st_transform(st_PolyFromText(''POLYGON((26.0 28.0, 26.0 31.0, 28.0 31.0, 28.0 28.0, 26.0 28.0))'', 4326), #{srid})) AS the_geom
 UNION
-SELECT ''2'' as id, ''Cape / Lo29'' AS label, st_asewkb(st_transform(st_PolyFromText(''POLYGON((28.0 28.0, 28.0 31.0, 30.0 31.0, 30.0 28.0, 28.0 28.0))'', 4326), #{srid})) AS the_geom'); 
-
--- The below coordinates show Lo29 to the right of Lo27, however the longitude must be changed by 4 degrees
---SELECT ''2'' as id, ''Cape / Lo29'' AS label, st_asewkb(st_transform(st_PolyFromText(''POLYGON((26.0 28.0, 26.0 31.0, 24.0 31.0, 24.0 28.0, 26.0 28.0))'', 4326), #{srid})) AS the_geom'); 
+SELECT ''2'' as id, ''Cape / Lo29'' AS label, st_asewkb(st_transform(st_PolyFromText(''POLYGON((26.0 28.0, 26.0 31.0, 24.0 31.0, 24.0 28.0, 26.0 28.0))'', 4326), #{srid})) AS the_geom');  
  
 INSERT INTO system.query("name", sql)
  VALUES ('dynamic.informationtool.get_zones', 
@@ -136,19 +134,19 @@ INSERT INTO system.query_field (query_name, index_in_query, name, display_value)
 
 delete from system.config_map_layer where name='ls_orthophoto';
 
-INSERT INTO system.config_map_layer VALUES ('ls_orthophoto', 'LS Orthophoto', 'wms', TRUE, TRUE, 1, NULL, 'http://localhost:14922/geoserver/sola/wms', 'sola:ls_orthophoto', '1.1.1', 'image/tiff', NULL, NULL, NULL, NULL, NULL, NULL, FALSE);
-
+INSERT INTO system.config_map_layer ("name", title, type_code, active, visible_in_start, item_order, url, wms_layers, wms_version, wms_format) 
+VALUES ('ls_orthophoto', 'LS Orthophoto', 'wms', TRUE, FALSE, 5, 'http://localhost:8085/geoserver/sola/wms', 'sola:ls_orthophoto', '1.1.1', 'image/tiff');
 
 INSERT INTO system.config_map_layer ("name", title, type_code, pojo_query_name, pojo_structure, pojo_query_name_for_select, style, active, item_order, visible_in_start)
  VALUES ('zones', 'Zones', 'pojo', 'SpatialResult.getZones', 'theGeom:Polygon,label:""', 
-  'dynamic.informationtool.get_zones', 'zone.xml', TRUE, 49, TRUE);
+  'dynamic.informationtool.get_zones', 'zone.xml', TRUE, 10, FALSE);
 
 INSERT INTO system.config_map_layer ("name", title, type_code, pojo_query_name, pojo_structure, pojo_query_name_for_select, style, active, item_order, visible_in_start)
- VALUES ('grid', 'Grids', 'pojo', 'SpatialResult.getGrids', 'theGeom:Polygon,label:""','dynamic.informationtool.get_grids', 'zone.xml', TRUE, 50, TRUE);
+ VALUES ('grid', 'Grids::::Particelle', 'pojo', 'SpatialResult.getGrids', 'theGeom:Polygon,label:""','dynamic.informationtool.get_grids', 'grid.xml', TRUE, 20, TRUE);
 
 INSERT INTO system.config_map_layer ("name", title, type_code, pojo_query_name, pojo_structure, pojo_query_name_for_select, style, active, item_order, visible_in_start)
  VALUES ('srids', 'Coordinate systems', 'pojo', 'SpatialResult.getSridZones', 'theGeom:Polygon,label:""', 
-  NULL, 'srid_zone.xml', TRUE, 51, TRUE);
+  NULL, 'srid_zone.xml', TRUE, 15, TRUE);
 
 
 -- Reset the SRID check constraints
@@ -230,7 +228,7 @@ from_long - to_long define the area in wgs84 that the crs is valid. This range c
     
  -- Data for the table system.crs -- 
 insert into system.crs(srid, from_long, to_long, item_order) values(22287, 26.0, 28.0, 1);
-insert into system.crs(srid, from_long, to_long, item_order) values(22289, 28.0, 30.0, 2);
+insert into system.crs(srid, from_long, to_long, item_order) values(22289, 24.0, 26.0, 2);
 
 -- Function public.get_geometry_with_srid --
 -- SRID on new geometries is now set in the Client, so this function can simply return the geometry passed in. 
@@ -421,4 +419,4 @@ INSERT INTO system.query_field (query_name, index_in_query, name, display_value)
 
 INSERT INTO system.config_map_layer ("name", title, type_code, pojo_query_name, pojo_structure, pojo_query_name_for_select, style, active, item_order, visible_in_start)
  VALUES ('subplots', 'Subplots', 'pojo', 'SpatialResult.getSubplots', 'theGeom:Polygon,label:""', 
- 'dynamic.informationtool.get_subplot', 'subplot.xml', TRUE, 32, TRUE);
+ 'dynamic.informationtool.get_subplot', 'subplot.xml', TRUE, 30, FALSE);
