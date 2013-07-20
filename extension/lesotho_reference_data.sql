@@ -20,7 +20,7 @@ SELECT 'leaseServices', 'Lease Services', NULL, 'c' WHERE 'leaseServices' NOT IN
 -- Disable / hide unsued request types
 UPDATE application.request_type
 SET status = 'x'
-WHERE code in ('documentCopy', 'regnDeeds', 'surveyPlanCopy', 'cadastreImport');
+WHERE code in ('regnDeeds', 'surveyPlanCopy', 'cadastreImport');
 
 UPDATE application.request_type
 SET request_category_code = 'surveyServices'
