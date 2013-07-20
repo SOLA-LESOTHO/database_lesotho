@@ -1,3 +1,27 @@
+-- Configure roles for services
+INSERT INTO system.approle (code, display_value, status)
+SELECT req.code, req.display_value, 'c'
+FROM   application.request_type req
+WHERE  req.status = 'c'
+AND    NOT EXISTS (SELECT r.code FROM system.approle r WHERE req.code = r.code); 
+
+UPDATE  system.approle SET display_value = req.display_value
+FROM 	application.request_type req
+WHERE   system.approle.code = req.code; 
+
+-- Add any missing roles to the super-group-id
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) 
+(SELECT r.code, 'super-group-id' 
+ FROM   system.approle r
+ WHERE NOT EXISTS (SELECT approle_code FROM system.approle_appgroup rg
+                 WHERE  rg.approle_code = r.code
+				 AND    rg.appgroup_id = 'super-group-id')); 
+
+
+
+
+
+
 --DEFINING GROUPS (appgroup)
 insert into system.appgroup(id, name, description) values('cust-manager-id', 'Customer Services Manager group', 'This is a group of Customer Services Management that has right in all customer services activities.');
 insert into system.appgroup(id, name, description) values('cust-reps-id', 'Customer Services Representatives group', 'This is a group of Customer Services Representatives.');
