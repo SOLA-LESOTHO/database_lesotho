@@ -47,8 +47,8 @@ BEGIN
 
 			DELETE FROM cadastre.cadastre_object where name_firstpart=first_part and name_lastpart=last_part;
 			
-			INSERT INTO cadastre.cadastre_object (id, transaction_id, name_firstpart, name_lastpart, geom_polygon, status_code, change_user)
-				VALUES (rec.id, transaction_id_vl, first_part, last_part, rec.the_geom, rec.parcel_status, 'test');  
+			INSERT INTO cadastre.cadastre_object (id, transaction_id, name_firstpart, name_lastpart, geom_polygon, status_code, change_user, rowversion)
+				VALUES (rec.id, transaction_id_vl, first_part, last_part, rec.the_geom, rec.parcel_status, 'test', 1);  
 		
 		END LOOP;
 
@@ -76,8 +76,8 @@ BEGIN
 
 			DELETE FROM cadastre.cadastre_object where name_firstpart=first_part and name_lastpart=last_part;
 			
-			INSERT INTO cadastre.cadastre_object (id, transaction_id, name_firstpart, name_lastpart, geom_polygon, status_code, change_user)
-				VALUES (rec.id, transaction_id_vl, first_part, last_part, rec.the_geom, rec.parcel_status, 'test');  
+			INSERT INTO cadastre.cadastre_object (id, transaction_id, name_firstpart, name_lastpart, geom_polygon, status_code, change_user, rowversion)
+				VALUES (rec.id, transaction_id_vl, first_part, last_part, rec.the_geom, rec.parcel_status, 'test', 1);  
 		END IF;
 		END LOOP;
 
