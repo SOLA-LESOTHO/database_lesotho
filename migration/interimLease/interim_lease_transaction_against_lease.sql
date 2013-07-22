@@ -102,8 +102,8 @@ SET sola_rrr_id = uuid_generate_v1(),
 
 -- Add the mortgage rrr's
 delete from administrative.rrr where type_code = 'mortgage';
-INSERT INTO administrative.rrr(id, ba_unit_id, lease_number, is_primary, registration_date, start_date, execution_date, type_code, status_code, nr, registration_number, transaction_id, change_user,land_use_code)
-SELECT m.sola_rrr_id, b.id, m.titleid, FALSE, m.regdate, m.regdate, m.regdate, 'mortgage', m.status, m.sola_rrr_nr, m.deed_number ,'adm-transaction', 'test-id', m.land_use_code
+INSERT INTO administrative.rrr(id, ba_unit_id, lease_number, is_primary, registration_date, start_date, execution_date, type_code, status_code, nr, registration_number, transaction_id, change_user,land_use_code, land_usable, personal_levy, ground_rent)
+SELECT m.sola_rrr_id, b.id, m.titleid, FALSE, m.regdate, m.regdate, m.regdate, 'mortgage', m.status, m.sola_rrr_nr, m.deed_number ,'adm-transaction', 'test-id', m.land_use_code, 100, 1, 0
 FROM lesotho_etl.sola_mortgage m
 inner join administrative.ba_unit b on
 m.titleid = b.name; 
@@ -201,8 +201,8 @@ FROM
  where  lower(lease."LandUseDescription") in (SELECT code FROM cadastre.land_use_type)
  order by  lower(lease."LandUseDescription")
 )
-INSERT INTO administrative.rrr(id, ba_unit_id, lease_number, is_primary, registration_date, type_code, status_code, nr, transaction_id, change_user, registration_number, land_use_code)
-SELECT t.sola_rrr_id, b.id, t.titleid, FALSE, t.regdate, 'tenancy', t.status, t.sola_rrr_nr, 'adm-transaction', 'test-id', titleref, l.land_use_code
+INSERT INTO administrative.rrr(id, ba_unit_id, lease_number, is_primary, registration_date, start_date, execution_date, type_code, status_code, nr, transaction_id, change_user, registration_number, land_use_code, land_usable, personal_levy, ground_rent)
+SELECT t.sola_rrr_id, b.id, t.titleid, FALSE, t.regdate, t.regdate, t.regdate, 'tenancy', t.status, t.sola_rrr_nr, 'adm-transaction', 'test-id', titleref, l.land_use_code, 100, 1, 0
 FROM lesotho_etl.sola_transfer t
 inner join administrative.ba_unit b on
 t.titleid = b.name
