@@ -4238,7 +4238,7 @@ CREATE TABLE cadastre.cadastre_object(
     valuation_amount numeric(29, 2) NOT NULL DEFAULT (0),
     valuation_zone varchar(20),
     remarks varchar(500),
-    surveyor varchar(255),
+    surveyor_id varchar(40),
     survey_date date,
     survey_fee numeric(29, 2),
     road_class_code varchar(20) DEFAULT ('minor_surfaced'),
@@ -4294,7 +4294,7 @@ CREATE TABLE cadastre.cadastre_object_historic
     valuation_amount numeric(29, 2),
     valuation_zone varchar(20),
     remarks varchar(500),
-    surveyor varchar(255),
+    surveyor_id varchar(40),
     survey_date date,
     survey_fee numeric(29, 2),
     road_class_code varchar(20),
@@ -5469,6 +5469,8 @@ insert into party.legal_type(code, display_value, status) values('unmarried', 'U
 insert into party.legal_type(code, display_value, status) values('widowed', 'Widowed', 'c');
 insert into party.legal_type(code, display_value, status) values('regSoc1966', 'REGISTERED SOCIETY UNDER SOCIETIES ACT OF 1966', 'c');
 insert into party.legal_type(code, display_value, status) values('separated', 'Separated', 'c');
+insert into party.legal_type(code, display_value, status) values('regCompany', 'Registered Under Companies Act', 'c');
+insert into party.legal_type(code, display_value, status) values('single', 'Single', 'c');
 
 
 

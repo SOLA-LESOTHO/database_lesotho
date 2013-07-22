@@ -81,14 +81,15 @@ CREATE TABLE lesotho_etl.sola_mortgage (
    memorial VARCHAR(100),
    regdate timestamp without time zone, 
    status VARCHAR(20),
-   lender VARCHAR(255));
+   lender VARCHAR(255),
+   land_use_code varchar(40));
    
 -- Get all of the mortgage records 
 DELETE FROM lesotho_etl.sola_mortgage; 
- INSERT INTO lesotho_etl.sola_mortgage (titleid, deed_number, titleref, insttype, memorial, regdate, status, lender )
-select t."Plot_Number", t."DeedNumber",  t."TransactionNumber",  t."TransactionType", 'mortgage', t."RegistrationDate", 'current', t."OwnerOtherNames"
+ INSERT INTO lesotho_etl.sola_mortgage (titleid, deed_number, titleref, insttype, memorial, regdate, status, lender, land_use_code )
+select t."Plot_Number", t."DeedNumber",  t."TransactionNumber",  t."TransactionType", 'mortgage', t."RegistrationDate", 'current', t."OwnerOtherNames", r.land_use_code
 from lesotho_etl.lease_transaction t inner join lesotho_etl.lease l
-on t."Plot_Number" = l."Plot_Number"
+on t."Plot_Number" = l."Plot_Number" inner join administrative.rrr r on t."Plot_Number" = r.lease_number
 where length(t."DeedNumber") > 0 
 and t."TransactionType" in ('MORTGAGE')
 AND t."OwnerOtherNames" <> ''
@@ -101,8 +102,8 @@ SET sola_rrr_id = uuid_generate_v1(),
 
 -- Add the mortgage rrr's
 delete from administrative.rrr where type_code = 'mortgage';
-INSERT INTO administrative.rrr(id, ba_unit_id, is_primary, registration_date, type_code, status_code, nr, registration_number, transaction_id, change_user)
-SELECT m.sola_rrr_id, b.id, FALSE, m.regdate, 'mortgage', m.status, m.sola_rrr_nr, m.deed_number ,'adm-transaction', 'test-id'
+INSERT INTO administrative.rrr(id, ba_unit_id, lease_number, is_primary, registration_date, start_date, execution_date, type_code, status_code, nr, registration_number, transaction_id, change_user,land_use_code)
+SELECT m.sola_rrr_id, b.id, m.titleid, FALSE, m.regdate, m.regdate, m.regdate, 'mortgage', m.status, m.sola_rrr_nr, m.deed_number ,'adm-transaction', 'test-id', m.land_use_code
 FROM lesotho_etl.sola_mortgage m
 inner join administrative.ba_unit b on
 m.titleid = b.name; 
@@ -191,11 +192,21 @@ SET sola_rrr_id = uuid_generate_v1(),
 
 	
 -- Add the transfer rrr's
-INSERT INTO administrative.rrr(id, ba_unit_id, is_primary, registration_date, type_code, status_code, nr, transaction_id, change_user, registration_number)
-SELECT t.sola_rrr_id, b.id, FALSE, t.regdate, 'tenancy', t.status, t.sola_rrr_nr, 'adm-transaction', 'test-id', titleref
+with land_uses as
+(
+SELECT 
+  distinct lease."Plot_Number" as plot_number, lower(lease."LandUseDescription") as land_use_code
+FROM 
+ lesotho_etl.lease
+ where  lower(lease."LandUseDescription") in (SELECT code FROM cadastre.land_use_type)
+ order by  lower(lease."LandUseDescription")
+)
+INSERT INTO administrative.rrr(id, ba_unit_id, lease_number, is_primary, registration_date, type_code, status_code, nr, transaction_id, change_user, registration_number, land_use_code)
+SELECT t.sola_rrr_id, b.id, t.titleid, FALSE, t.regdate, 'tenancy', t.status, t.sola_rrr_nr, 'adm-transaction', 'test-id', titleref, l.land_use_code
 FROM lesotho_etl.sola_transfer t
 inner join administrative.ba_unit b on
-t.titleid = b.name; 
+t.titleid = b.name
+inner join land_uses l on l.plot_number = b.name; 
 
 
 -- Add the transfer notations
@@ -259,3 +270,8 @@ ba_unit_id,
 From administrative.rrr;
 
 select lesotho_etl.process_transfers();
+
+INSERT INTO administrative.source_describes_rrr(rrr_id, source_id)
+SELECT rrr.id, source.id
+FROM  source.source, administrative.rrr
+WHERE source.reference_nr = rrr.registration_number;

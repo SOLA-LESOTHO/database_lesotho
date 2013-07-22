@@ -17,14 +17,18 @@ nr,
 type_code, 
 status_code, 
 is_primary, 
-transaction_id, 
+transaction_id,
+registration_number, 
 registration_date,
 start_date,
 execution_date,
 expiration_date, 
 share,
 lease_number,
-land_use_code)
+land_use_code,
+land_usable,
+personal_levy,
+ground_rent)
 select 
 uuid_generate_v1(), 
 b.id, 
@@ -32,14 +36,18 @@ trim(to_char(nextval('administrative.rrr_nr_seq'), '000000')),
 'lease',
 'current', 
 TRUE, 
-'adm-transaction', 
+'adm-transaction',
+name, 
 creation_date,
 creation_date,
 creation_date,
 creation_date + INTERVAL '90 YEARS', 
 1/1,
 name,
-l.land_use_code 
+l.land_use_code,
+100,
+1,
+0 
 FROM administrative.ba_unit b, land_uses l
 WHERE b.name = l.plot_number;
 
