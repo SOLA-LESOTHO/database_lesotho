@@ -4636,6 +4636,7 @@ CREATE TABLE administrative.dispute(
     completion_date timestamp,
     dispute_category_code varchar(40),
     dispute_type_code varchar(40),
+	dispute_description varchar(100),
     status_code varchar(40) NOT NULL DEFAULT ('pending'),
     rrr_id varchar(40),
     plot_location varchar(200),
@@ -4679,6 +4680,7 @@ CREATE TABLE administrative.dispute_historic
     lodgement_date timestamp,
     completion_date timestamp,
     dispute_category_code varchar(40),
+	dispute_description varchar(100),
     dispute_type_code varchar(40),
     status_code varchar(40),
     rrr_id varchar(40),
@@ -4758,7 +4760,7 @@ DROP TABLE IF EXISTS administrative.dispute_comments CASCADE;
 CREATE TABLE administrative.dispute_comments(
     id varchar(50) NOT NULL,
     dispute_nr varchar(50) NOT NULL,
-    dispute_action_code varchar(40) NOT NULL,
+    dispute_action_code varchar(40),
     other_authorities_code varchar(40),
     update_date timestamp NOT NULL DEFAULT (now()),
     comments varchar(500),
@@ -4772,7 +4774,6 @@ CREATE TABLE administrative.dispute_comments(
     -- Internal constraints
     
     CONSTRAINT dispute_comments_id_unique UNIQUE (id),
-    CONSTRAINT dispute_comments_dispute_nr_unique UNIQUE (dispute_nr),
     CONSTRAINT dispute_comments_pkey PRIMARY KEY (id)
 );
 
