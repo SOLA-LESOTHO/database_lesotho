@@ -25,3 +25,5 @@ on b.id = r.ba_unit_id
 inner join administrative.rrr_share s --link share with rrr and party (via entity plot)
 on r.id = s.rrr_id and s.id = p.id;
 
+INSERT INTO party.party_role (party_id, type_code)
+SELECT DISTINCT party_id, 'accountHolder' from administrative.party_for_rrr;
