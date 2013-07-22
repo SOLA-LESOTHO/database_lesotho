@@ -3462,6 +3462,15 @@ insert into system.approle(code, display_value, status, description) values('Dis
 insert into system.approle(code, display_value, status, description) values('DisputeView', 'Dispute View', 'c', 'Allows to view disputes');
 insert into system.approle(code, display_value, status, description) values('manageLease', 'Manage lease', 'c', 'Allows to prepare or vary lease');
 insert into system.approle(code, display_value, status, description) values('regLease', 'Register lease', 'c', 'Allows to do lease registration including registration of variation');
+insert into system.approle(code, display_value, status, description) values('endorseRight', 'Endorse Right', 'c', 'Allows to do rights endorsement');
+insert into system.approle(code, display_value, status, description) values('nameChange', 'Name Change', 'c', 'Allows to do Name change Service');
+insert into system.approle(code, display_value, status, description) values('renewLease', 'Renew Lease', 'c', 'Allows to do Renew Lease Service');
+insert into system.approle(code, display_value, status, description) values('cancelMortBonds', 'Cancel Mortgage', 'c', 'Allows to do Cancellation of Mortgage Bond Service');
+insert into system.approle(code, display_value, status, description) values('cnclSublease', 'Cancel Sublease', 'c', 'Allows to do Cancel Sublease Service');
+insert into system.approle(code, display_value, status, description) values('varySublease', 'Vary Sublease', 'c', 'Allows to do Vary Sublease Service');
+insert into system.approle(code, display_value, status, description) values('groundRentExemp', 'Ground Rent Excemption', 'c', 'Allows to do Ground Rent Exception Service');
+insert into system.approle(code, display_value, status, description) values('mapSale', 'Map Sale', 'c', 'Allows to do Map Sale Service');
+insert into system.approle(code, display_value, status, description) values('cadastreImport', 'Cadastre Import', 'c', 'Allows to do Cadastre Import Service');
 
 
 
@@ -3502,6 +3511,15 @@ insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputeSe
 insert into system.approle_appgroup(approle_code, appgroup_id) values('DisputePartySave', 'super-group-id');
 insert into system.approle_appgroup(approle_code, appgroup_id) values('manageLease', 'super-group-id');
 insert into system.approle_appgroup(approle_code, appgroup_id) values('regLease', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) values('endorseRight', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) values('nameChange', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) values('renewLease', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) values('cancelMortBonds', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) values('cnclSublease', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) values('varySublease', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) values('groundRentExemp', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) values('mapSale', 'super-group-id');
+insert into system.approle_appgroup(approle_code, appgroup_id) values('cadastreImport', 'super-group-id');
 
 
 
@@ -5159,12 +5177,12 @@ CREATE TABLE cadastre.land_grade_type(
 comment on table cadastre.land_grade_type is '';
     
  -- Data for the table cadastre.land_grade_type -- 
-insert into cadastre.land_grade_type(code, display_value, status) values('grade1', 'Grade1', 'c');
-insert into cadastre.land_grade_type(code, display_value, status) values('grade2', 'Grade2', 'c');
-insert into cadastre.land_grade_type(code, display_value, status) values('grade3', 'Grade3', 'c');
-insert into cadastre.land_grade_type(code, display_value, status) values('grade4', 'Grade4', 'c');
-insert into cadastre.land_grade_type(code, display_value, status) values('grade5', 'Grade5', 'c');
-insert into cadastre.land_grade_type(code, display_value, status) values('grade6', 'Grade6', 'c');
+insert into cadastre.land_grade_type(code, display_value, status) values('grade1', 'Zone1', 'c');
+insert into cadastre.land_grade_type(code, display_value, status) values('grade2', 'Zone2', 'c');
+insert into cadastre.land_grade_type(code, display_value, status) values('grade3', 'Zone3', 'c');
+insert into cadastre.land_grade_type(code, display_value, status) values('grade4', 'Zone4', 'c');
+insert into cadastre.land_grade_type(code, display_value, status) values('grade5', 'Zone5', 'c');
+insert into cadastre.land_grade_type(code, display_value, status) values('grade6', 'Zone6', 'c');
 
 
 
