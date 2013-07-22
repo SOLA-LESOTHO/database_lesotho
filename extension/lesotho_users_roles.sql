@@ -450,8 +450,6 @@ INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES('DisputeV
 
 --legal
 
-
-
 --IT
 Delete From system.approle_appgroup
 where appgroup_id = 'administrator-id';
@@ -483,28 +481,9 @@ INSERT INTO system.approle_appgroup(approle_code, appgroup_id)
    JOIN system.appuser_appgroup ug ON (u.id = ug.appuser_id and u.active)
    JOIN system.approle_appgroup rg ON ug.appgroup_id = rg.appgroup_id;
 ---
-
-
----
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('consentApplication', 'super-group-id');
-
---
 INSERT INTO system.approle_appgroup VALUES('regNotBond','deeds-manager-id');
 INSERT INTO system.approle_appgroup VALUES('regNotBond','deeds-reps-id');
-INSERT INTO system.approle_appgroup VALUES('regNotBond','super-group-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclNotBond','deeds-manager-id');
 INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclNotBond','deeds-reps-id');
-INSERT INTO system.approle_appgroup(approle_code, appgroup_id) VALUES('cnclNotBond','super-group-id');
+
 --
-
-
-
-
-
-
-
-
-
-
-
-
