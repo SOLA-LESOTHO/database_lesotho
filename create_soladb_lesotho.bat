@@ -148,6 +148,14 @@ echo loading transactions against a lease...
 echo loading transactions against a lease... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_transaction_against_lease.sql >> build.log 2>&1
 
+echo Updating road classes for cadastre object...
+echo Loading road classes... >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\road_class.sql >> build.log 2>&1
+
+echo Updating ground rent zones for cadastre object...
+echo Loading ground rent zones... >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\ground_rent_zones.sql >> build.log 2>&1
+
 REM echo migrating into lease table...
 REM echo migrating into lease table... >> build.log 2>&1
 REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_lease.sql >> build.log 2>&1
