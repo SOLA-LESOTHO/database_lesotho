@@ -44,28 +44,28 @@ INSERT INTO application.request_type(code, request_category_code, display_value,
             nr_properties_required, notation_template, rrr_type_code, type_action_code, 
             description)
     VALUES ('regOnEndorseRight','registrationServices','Registration on Endorsement','c',5,0,0.00,0.00,0,
-	'','endorsement','vary', null);
+	'','lease','vary', null);
 	
 INSERT INTO application.request_type(code, request_category_code, display_value, 
             status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
             nr_properties_required, notation_template, rrr_type_code, type_action_code, 
             description)
     VALUES ('regOnNameChange','registrationServices','Registration on Change of Lessee Names','c',5,0,0.00,0.00,0,
-	'','change of names','vary', null);
+	'','lease','vary', null);
 	
 INSERT INTO application.request_type(code, request_category_code, display_value, 
             status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
             nr_properties_required, notation_template, rrr_type_code, type_action_code, 
             description)
     VALUES ('regOnVaryLease','registrationServices','Registration on Lease Variation','c',5,0,0.00,0.00,0,
-	'','lease variation','vary', null);
+	'','lease','vary', null);
 
 INSERT INTO application.request_type(code, request_category_code, display_value, 
             status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
             nr_properties_required, notation_template, rrr_type_code, type_action_code, 
             description)
     VALUES ('regOnRenwalLease','registrationServices','Registration on Lease Renewal','c',5,0,0.00,0.00,0,
-	'','lease renewal','vary', null);
+	'','lease','vary', null);
 
 -- Configure roles for services
 INSERT INTO system.approle (code, display_value, status) SELECT req.code, req.display_value, 'c'
@@ -77,7 +77,9 @@ UPDATE  system.approle SET display_value = req.display_value
 FROM 	application.request_type req
 WHERE   system.approle.code = req.code; 
 
--- Add any missing roles to the super-group-id INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT r.code, 'super-group-id' 
+-- Add any missing roles to the super-group-id 
+
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) (SELECT r.code, 'super-group-id' 
  FROM   system.approle r
  WHERE NOT EXISTS (SELECT approle_code FROM system.approle_appgroup rg
                  WHERE  rg.approle_code = r.code
