@@ -57,12 +57,11 @@ echo Loading Lesotho Extensions... >> build.log 2>&1
 echo Loading Lesotho Business Rules... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\lesotho_business_rules.sql >> build.log 2>&1
 
-echo Loading Users and Roles... >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\lesotho_users_roles.sql >> build.log 2>&1
-
-
 echo Loading Reference Data... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\lesotho_reference_data.sql >> build.log 2>&1
+
+echo Loading Users and Roles... >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\lesotho_users_roles.sql >> build.log 2>&1
 
 
 REM  Loading laa spatial data section
