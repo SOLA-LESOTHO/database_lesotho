@@ -66,6 +66,15 @@ INSERT INTO application.request_type(code, request_category_code, display_value,
             description)
     VALUES ('regOnRenwalLease','registrationServices','Registration on Lease Renewal','c',5,0,0.00,0.00,0,
 	'','lease','vary', null);
+	
+INSERT INTO application.request_type(code, request_category_code, display_value, 
+            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
+            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
+            description)
+    VALUES ('regOnSurrenderLease','registrationServices','Registration on Lease Surrender','c',5,0,0.00,0.00,0,
+	'','lease','vary', null);
+	
+	
 
 -- Configure roles for services
 INSERT INTO system.approle (code, display_value, status) SELECT req.code, req.display_value, 'c'
