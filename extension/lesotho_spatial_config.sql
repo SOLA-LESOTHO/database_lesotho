@@ -420,3 +420,57 @@ INSERT INTO system.query_field (query_name, index_in_query, name, display_value)
 INSERT INTO system.config_map_layer ("name", title, type_code, pojo_query_name, pojo_structure, pojo_query_name_for_select, style, active, item_order, visible_in_start)
  VALUES ('subplots', 'Subplots', 'pojo', 'SpatialResult.getSubplots', 'theGeom:Polygon,label:""', 
  'dynamic.informationtool.get_subplot', 'subplot.xml', TRUE, 30, FALSE);
+ 
+ 
+-- *** Configure Map Find Queries for Lesotho
+UPDATE system.map_search_option
+SET    title = 'Plot number'
+WHERE  code = 'NUMBER';
+
+UPDATE system.map_search_option
+SET    title = 'Lessee name'
+WHERE  code = 'OWNER_OF_BAUNIT'; 
+ 
+UPDATE system.map_search_option
+SET    active = FALSE
+WHERE  code = 'BAUNIT';
+
+-- Fix the Property Owner Search
+UPDATE system.query SET sql = 'SELECT DISTINCT co.id,  
+       coalesce(p.name, '''') || '' '' || coalesce(p.last_name, '''') || '' > '' || co.name_firstpart || ''-'' || co.name_lastpart as label,  
+       st_asewkb(st_transform(co.geom_polygon, #{srid})) as the_geom 
+FROM   party.party p,
+       administrative.party_for_rrr pfr,
+       administrative.rrr rrr,
+       administrative.ba_unit bau,
+       cadastre.cadastre_object  co
+WHERE  compare_strings(#{search_string}, coalesce(p.name, '''') || '' '' || coalesce(p.last_name, ''''))
+AND    pfr.party_id = p.id
+AND    rrr.id = pfr.rrr_id
+AND    rrr.status_code = ''current''
+AND    rrr.type_code = ''lease''
+AND    bau.id = rrr.ba_unit_id
+AND    co.id = bau.cadastre_object_id
+AND    co.geom_polygon IS NOT NULL
+AND   (co.status_code = ''current'' OR bau.status_code = ''current'')
+LIMIT 30'
+WHERE "name" = 'map_search.cadastre_object_by_baunit_owner'; 
+
+INSERT INTO system.query (name, sql)
+VALUES ('map_search.grid_by_number', 
+'SELECT DISTINCT su.id, su.label AS label, st_asewkb(st_transform(geom, #{srid})) AS the_geom 
+FROM  cadastre.spatial_unit su,
+      cadastre.level l
+WHERE su.level_id = l.id
+AND   l.name = ''Grids''
+AND   su.geom IS NOT NULL
+AND   compare_strings(#{search_string}, su.label) 
+LIMIT 30'); 
+
+INSERT INTO system.map_search_option (code, title, query_name,
+active, min_search_str_len, zoom_in_buffer)
+VALUES ('GRID', 'Grid number', 'map_search.grid_by_number', TRUE, 3, 500); 
+ 
+ 
+ 
+ 
