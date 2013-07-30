@@ -17,8 +17,16 @@ INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_c
 	SELECT uuid_generate_v1(), '2D', msuvalzones."type", 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Zones') As l_id, 'test' AS ch_user 
 	FROM interim_data.msuvalzones WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
 	
+--Hlotse zones
 
-	
+INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
+	SELECT uuid_generate_v1(), '2D', value_area, 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Zones') As l_id, 'test' AS ch_user 
+	FROM interim_data."Hlotse_Zones" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL);
+
+	UPDATE 	cadastre.spatial_unit set label='Residential 2' where label='R 2';
+	UPDATE 	cadastre.spatial_unit set label='Residential 3' where label='R 3';
+	UPDATE 	cadastre.spatial_unit set label='Residential 4' where label='R 4';
+	UPDATE 	cadastre.spatial_unit set label='Commercial 2' where label='C 2';
 
 --INSERT VALUES FOR ROAD CENTRELINES
 -- roads Maseru area
@@ -29,7 +37,7 @@ INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_c
 	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
 	AND (st_ndims(the_geom) = 2);
 
-	--roads maputsoe area
+	--roads Maputsoe area
 	
 INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
 	SELECT uuid_generate_v1(), '2D', road_type, 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user
@@ -37,7 +45,29 @@ INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_c
 	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
 	AND (st_ndims(the_geom) = 2);
 
+	--roads Mafeteng area
 	
+INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
+	SELECT uuid_generate_v1(), '2D', road_type, 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user
+	FROM interim_data."Mafeteng_Roads"
+	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
+	AND (st_ndims(the_geom) = 2);	
+	
+--roads Mohale's Hoek area
+	
+INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
+	SELECT uuid_generate_v1(), '2D', road_type, 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user
+	FROM interim_data."Mh_Roads"
+	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
+	AND (st_ndims(the_geom) = 2);		
+
+--roads Quthing area
+	
+INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
+	SELECT uuid_generate_v1(), '2D', road_type, 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user
+	FROM interim_data."Quthing_Roads"
+	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
+	AND (st_ndims(the_geom) = 2);	
 	
 	
 --INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
