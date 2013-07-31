@@ -88,83 +88,40 @@ echo Parcel numbering >> build.log 2>&1
 echo Renaming Zones >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\update_spatial_unit_zones.sql >> build.log 2>&1
 
-REM end of loading laa spatial data section
-
-
-
-
-REM loading lease data section
-
-REM echo Loading lease and deeds documents
-REMecho Loading lease and deeds documents >> build.log 2>&1
-REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=..\laa_data\document.sql >> build.log 2>&1
-
-REM echo Creating temporary schema and tables...
-REM echo Creating temporary schema and tables... >> build.log 2>&1
-REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease.sql >> build.log 2>&1
-
-REM echo Loading access Lease Data...
-REM echo Loading access Lease Data... >> build.log 2>&1
-REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=..\laa_data\lease.sql >> build.log 2>&1
-
-REM echo Loading access Lease Transaction Data...
-REM echo Loading access Lease Transaction Data... >> build.log 2>&1
-REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=..\laa_data\lease_transaction.sql >> build.log 2>&1
-REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\registration_services.sql >> build.log 2>&1
-
-REM echo Preprocessing of data...
-REM echo Preprocessing of data.... >> build.log 2>&1
-REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_data_fixes.sql >> build.log 2>&1
-
-echo Loading parties...
-echo Loading parties... >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_parties.sql >> build.log 2>&1
-
-echo Loading plots..
-echo Loading plots.. >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_plots.sql >> build.log 2>&1
-
-echo Craeting cadastre_object views and user with read-only rights...
-echo Craeting cadastre_object views and user with read-only rights... >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\cadastre_object_views.sql >> build.log 2>&1
-
-echo Loading property...
-echo Loading property... >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_property.sql >> build.log 2>&1
-
-echo Loading rrr...
-echo Loading rrr... >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_rrr.sql >> build.log 2>&1
-
-echo Loading rrr share...
-echo Loading rrr share... >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_rrr_share.sql >> build.log 2>&1
-
-echo loading party for rrr...
-echo loading party for rrr... >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_party_for_rrr.sql >> build.log 2>&1
-
-echo loading transactions against a lease...
-echo loading transactions against a lease... >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_transaction_against_lease.sql >> build.log 2>&1
-
-echo Updating road classes for cadastre object...
-echo Loading road classes... >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\road_class.sql >> build.log 2>&1
-
-echo Updating ground rent zones for cadastre object...
-echo Loading ground rent zones... >> build.log 2>&1
+echo Updating Ground Rent Zones >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\ground_rent_zones.sql >> build.log 2>&1
 
-REM echo migrating into lease table...
-REM echo migrating into lease table... >> build.log 2>&1
-REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\interim_lease_lease.sql >> build.log 2>&1
+echo Updating Road Classes >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\road_class.sql >> build.log 2>&1
 
-echo HOUSE KEEPING... >> build.log 2>&1
-REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=house_keeper.sql >> build.log 2>&1
+echo end of loading laa spatial data section
 
+echo migrating lease data
 
-REM 
+echo loading property....
+echo loading property >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\1interim_lease_migration_property.sql >> build.log 2>&1
+
+echo loading transfer....
+echo loading transfer >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\2interim_lease_migration_transfer.sql >> build.log 2>&1
+
+echo loading mortgages.....
+echo loading mortgages >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\3interim_lease_migration_mortgage.sql >> build.log 2>&1
+
+echo loading lease variation.....
+echo loading variations >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\4interim_lease_migration_variation.sql >> build.log 2>&1
+
+echo loading subleases.....
+echo loading subleases >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\5interim_lease_migration_sublease.sql >> build.log 2>&1
+
+echo loading surrender.....
+echo loading surrendered titles >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\6interim_lease_migration_surrender.sql >> build.log 2>&1
+
 echo Finished at %time% - Check build.log for errors!
 echo Finished at %time% >> build.log 2>&1
 pause
