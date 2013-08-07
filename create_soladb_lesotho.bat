@@ -63,6 +63,12 @@ echo Loading Reference Data... >> build.log 2>&1
 echo Loading Users and Roles... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\lesotho_users_roles.sql >> build.log 2>&1
 
+echo Creating cadastre_object table views >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\cadastre_object_views.sql >> build.log 2>&1
+
+echo Creating finance interface functions >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\finance_interface_functions.sql >> build.log 2>&1
+
 
 REM  Loading laa spatial data section
 
@@ -93,6 +99,9 @@ echo Updating Ground Rent Zones >> build.log 2>&1
 
 echo Updating Road Classes >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\road_class.sql >> build.log 2>&1
+
+echo Creating cadastre_object table views >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\cadastre_object_views.sql >> build.log 2>&1
 
 echo end of loading laa spatial data section
 
