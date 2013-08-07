@@ -2477,7 +2477,7 @@ CREATE OR REPLACE FUNCTION party.is_rightholder(
 ) RETURNS boolean 
 AS $$
 BEGIN
-  return (SELECT (CASE (SELECT COUNT(1) FROM administrative.party_for_rrr ap INNER JOIN administrative.rrr r ON ap.rrr_id = r.id WHERE r.status_code!='pending' AND ap.party_id = id) WHEN 0 THEN false ELSE true END));
+  return (SELECT (CASE (SELECT COUNT(1) FROM administrative.party_for_rrr ap INNER JOIN administrative.rrr r ON ap.rrr_id = r.id WHERE r.status_code!='pending' AND ap.party_id = $1) WHEN 0 THEN false ELSE true END));
 END;
 $$ LANGUAGE plpgsql;
 COMMENT ON FUNCTION party.is_rightholder(
