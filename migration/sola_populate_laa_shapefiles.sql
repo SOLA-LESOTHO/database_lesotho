@@ -79,6 +79,8 @@ UPDATE 	cadastre.spatial_unit set label='Main Tarred Road' where label='Main_Roa
 	UPDATE 	cadastre.spatial_unit set label='Secondary Untarred Road' where label='Sec_Roads_Untarred';
 	UPDATE 	cadastre.spatial_unit set label='Minor Untarred Road' where label='Minor_Roads_Untarred';
 	UPDATE 	cadastre.spatial_unit set label='No Vehicular Access' where label='No_Vehicular_Access';
+	UPDATE 	cadastre.spatial_unit set label='Minor Untarred Road' where label='Minor_Untarred';
+	UPDATE 	cadastre.spatial_unit set label='Main Tarred Road' where label='Main_road';
 
 
 	

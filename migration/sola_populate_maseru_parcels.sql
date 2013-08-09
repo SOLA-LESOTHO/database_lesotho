@@ -37,7 +37,7 @@ BEGIN
 
 	----Load 22289 Lesotho parcels---LO29
 	
-	FOR rec IN EXECUTE 'SELECT id, plotnumber,areai AS area, 
+	FOR rec IN EXECUTE 'SELECT id, plotnumber, 
 			ST_SetSRID(ST_GeometryN(the_geom, 1),22289) AS the_geom,  ''current'' AS parcel_status FROM interim_data."LO29 DEFAULT_Areas" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL) and st_isvalid(the_geom)=TRUE and length(plotnumber)>0'
 		LOOP
 		
@@ -55,7 +55,7 @@ BEGIN
  ----Load 22287 Lesotho parcels---LO27
  
 	
-	FOR rec IN EXECUTE 'SELECT id, plotnumber,areai AS area, 
+	FOR rec IN EXECUTE 'SELECT id, plotnumber, 
 			ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom,  ''current'' AS parcel_status FROM interim_data."Examined Plots" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL) and st_isvalid(the_geom)=TRUE and length(plotnumber)>0'
 		LOOP
 		
@@ -70,7 +70,7 @@ BEGIN
 		
 	END LOOP;
 	
-	FOR rec IN EXECUTE 'SELECT id, plotnumber,areai AS area, 
+	FOR rec IN EXECUTE 'SELECT id, plotnumber, 
 			ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom,  ''current'' AS parcel_status FROM interim_data."Approved Regularisation Parcel_Implementation" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL) and st_isvalid(the_geom)=TRUE and length(plotnumber)>0'
 		LOOP
 		
@@ -85,7 +85,7 @@ BEGIN
 		
 	END LOOP;
 	
-	FOR rec IN EXECUTE 'SELECT id, plotnumber AS appellatio, partplotnu AS last_part, plotnumber, areai AS area, 
+	FOR rec IN EXECUTE 'SELECT id, plotnumber AS appellatio, partplotnu AS last_part, plotnumber, 
 		ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, partplotnu AS parcel_int,  ''current'' AS parcel_status FROM interim_data."DST27 DEFAULT _Areas plus Maseru Default" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL) and st_isvalid(the_geom)=TRUE'
 		LOOP
 		IF rec.parcel_int not in ('Hydro', 'Road') THEN
@@ -131,7 +131,20 @@ delete from cadastre.spatial_unit AS su WHERE su.level_id= (select cl.id from ca
 INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, level_id, change_user) 
 	SELECT id, '2D', plotnumber, 'onSurface',  
 	(SELECT id FROM cadastre.level WHERE name='Parcels') As l_id, 'test' AS ch_user
-	FROM interim_data."ExaminedPlots_ Lo29" WHERE ST_GeometryN(the_geom, 1) IS NOT NULL;
+	FROM interim_data."Examined Plots" WHERE ST_GeometryN(the_geom, 1) IS NOT NULL;
+
+
+INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, level_id, change_user) 
+	SELECT id, '2D', plotnumber, 'onSurface',  
+	(SELECT id FROM cadastre.level WHERE name='Parcels') As l_id, 'test' AS ch_user
+	FROM interim_data."Approved Regularisation Parcel_Implementation" WHERE ST_GeometryN(the_geom, 1) IS NOT NULL;
+	
+
+INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, level_id, change_user) 
+	SELECT id, '2D', plotnumber, 'onSurface',  
+	(SELECT id FROM cadastre.level WHERE name='Parcels') As l_id, 'test' AS ch_user
+	FROM interim_data."LO29 DEFAULT_Areas" WHERE ST_GeometryN(the_geom, 1) IS NOT NULL;
+	
 
 
 DELETE FROM cadastre.cadastre_object;
