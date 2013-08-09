@@ -70,6 +70,18 @@ INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_c
 	AND (st_ndims(the_geom) = 2);	
 	
 	
+--update labels for the roads
+
+UPDATE 	cadastre.spatial_unit set label='Main Tarred Road' where label='Main_Roads_Tarred';
+	UPDATE 	cadastre.spatial_unit set label='Secondary Tarred Road' where label='Sec_Roads_Tarred';
+	UPDATE 	cadastre.spatial_unit set label='Minor Tarred Road' where label='Minor_Roads_Tarred';
+	UPDATE 	cadastre.spatial_unit set label='Main Untarred Road' where label='Main_Roads_Untarred';
+	UPDATE 	cadastre.spatial_unit set label='Secondary Untarred Road' where label='Sec_Roads_Untarred';
+	UPDATE 	cadastre.spatial_unit set label='Minor Untarred Road' where label='Minor_Roads_Untarred';
+	UPDATE 	cadastre.spatial_unit set label='No Vehicular Access' where label='No_Vehicular_Access';
+
+
+	
 --INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
 --	SELECT uuid_generate_v1(), '2D', 'Highway', 'onSurface', the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user 
 --	FROM interim_data.highway_roads 
