@@ -381,6 +381,7 @@ WITH 	newFreeholdApp	AS	(SELECT (SUM(1) > 0) AS fhCheck FROM application.service
 				WHERE sv.application_id = #{id}
 				AND sv.request_type_code = ''newFreehold'' LIMIT 1)
 				
+				
 SELECT CASE WHEN fhCheck IS TRUE THEN ((SELECT cancelSequence FROM orderCancel) - (SELECT newSequence FROM orderNew)) > 0
 		ELSE NULL
 	END AS vl FROM newFreeholdApp');
@@ -424,6 +425,17 @@ SELECT CASE 	WHEN (SELECT (COUNT(*) = 0) FROM cancelPropApp) THEN NULL
 
 INSERT INTO system.br_validation(br_id, target_code, target_application_moment, severity_code, order_of_execution)
 VALUES ('cancel-title-check-rrr-cancelled', 'application', 'validate', 'critical', 150);
+
+----------------------------------------------------------------------------------------------------------------------
+INSERT INTO system.br(id, technical_type_code, feedback) 
+VALUES('check-payment', 'sql', 'Application must be paid');
+
+INSERT INTO system.br_definition(br_id, active_from, active_until, body) 
+VALUES('check-payment', now(), 'infinity', 
+'SELECT COUNT(1)>0 AS vl FROM application.application WHERE fee_paid AND id = #{id}');
+
+INSERT INTO system.br_validation(br_id, target_code, target_application_moment, severity_code, order_of_execution)
+VALUES ('check-payment', 'application', 'validate', 'critical', 20);
 
 ----------------------------------------------------------------------------------------------------------------------
 UPDATE system.br SET display_name = id WHERE display_name !=id;
