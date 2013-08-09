@@ -38,7 +38,7 @@ BEGIN
 	----Load 22289 Lesotho parcels---LO29
 	
 	FOR rec IN EXECUTE 'SELECT id, plotnumber,areai AS area, 
-			ST_SetSRID(ST_GeometryN(the_geom, 1),22289) AS the_geom,  ''current'' AS parcel_status FROM interim_data."ExaminedPlots_ Lo29" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL) and st_isvalid(the_geom)=TRUE and length(plotnumber)>0'
+			ST_SetSRID(ST_GeometryN(the_geom, 1),22289) AS the_geom,  ''current'' AS parcel_status FROM interim_data."LO29 DEFAULT_Areas" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL) and st_isvalid(the_geom)=TRUE and length(plotnumber)>0'
 		LOOP
 		
                         first_part = left(rec.plotnumber,position('-' in rec.plotnumber)-1);
@@ -54,6 +54,37 @@ BEGIN
 
  ----Load 22287 Lesotho parcels---LO27
  
+	
+	FOR rec IN EXECUTE 'SELECT id, plotnumber,areai AS area, 
+			ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom,  ''current'' AS parcel_status FROM interim_data."Examined Plots" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL) and st_isvalid(the_geom)=TRUE and length(plotnumber)>0'
+		LOOP
+		
+                        first_part = left(rec.plotnumber,position('-' in rec.plotnumber)-1);
+			            last_part = right(rec.plotnumber,length(trim(rec.plotnumber))-position('-' in rec.plotnumber));
+	               
+
+			DELETE FROM cadastre.cadastre_object where name_firstpart=first_part and name_lastpart=last_part;
+			
+			INSERT INTO cadastre.cadastre_object (id, transaction_id, name_firstpart, name_lastpart, geom_polygon, status_code, change_user, rowversion)
+				VALUES (rec.id, transaction_id_vl, first_part, last_part, rec.the_geom, rec.parcel_status, 'test', 1);  
+		
+	END LOOP;
+	
+	FOR rec IN EXECUTE 'SELECT id, plotnumber,areai AS area, 
+			ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom,  ''current'' AS parcel_status FROM interim_data."Approved Regularisation Parcel_Implementation" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL) and st_isvalid(the_geom)=TRUE and length(plotnumber)>0'
+		LOOP
+		
+                        first_part = left(rec.plotnumber,position('-' in rec.plotnumber)-1);
+			            last_part = right(rec.plotnumber,length(trim(rec.plotnumber))-position('-' in rec.plotnumber));
+	               
+
+			DELETE FROM cadastre.cadastre_object where name_firstpart=first_part and name_lastpart=last_part;
+			
+			INSERT INTO cadastre.cadastre_object (id, transaction_id, name_firstpart, name_lastpart, geom_polygon, status_code, change_user, rowversion)
+				VALUES (rec.id, transaction_id_vl, first_part, last_part, rec.the_geom, rec.parcel_status, 'test', 1);  
+		
+	END LOOP;
+	
 	FOR rec IN EXECUTE 'SELECT id, plotnumber AS appellatio, partplotnu AS last_part, plotnumber, areai AS area, 
 		ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, partplotnu AS parcel_int,  ''current'' AS parcel_status FROM interim_data."DST27 DEFAULT _Areas plus Maseru Default" WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL) and st_isvalid(the_geom)=TRUE'
 		LOOP
