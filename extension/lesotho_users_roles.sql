@@ -406,7 +406,13 @@ INSERT INTO appuser (id, username, first_name, last_name, passwd, active, descri
 INSERT INTO appuser (id, username, first_name, last_name, passwd, active, description, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('nputsoa-id', 'nputsoa', 'Ntsebo', 'Putsoa', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', true, NULL, 'e4b65a92-ff75-11e2-83f1-7fc5f9887c17', 1, 'i', 'db:postgres', '2013-08-08 03:27:38.688');
 INSERT INTO appuser (id, username, first_name, last_name, passwd, active, description, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('mchaka-id', 'mchaka', 'Mahashe', 'Chaka', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', true, NULL, 'e4b6a8b2-ff75-11e2-84cd-4369fa6603b1', 1, 'i', 'db:postgres', '2013-08-08 03:27:38.688');
 INSERT INTO appuser (id, username, first_name, last_name, passwd, active, description, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('knkalai-id', 'knkalai', 'Khopotso', 'Nkalai', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', true, NULL, 'e4b52208-ff75-11e2-9b61-3f662cf79ad9', 13, 'u', 'knkalai', '2013-08-09 19:43:44.73');
-
+INSERT INTO appuser (id, username, first_name, last_name, passwd, active, description, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('mtsoeute-id', 'mtsoeute', 'Marorisang', 'Ts''oeute', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', true, NULL, 'e4b6a8b2-ff75-11e2-84cd-4369fa6603b1', 1, 'i', 'db:postgres', '2013-08-08 03:27:38.688');
+INSERT INTO appuser (id, username, first_name, last_name, passwd, active, description, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('bkuenane-id', 'bkuenane', 'Bofihla', 'Kuenane', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', true, NULL, 'e4b6a8b2-ff75-11e2-84cd-4369fa6603b1', 1, 'i', 'db:postgres', '2013-08-08 03:27:38.688');
+INSERT INTO appuser (id, username, first_name, last_name, passwd, active, description, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('pmoloi-id', 'pmoloi', 'Papali', 'Moloi', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', true, NULL, 'e4b6a8b2-ff75-11e2-84cd-4369fa6603b1', 1, 'i', 'db:postgres', '2013-08-08 03:27:38.688');
+INSERT INTO appuser (id, username, first_name, last_name, passwd, active, description, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('pphokoane-id', 'pphokoane', 'Pitikoe', 'Phokoane', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', true, NULL, 'e4b6a8b2-ff75-11e2-84cd-4369fa6603b1', 1, 'i', 'db:postgres', '2013-08-08 03:27:38.688');
+INSERT INTO appuser (id, username, first_name, last_name, passwd, active, description, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('mmatela-id', 'mmatela', 'Motlotolo', 'Matela', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', true, NULL, 'e4b6a8b2-ff75-11e2-84cd-4369fa6603b1', 1, 'i', 'db:postgres', '2013-08-08 03:27:38.688');
+INSERT INTO appuser (id, username, first_name, last_name, passwd, active, description, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('mletsela-id', 'mletsela', 'Mokhethi', 'Lets''ela', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', true, NULL, 'e4b6a8b2-ff75-11e2-84cd-4369fa6603b1', 1, 'i', 'db:postgres', '2013-08-08 03:27:38.688');
+INSERT INTO appuser (id, username, first_name, last_name, passwd, active, description, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('tmakhaphela-id', 'tmakhaphela', 'Tseliso', 'Makhaphela', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', true, NULL, 'e4b6a8b2-ff75-11e2-84cd-4369fa6603b1', 1, 'i', 'db:postgres', '2013-08-08 03:27:38.688');
 
 ALTER TABLE appuser ENABLE TRIGGER ALL;
 
@@ -418,6 +424,15 @@ ALTER TABLE appuser ENABLE TRIGGER ALL;
 
 ALTER TABLE appuser_appgroup DISABLE TRIGGER ALL;
 
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('tmakhaphela-id', 'deeds-reps-id');
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('tmakhaphela-id', 'manager-id');
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('mletsela-id', 'lease-id');
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('mmatela-id', 'surveymapp-id');
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('matela-id', 'manager-id');
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('mtsoeute-id', 'cust-reps-id');
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('bkuenane-id', 'cust-reps-id');
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('pmoloi-id', 'cust-reps-id');
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('pphokoane-id', 'cust-reps-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('andrew', 'lease-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('andrew', 'cust-reps-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('andrew', 'administrator-id');
@@ -440,7 +455,6 @@ INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('alex', 'audit-id
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('alex', 'legal-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('alex', 'lease-correct-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('smatela-id', 'surveymapp-id');
-INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('smatela-id', 'manager-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('mrammoko-id', 'manager-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('mrammoko-id', 'surveymapp-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('lmosae-id', 'lease-id');
@@ -457,6 +471,7 @@ INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('mmolupe-id', 'le
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('mmoleli-id', 'surveymapp-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('mramakau-id', 'surveymapp-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('nmokhethi-id', 'surveymapp-id');
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('nmokhethi-id', 'manager-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('lnovember-id', 'surveymapp-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('pkoloi-id', 'surveymapp-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('mboiketlo-id', 'surveymapp-id');
