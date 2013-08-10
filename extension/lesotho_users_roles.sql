@@ -31,6 +31,7 @@ INSERT INTO appgroup (id, name, description) VALUES ('deeds-reps-id', 'Deeds Ass
 INSERT INTO appgroup (id, name, description) VALUES ('manager-id', 'Managers', 'This group provides additional roles common to managers such as reporting, application assignment and application approval. This group can be combined with the appropriate section group to provide the necessary manager functions for that section.  ');
 INSERT INTO appgroup (id, name, description) VALUES ('audit-id', 'Audit', 'This is a group of Auditors.');
 INSERT INTO appgroup (id, name, description) VALUES ('legal-id', 'Legal', 'This is a group for Legal Representatives.');
+INSERT INTO appgroup (id, name, description) VALUES ('lease-correct-id', 'Lease Correction', 'This group can process the lease correction services to fix invalid details on a lease');
 
 
 ALTER TABLE appgroup ENABLE TRIGGER ALL;
@@ -126,7 +127,8 @@ INSERT INTO approle (code, display_value, status, description) VALUES ('varyMort
 INSERT INTO approle (code, display_value, status, description) VALUES ('nameChange', 'Service - Change of Lessee name(s)', 'c', 'Lease Service. Allows the Change of Lessee name(s) service to be started');
 INSERT INTO approle (code, display_value, status, description) VALUES ('consentApplication', 'Serivce - Consent Application', 'c', 'Lease Service. Allows the Consent Application service to be started. ');
 INSERT INTO approle (code, display_value, status, description) VALUES ('DisputeView', 'Dispute - View', 'c', 'Allows the user to open the Disputes and Court Cases form');
-
+INSERT INTO approle (code, display_value, status, description) VALUES ('registrarCorrection', 'Serivce - Correct Lease', 'c', 'Lease Service. Allows the Correct Lease service to be started. ');
+INSERT INTO approle (code, display_value, status, description) VALUES ('registrarCancel', 'Serivce - Correct Lease (Cancel Right)', 'c', 'Lease Service. Allows the Correct Lease (Cancel Right). ');
 
 ALTER TABLE approle ENABLE TRIGGER ALL;
 
@@ -138,6 +140,9 @@ ALTER TABLE approle ENABLE TRIGGER ALL;
 
 ALTER TABLE approle_appgroup DISABLE TRIGGER ALL;
 
+INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('registrarCorrection', 'lease-correct-id');
+INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('registrarCancel', 'lease-correct-id');
+INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('BulkApplication', 'administrator-id');
 INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('ManageBR', 'administrator-id');
 INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('ApplnStatus', 'audit-id');
 INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('ApplnView', 'administrator-id');
@@ -422,6 +427,7 @@ INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('andrew', 'audit-
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('andrew', 'dg-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('andrew', 'legal-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('andrew', 'manager-id');
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('andrew', 'lease-correct-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('knkalai-id', 'administrator-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('alex', 'dg-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('alex', 'administrator-id');
@@ -432,6 +438,7 @@ INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('alex', 'deeds-re
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('alex', 'manager-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('alex', 'audit-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('alex', 'legal-id');
+INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('alex', 'lease-correct-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('smatela-id', 'surveymapp-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('smatela-id', 'manager-id');
 INSERT INTO appuser_appgroup (appuser_id, appgroup_id) VALUES ('mrammoko-id', 'manager-id');
