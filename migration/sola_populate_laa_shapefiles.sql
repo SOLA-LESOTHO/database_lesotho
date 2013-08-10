@@ -49,7 +49,7 @@ INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_c
 	
 INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
 	SELECT uuid_generate_v1(), '2D', road_type, 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user
-	FROM interim_data."Mafeteng_Roads"
+	FROM interim_data."Mafeteng_Rds"
 	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
 	AND (st_ndims(the_geom) = 2);	
 	
@@ -68,7 +68,31 @@ INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_c
 	FROM interim_data."Quthing_Roads"
 	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
 	AND (st_ndims(the_geom) = 2);	
+
+--roads TY area
 	
+INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
+	SELECT uuid_generate_v1(), '2D', road_type, 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user
+	FROM interim_data."TY_Roads"
+	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
+	AND (st_ndims(the_geom) = 2);	
+	
+--roads Butha-Bothe area
+	
+INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
+	SELECT uuid_generate_v1(), '2D', road_type, 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user
+	FROM interim_data."Botha_Bothe_Rds"
+	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
+	AND (st_ndims(the_geom) = 2);	
+	
+--roads Hlotse area
+	
+INSERT INTO cadastre.spatial_unit (id, dimension_code, label, surface_relation_code, geom, level_id, change_user) 
+	SELECT uuid_generate_v1(), '2D', road_type, 'onSurface', ST_SetSRID(ST_GeometryN(the_geom, 1),22287) AS the_geom, (SELECT id FROM cadastre.level WHERE name='Roads') As l_id, 'test' AS ch_user
+	FROM interim_data."Hlotse_Rds1"
+	WHERE (ST_GeometryN(the_geom, 1) IS NOT NULL)
+	AND (st_ndims(the_geom) = 2);		
+
 	
 --update labels for the roads
 
@@ -81,6 +105,9 @@ UPDATE 	cadastre.spatial_unit set label='Main Tarred Road' where label='Main_Roa
 	UPDATE 	cadastre.spatial_unit set label='No Vehicular Access' where label='No_Vehicular_Access';
 	UPDATE 	cadastre.spatial_unit set label='Minor Untarred Road' where label='Minor_Untarred';
 	UPDATE 	cadastre.spatial_unit set label='Main Tarred Road' where label='Main_road';
+	UPDATE 	cadastre.spatial_unit set label='Main Tarred Road' where label='Main_Roads';
+	UPDATE 	cadastre.spatial_unit set label='Secondary Tarred Road' where label='Sec_Tarred';
+	UPDATE 	cadastre.spatial_unit set label='Secondary Untarred Road' where label='Sec_Untarred';
 
 
 	
