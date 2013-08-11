@@ -121,7 +121,7 @@ echo loading mortgages >> build.log 2>&1
 
 echo loading lease variation.....
 echo loading variations >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\4interim_lease_migration_variation.sql >> build.log 2>&1
+REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\interimLease\4interim_lease_migration_variation.sql >> build.log 2>&1
 
 echo loading subleases.....
 echo loading subleases >> build.log 2>&1

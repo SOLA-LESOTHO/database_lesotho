@@ -8,8 +8,8 @@ registration_number, registration_date, start_date, execution_date, expiration_d
 share, lease_number, land_use_code, land_usable, personal_levy, ground_rent)
 SELECT 
 uuid_generate_v1(), b.id, trim(to_char(nextval('administrative.rrr_nr_seq'), '000000')),
-'lease', 'current', TRUE, 'adm-transaction', r.registration_number, b.creation_date, b.creation_date, 
-b.creation_date, b.expiration_date, 1/1, b.name, r.land_use_code, 100, 1, 0 
+'sublease', 'current', TRUE, 'adm-transaction', r.registration_number, r.creation_date, r.creation_date, 
+r.creation_date, r.expiration_date, 1/1, b.name, r.land_use_code, 100, 1, 0 
 FROM administrative.ba_unit b
 INNER JOIN lesotho_etl.lms_right r ON r.first_part = b.name_firstpart AND r.last_part = b.name_lastpart
 WHERE r.right_type_code ='sublease'

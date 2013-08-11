@@ -46,7 +46,8 @@ uuid_generate_v1(), b.id, trim(to_char(nextval('administrative.rrr_nr_seq'), '00
 b.creation_date, b.expiration_date, 1/1, b.name, r.land_use_code, 100, 1, 0 
 FROM administrative.ba_unit b
 INNER JOIN lesotho_etl.lms_right r
-ON r.plot_number = b.name;
+ON r.plot_number = b.name
+WHERE r.right_type_code = 'lease';
 
 -- Add Lease Notations
 INSERT INTO  administrative.notation(id, rrr_id, transaction_id, change_user, notation_date, status_code, notation_text, reference_nr) 
