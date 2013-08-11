@@ -23,13 +23,6 @@ FROM administrative.rrr r
 WHERE r.type_code = 'tenancy';
 
 
---Add rrr shares
-INSERT INTO administrative.rrr_share(id, rrr_id, nominator, denominator)
-SELECT uuid_generate_v1(), id, 1, 1 from administrative.rrr r
-WHERE r.type_code = 'tenancy';
-
-
-
 UPDATE administrative.rrr
   SET status_code='historic'
 WHERE ba_unit_id IN (SELECT ba_unit_id FROM administrative.rrr WHERE type_code ='tenancy')
@@ -38,23 +31,25 @@ AND type_code = 'lease';
 --Load Parties first
 INSERT INTO party.party
 (id, type_code, name, last_name, legal_type, gender_code)
-SELECT distinct id, party_type_code, trim(first_name), last_name, legal_type_code, gender_code
-FROM lesotho_etl.lms_party 
-WHERE lease_number in (SELECT lease_number FROM administrative.rrr)
-AND right_type_code = 'transfer'
-AND id NOT IN (SELECT id FROM party.party);
+SELECT distinct p.id, p.party_type_code, trim(p.first_name), p.last_name, p.legal_type_code, p.gender_code
+FROM lesotho_etl.lms_party p,
+     administrative.rrr r
+WHERE  r.type_code = 'tenancy'
+AND    p.lease_number = r.lease_number
+AND    p.registration_number = r.registration_number
+AND    p.right_type_code ='transfer'
+AND    NOT EXISTS (SELECT id FROM party.party where p.id = id);
 
 --Load party for Rrr
 INSERT INTO administrative.party_for_rrr
-(rrr_id, share_id, party_id)
-SELECT DISTINCT
-s.rrr_id, s.id, p.id
-FROM  administrative.rrr_share s
-INNER JOIN administrative.rrr r ON
-s.rrr_id = r.id
-INNER JOIN lesotho_etl.lms_party p ON
-r.lease_number = p.lease_number
-WHERE p.right_type_code = 'transfer';
+(rrr_id, party_id)
+SELECT DISTINCT r.id, p.id
+FROM lesotho_etl.lms_party p,
+     administrative.rrr r
+WHERE  r.type_code = 'tenancy'
+AND    p.lease_number = r.lease_number
+AND    p.registration_number = r.registration_number
+AND    p.right_type_code ='transfer';
 
 --add account holder role
 INSERT INTO party.party_role (party_id, type_code)

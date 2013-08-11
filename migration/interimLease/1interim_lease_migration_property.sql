@@ -3,6 +3,16 @@
 delete from administrative.ba_unit;
 delete from party.party;
 
+create or replace function safe_cast(text,anyelement) 
+returns anyelement 
+language plpgsql as $$ 
+begin 
+    $0 := $1; 
+    return $0; 
+    exception when others then 
+        return $2; 
+end; $$;
+
 --ADD transaction for lease migration
 INSERT INTO transaction.transaction
 (id, from_service_id, status_code, approval_datetime, bulk_generate_first_part, is_bulk_operation) 
@@ -31,7 +41,8 @@ expiration_date, status_code, transaction_id
 FROM lesotho_etl.lms_right
 WHERE right_type_code = 'lease'
 AND creation_date is NOT NULL
-AND cadastre_object_id NOT IN (SELECT cadastre_object_id FROM cadastre_list);
+AND NOT EXISTs (select cadastre_object_id FROM cadastre_list where
+cadastre_object_id = lms_right.cadastre_object_id);
 
 --Add Lease Rights
 
@@ -54,29 +65,26 @@ INSERT INTO  administrative.notation(id, rrr_id, transaction_id, change_user, no
 SELECT uuid_generate_v1(), r.id, 'adm-transaction', 'test-id', r.registration_date, 'current', 'lease', r.nr
 FROM administrative.rrr r;
 
---Add rrr shares
-INSERT INTO administrative.rrr_share(id, rrr_id, nominator, denominator)
-SELECT uuid_generate_v1(), id, 1, 1 from administrative.rrr;
-
 --Load Parties first
 INSERT INTO party.party
 (id, type_code, name, last_name, legal_type, gender_code)
-SELECT distinct id, party_type_code, trim(first_name), last_name, legal_type_code, gender_code
-FROM lesotho_etl.lms_party 
-WHERE lease_number in (SELECT lease_number FROM administrative.rrr)
-AND right_type_code = 'lease';
+SELECT distinct p.id, p.party_type_code, trim(p.first_name), p.last_name, p.legal_type_code, p.gender_code
+FROM lesotho_etl.lms_party p,
+     administrative.rrr r
+WHERE  r.type_code = 'lease'
+AND    p.lease_number = r.lease_number
+AND    p.right_type_code ='lease'
+AND    NOT EXISTS (SELECT id FROM party.party where p.id = id);
 
 --Load party for Rrr
 INSERT INTO administrative.party_for_rrr
-(rrr_id, share_id, party_id)
-SELECT DISTINCT
-s.rrr_id, s.id, p.id
-FROM  administrative.rrr_share s
-INNER JOIN administrative.rrr r ON
-s.rrr_id = r.id
-INNER JOIN lesotho_etl.lms_party p ON
-r.lease_number = p.lease_number
-WHERE p.right_type_code = 'lease';
+(rrr_id, party_id)
+SELECT DISTINCT r.id, p.id
+FROM lesotho_etl.lms_party p,
+     administrative.rrr r
+WHERE  r.type_code = 'lease'
+AND    p.lease_number = r.lease_number
+AND    p.right_type_code ='lease';
 
 INSERT INTO party.party_role (party_id, type_code)
 SELECT DISTINCT p.id, l.party_role_code from lesotho_etl.lms_party l
