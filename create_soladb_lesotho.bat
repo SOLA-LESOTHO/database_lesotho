@@ -54,6 +54,9 @@ echo Loading SOLA business rules... >> build.log 2>&1
 
 echo Loading Lesotho Extensions...
 echo Loading Lesotho Extensions... >> build.log 2>&1
+echo Table & Trigger changes... >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\table_trigger_changes.sql >> build.log 2>&1
+
 echo Loading Lesotho Business Rules... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\lesotho_business_rules.sql >> build.log 2>&1
 
@@ -87,9 +90,6 @@ echo Loading Lesotho Grids... >> build.log 2>&1
 
 echo Loading roads and zones data... >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\sola_populate_laa_shapefiles.sql >> build.log 2>&1
-
-echo Parcel numbering >> build.log 2>&1
-%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=extension\trigger_new_cadastre_object.sql >> build.log 2>&1
 
 echo Renaming Zones >> build.log 2>&1
 %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=migration\update_spatial_unit_zones.sql >> build.log 2>&1
