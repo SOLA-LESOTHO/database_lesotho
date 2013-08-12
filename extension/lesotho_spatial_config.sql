@@ -38,7 +38,7 @@ WHERE "name" IN ('orthophoto', 'applications', 'place-names', 'survey-controls',
 -- Update Generic SOLA layers so they are not visible by default
 UPDATE system.config_map_layer
 SET visible_in_start = FALSE
-WHERE "name" IN ('parcel-nodes', 'parcels-historic-current-ba', 'pending-parcels', 'roads');
+WHERE "name" IN ('parcel-nodes', 'parcels-historic-current-ba', 'pending-parcels');
 
 UPDATE system.config_map_layer
 SET style = 'parcel.xml', 
