@@ -5297,6 +5297,9 @@ insert into cadastre.land_use_type(code, display_value, status) values('agricNon
 insert into cadastre.land_use_type(code, display_value, status) values('agricRangeGrazing', 'Range Grazing or Forestry', 'c');
 insert into cadastre.land_use_type(code, display_value, status) values('agricOther', 'Other Agricultural Use', 'c');
 insert into cadastre.land_use_type(code, display_value, status) values('agricIntensive', 'Livestock, Poultry, or Horticulture', 'c');
+insert into cadastre.land_use_type(code, display_value, description, status) values('other', 'Other', '(NULL)', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('benovelent', 'Benovelent', 'c');
+insert into cadastre.land_use_type(code, display_value, status) values('devotional', 'Devotional', 'c');
 
 
 
