@@ -99,3 +99,27 @@ $BODY$
 ALTER FUNCTION cadastre.f_for_tbl_cadastre_object_trg_new()
   OWNER TO postgres;
 COMMENT ON FUNCTION cadastre.f_for_tbl_cadastre_object_trg_new() IS 'This function creates a new spatial_unit record for any new cadastre object and also determines the name for the new CO based on the grid the CO is within';
+
+CREATE OR REPLACE FUNCTION administrative.f_for_tbl_ba_unit_trg_check_cadastre_object()
+  RETURNS trigger AS
+$BODY$
+begin
+   --IF new.cadastre_object_id is null and new.status_code is not null and new.status_code != 'pending' THEN
+	--raise exception 'Cadastre object can''t be null';
+   --END IF;
+   
+   IF (select count(1) from administrative.ba_unit b 
+       where b.id!=new.id and b.cadastre_object_id = new.cadastre_object_id and 
+       b.status_code in ('pending', 'current') and new.status_code in ('pending', 'current')) > 0 THEN
+      raise exception 'Selected cadastre object already bound to the lease.';
+   END IF;
+   return new;
+end
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION administrative.f_for_tbl_ba_unit_trg_check_cadastre_object()
+  OWNER TO postgres;
+
+ ALTER TABLE administrative.ba_unit
+  ADD CONSTRAINT ba_unit_unique_name_parts UNIQUE (name_firstpart, name_lastpart);
