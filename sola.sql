@@ -4641,81 +4641,71 @@ insert into cadastre.dimension_type(code, display_value, status) values('liminal
 
 --Table administrative.dispute ----
 DROP TABLE IF EXISTS administrative.dispute CASCADE;
-CREATE TABLE administrative.dispute(
-    id varchar(50) NOT NULL,
-    nr varchar(50) NOT NULL,
-    lodgement_date timestamp DEFAULT (now()),
-    completion_date timestamp,
-    dispute_category_code varchar(40),
-    dispute_type_code varchar(40),
-    status_code varchar(40) NOT NULL DEFAULT ('pending'),
-    rrr_id varchar(40),
-    plot_location varchar(200),
-    cadastre_object_id varchar(40),
-    casetype varchar(100),
-    action_required varchar(555),
-    primary_respondent bool NOT NULL DEFAULT ('false'),
-    rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
-    rowversion integer NOT NULL DEFAULT (0),
-    change_action char(1) NOT NULL DEFAULT ('i'),
-    change_user varchar(50),
-    change_time timestamp NOT NULL DEFAULT (now()),
+CREATE TABLE administrative.dispute (
+  id                 varchar(50) NOT NULL, 
+  nr                 varchar(255) NOT NULL, 
+  lodgement_date     timestamp without time zone NOT NULL DEFAULT now(), 
+  completion_date    timestamp  without time zone,
+  dispute_category_code   varchar(40), 
+  dispute_type_code       varchar(40), 
+  status_code 		 varchar(20) NOT NULL DEFAULT ('Pending'), 
+  rrr_id             varchar(40), 
+  plot_location      varchar(255), 
+  cadastre_object_id varchar(40), 
+  casetype           varchar(100),
+  action_required    varchar(555),
+  dispute_description varchar(255),
+  primary_respondent bool NOT NULL DEFAULT (false),
+  rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
+  rowversion integer NOT NULL DEFAULT (0),
+  change_action char(1) NOT NULL DEFAULT ('i'),
+  change_user varchar(50),
+  change_time timestamp NOT NULL DEFAULT (now()),
+  
+   -- Internal constraints
+  CONSTRAINT dispute_pkey PRIMARY KEY(id)
+  );
+ 
+ COMMENT ON TABLE administrative.dispute IS 'First table created that captures basic information about a dispute.';
 
-    -- Internal constraints
-    
-    CONSTRAINT dispute_id_unique UNIQUE (id),
-    CONSTRAINT dispute_nr_unique UNIQUE (nr),
-    CONSTRAINT dispute_pkey PRIMARY KEY (id)
-);
-
-
-
--- Index dispute_index_on_rowidentifier  --
+  -- Index dispute_index_on_rowidentifier  --
 CREATE INDEX dispute_index_on_rowidentifier ON administrative.dispute (rowidentifier);
-    
 
-comment on table administrative.dispute is 'First table created that captures basic information about a dispute.';
-    
 DROP TRIGGER IF EXISTS __track_changes ON administrative.dispute CASCADE;
 CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
    ON administrative.dispute FOR EACH ROW
    EXECUTE PROCEDURE f_for_trg_track_changes();
-    
-
-----Table administrative.dispute_historic used for the history of data of table administrative.dispute ---
+  
 DROP TABLE IF EXISTS administrative.dispute_historic CASCADE;
-CREATE TABLE administrative.dispute_historic
-(
-    id varchar(50),
-    nr varchar(50),
-    lodgement_date timestamp,
-    completion_date timestamp,
-    dispute_category_code varchar(40),
-    dispute_type_code varchar(40),
-    status_code varchar(40),
-    rrr_id varchar(40),
-    plot_location varchar(200),
-    cadastre_object_id varchar(40),
-    casetype varchar(100),
-    action_required varchar(555),
-    primary_respondent bool,
-    rowidentifier varchar(40),
-    rowversion integer,
-    change_action char(1),
-    change_user varchar(50),
-    change_time timestamp,
-    change_time_valid_until TIMESTAMP NOT NULL default NOW()
-);
-
-
--- Index dispute_historic_index_on_rowidentifier  --
-CREATE INDEX dispute_historic_index_on_rowidentifier ON administrative.dispute_historic (rowidentifier);
-    
-
-DROP TRIGGER IF EXISTS __track_history ON administrative.dispute CASCADE;
-CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
-   ON administrative.dispute FOR EACH ROW
-   EXECUTE PROCEDURE f_for_trg_track_history();
+CREATE TABLE administrative.dispute_historic (
+  id                 varchar(50) , 
+  nr                 varchar(255), 
+  lodgement_date     timestamp without time zone,
+  completion_date    timestamp without time zone,
+  dispute_category_code   varchar(40),
+  dispute_type_code       varchar(40),  
+  status_code        char(50) , 
+  rrr_id             varchar(40), 
+  plot_location      varchar(255), 
+  cadastre_object_id varchar(40), 
+  casetype           varchar(100),
+  action_required    varchar(555),
+  dispute_description varchar(255),
+  primary_respondent bool,
+  rowidentifier varchar(40),
+  rowversion integer,
+  change_action char(1) ,
+  change_user varchar(50),
+  change_time timestamp,
+  change_time_valid_until TIMESTAMP NOT NULL default NOW()
+  );
+  
+  CREATE INDEX dispute_historic_index_on_rowidentifier ON administrative.dispute_historic (rowidentifier);
+  
+  DROP TRIGGER IF EXISTS __track_changes ON administrative.dispute_historic CASCADE;
+CREATE TRIGGER __track_changes AFTER UPDATE OR DELETE
+   ON administrative.dispute_historic FOR EACH ROW
+   EXECUTE PROCEDURE f_for_trg_track_changes();
     
 --Table administrative.dispute_action ----
 DROP TABLE IF EXISTS administrative.dispute_action CASCADE;
@@ -4767,14 +4757,63 @@ insert into administrative.dispute_category(code, display_value, description, st
 
 --Table administrative.dispute_comments ----
 DROP TABLE IF EXISTS administrative.dispute_comments CASCADE;
-CREATE TABLE administrative.dispute_comments(
-    id varchar(50) NOT NULL,
-    dispute_nr varchar(50) NOT NULL,
-    dispute_action_code varchar(40) NOT NULL,
-    other_authorities_code varchar(40),
-    update_date timestamp NOT NULL DEFAULT (now()),
-    comments varchar(500),
-    updated_by varchar(255),
+  CREATE TABLE administrative.dispute_comments (
+  id                     varchar(50) NOT NULL, 
+  dispute_nr             varchar(50) NOT NULL, 
+  dispute_action_code    varchar(50), 
+  other_authorities_code varchar(50),
+  update_date     		 timestamp without time zone NOT NULL DEFAULT now(),
+  comments               varchar(500), 
+  updated_by             varchar(255),  
+  rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
+  rowversion integer NOT NULL DEFAULT (0),
+  change_action char(1) NOT NULL DEFAULT ('i'),
+  change_user varchar(50),
+  change_time timestamp NOT NULL DEFAULT (now()),
+  
+  -- Internal constraints
+ 
+    CONSTRAINT dispute_comments_pkey PRIMARY KEY (id)
+  
+  );
+  
+  COMMENT ON TABLE administrative.dispute_comments IS 'Captures updates happening on a specific dispute. ';
+  
+  DROP TRIGGER IF EXISTS __track_changes ON administrative.dispute_comments CASCADE;
+  CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
+   ON administrative.dispute_comments FOR EACH ROW
+   EXECUTE PROCEDURE f_for_trg_track_changes();
+  
+  DROP TABLE IF EXISTS administrative.dispute_comments_historic CASCADE;
+  CREATE TABLE administrative.dispute_comments_historic (
+  id                     varchar(50), 
+  dispute_nr             varchar(50), 
+  dispute_action_code    varchar(50), 
+  other_authorities_code varchar(50),
+  update_date      		 timestamp without time zone ,
+  comments               varchar(500), 
+  updated_by             varchar(255), 
+  rowidentifier varchar(40),
+  rowversion integer,
+  change_action char(1) ,
+  change_user varchar(50),
+  change_time timestamp,
+  change_time_valid_until TIMESTAMP NOT NULL default NOW()
+  
+  );
+  
+  CREATE INDEX dispute_comments_historic_index_on_rowidentifier ON administrative.dispute_comments_historic (rowidentifier);
+  
+  DROP TRIGGER IF EXISTS __track_changes ON administrative.dispute_comments_historic CASCADE;
+  CREATE TRIGGER __track_changes AFTER UPDATE OR DELETE
+   ON administrative.dispute_comments_historic FOR EACH ROW
+   EXECUTE PROCEDURE f_for_trg_track_changes();
+   
+--Table administrative.dispute_source
+DROP TABLE IF EXISTS administrative.disputes_source CASCADE;
+CREATE TABLE administrative.disputes_source(
+    dispute_id varchar(40) NOT NULL,
+    source_id varchar(40) NOT NULL,
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -4783,36 +4822,27 @@ CREATE TABLE administrative.dispute_comments(
 
     -- Internal constraints
     
-    CONSTRAINT dispute_comments_id_unique UNIQUE (id),
-    CONSTRAINT dispute_comments_dispute_nr_unique UNIQUE (dispute_nr),
-    CONSTRAINT dispute_comments_pkey PRIMARY KEY (id)
+    CONSTRAINT disputes_source_pkey PRIMARY KEY (dispute_id,source_id)
 );
 
-
-
--- Index dispute_comments_index_on_rowidentifier  --
-CREATE INDEX dispute_comments_index_on_rowidentifier ON administrative.dispute_comments (rowidentifier);
+-- Index dispute_source_index_on_rowidentifier  --
+CREATE INDEX disputes_source_index_on_rowidentifier ON administrative.disputes_source (rowidentifier);
     
 
-comment on table administrative.dispute_comments is 'Captures updates happening on a specific dispute. ';
+comment on table administrative.disputes_source is 'Sources (documents) submitted with a dispute';
     
-DROP TRIGGER IF EXISTS __track_changes ON administrative.dispute_comments CASCADE;
+DROP TRIGGER IF EXISTS __track_changes ON administrative.disputes_source CASCADE;
 CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
-   ON administrative.dispute_comments FOR EACH ROW
+   ON administrative.disputes_source FOR EACH ROW
    EXECUTE PROCEDURE f_for_trg_track_changes();
     
 
-----Table administrative.dispute_comments_historic used for the history of data of table administrative.dispute_comments ---
-DROP TABLE IF EXISTS administrative.dispute_comments_historic CASCADE;
-CREATE TABLE administrative.dispute_comments_historic
+----Table administrative.disputes_source_historic used for the history of data of table administrative.adisputes_source ---
+DROP TABLE IF EXISTS administrative.disputes_source_historic CASCADE;
+CREATE TABLE administrative.disputes_source_historic
 (
-    id varchar(50),
-    dispute_nr varchar(50),
-    dispute_action_code varchar(40),
-    other_authorities_code varchar(40),
-    update_date timestamp,
-    comments varchar(500),
-    updated_by varchar(255),
+    dispute_id varchar(40),
+    source_id varchar(40),
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),
@@ -4822,68 +4852,49 @@ CREATE TABLE administrative.dispute_comments_historic
 );
 
 
--- Index dispute_comments_historic_index_on_rowidentifier  --
-CREATE INDEX dispute_comments_historic_index_on_rowidentifier ON administrative.dispute_comments_historic (rowidentifier);
+-- Index disputes_source_historic_index_on_rowidentifier  --
+CREATE INDEX disputes_source_historic_index_on_rowidentifier ON administrative.disputes_source_historic (rowidentifier);
     
 
-DROP TRIGGER IF EXISTS __track_history ON administrative.dispute_comments CASCADE;
+DROP TRIGGER IF EXISTS __track_history ON administrative.disputes_source CASCADE;
 CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
-   ON administrative.dispute_comments FOR EACH ROW
+   ON administrative.disputes_source FOR EACH ROW
    EXECUTE PROCEDURE f_for_trg_track_history();
     
 --Table administrative.dispute_party ----
 DROP TABLE IF EXISTS administrative.dispute_party CASCADE;
-CREATE TABLE administrative.dispute_party(
-    id varchar(50) NOT NULL,
-    dispute_nr varchar(50) NOT NULL,
-    party_id varchar(50) NOT NULL,
-    party_role varchar(100) NOT NULL,
-    rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
-    rowversion integer NOT NULL DEFAULT (0),
-    change_action char(1) NOT NULL DEFAULT ('i'),
-    change_user varchar(50),
-    change_time timestamp NOT NULL DEFAULT (now())
-);
-
-
-
--- Index dispute_party_index_on_rowidentifier  --
-CREATE INDEX dispute_party_index_on_rowidentifier ON administrative.dispute_party (rowidentifier);
-    
-
-comment on table administrative.dispute_party is 'Captures individuals involved ina dispsute';
-    
-DROP TRIGGER IF EXISTS __track_changes ON administrative.dispute_party CASCADE;
-CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
-   ON administrative.dispute_party FOR EACH ROW
-   EXECUTE PROCEDURE f_for_trg_track_changes();
-    
-
-----Table administrative.dispute_party_historic used for the history of data of table administrative.dispute_party ---
-DROP TABLE IF EXISTS administrative.dispute_party_historic CASCADE;
-CREATE TABLE administrative.dispute_party_historic
-(
-    id varchar(50),
-    dispute_nr varchar(50),
-    party_id varchar(50),
-    party_role varchar(100),
-    rowidentifier varchar(40),
-    rowversion integer,
-    change_action char(1),
-    change_user varchar(50),
-    change_time timestamp,
-    change_time_valid_until TIMESTAMP NOT NULL default NOW()
-);
-
-
--- Index dispute_party_historic_index_on_rowidentifier  --
-CREATE INDEX dispute_party_historic_index_on_rowidentifier ON administrative.dispute_party_historic (rowidentifier);
-    
-
-DROP TRIGGER IF EXISTS __track_history ON administrative.dispute_party CASCADE;
-CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
-   ON administrative.dispute_party FOR EACH ROW
-   EXECUTE PROCEDURE f_for_trg_track_history();
+  CREATE TABLE administrative.dispute_party (
+  id                       varchar(50) NOT NULL,
+  dispute_nr               varchar(50) NOT NULL, 
+  party_id                 varchar(50) NOT NULL, 
+  party_role     varchar(100) NOT NULL, 
+  party_name	 varchar(100) NOT NULL, 
+  rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
+  rowversion integer NOT NULL DEFAULT (0),
+  change_action char(1) NOT NULL DEFAULT ('i'),
+  change_user varchar(50),
+  change_time timestamp NOT NULL DEFAULT (now()),
+  
+   -- Internal constraints
+  CONSTRAINT dispute_party_pkey PRIMARY KEY(id)
+  );
+  COMMENT ON TABLE administrative.dispute_party IS 'Captures individuals involved in a dispsute';
+  
+  
+   DROP TABLE IF EXISTS administrative.dispute_party_historic CASCADE;
+  CREATE TABLE administrative.dispute_party_historic (
+  id                       varchar(50),
+  dispute_nr               varchar(50), 
+  party_id                 varchar(50), 
+  party_role     varchar(100),
+  party_name	 varchar(100) NOT NULL,
+  rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
+  rowversion integer ,
+  change_action char(1) ,
+  change_user varchar(50),
+  change_time timestamp ,
+  change_time_valid_until TIMESTAMP NOT NULL default NOW()
+  );
     
 --Table administrative.dispute_status ----
 DROP TABLE IF EXISTS administrative.dispute_status CASCADE;
