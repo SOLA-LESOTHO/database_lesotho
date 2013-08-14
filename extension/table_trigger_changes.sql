@@ -3,6 +3,7 @@
 -- is room for other documents to be inserted if necessary
 DROP SEQUENCE IF EXISTS document.document_nr_seq;
 DROP SEQUENCE IF EXISTS source.source_la_nr_seq;
+DROP SEQUENCE IF EXISTS administrative.rrr_nr_seq;
 
 CREATE SEQUENCE document.document_nr_seq
   INCREMENT 1
@@ -16,6 +17,13 @@ CREATE SEQUENCE source.source_la_nr_seq
   MINVALUE 500000
   MAXVALUE 99999999
   START 500000
+  CACHE 1;
+  
+CREATE SEQUENCE  administrative.rrr_nr_seq
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 999999
+  START 1
   CACHE 1;
 
 -- Customised Trigger function to determine the correct name for the new cadastre object
