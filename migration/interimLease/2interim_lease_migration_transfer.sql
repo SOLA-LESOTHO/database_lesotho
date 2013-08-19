@@ -51,10 +51,13 @@ AND    p.lease_number = r.lease_number
 AND    p.registration_number = r.registration_number
 AND    p.right_type_code ='transfer';
 
---add account holder role
+--add account holder  for transferees
 INSERT INTO party.party_role (party_id, type_code)
-SELECT DISTINCT p.id, l.party_role_code from lesotho_etl.lms_party l
-INNER JOIN party.party p ON p.id = l.id
-WHERE l.party_role_code = 'transferee';
+SELECT MAX(p.id), 'accountHolder' 
+FROM lesotho_etl.lms_party lp,
+     party.party p
+WHERE p.id = lp.id
+AND   lp.right_type_code = 'transfer'
+GROUP BY lp.lease_number, lp.registration_number;
 
 select lesotho_etl.process_transfers();

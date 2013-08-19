@@ -35,6 +35,17 @@ WHERE r.right_type_code ='mortgage'
 AND r.registration_number <> ''
 AND r.creation_date is NOT NULL;
 
+-- Update properties with multiple mortgages so that only the most recently registered
+-- mortgage remains current. If a property has multiple mortgages, then the mortgage
+-- can be added again later through a Lease Correction. 
+UPDATE administrative.rrr r
+SET status_code = 'historic'
+WHERE type_code = 'mortgage'
+AND registration_date != (SELECT MAX(registration_date)
+                          FROM administrative.rrr
+                          WHERE type_code = 'mortgage'
+                          AND ba_unit_id = r.ba_unit_id);
+
 -- Add the mortgage notations
 INSERT INTO  administrative.notation(id, rrr_id, transaction_id, change_user, notation_date, status_code, notation_text, reference_nr) 
 SELECT uuid_generate_v1(), r.id, 'adm-transaction', 'test-id', r.registration_date, 'current', 'mortgage', r.nr

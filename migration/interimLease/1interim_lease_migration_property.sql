@@ -76,14 +76,15 @@ AND    p.lease_number = r.lease_number
 AND    p.right_type_code ='lease'
 AND    NOT EXISTS (SELECT id FROM party.party where p.id = id);
 
---Load party for Rrr
+--Load party for Rrr - Link using the r.registration_number to avoid
+-- duplicate records where transfers have occurred. 
 INSERT INTO administrative.party_for_rrr
 (rrr_id, party_id)
 SELECT DISTINCT r.id, p.id
 FROM lesotho_etl.lms_party p,
      administrative.rrr r
 WHERE  r.type_code = 'lease'
-AND    p.lease_number = r.lease_number
+AND    p.lease_number = r.registration_number
 AND    p.right_type_code ='lease';
 
 INSERT INTO party.party_role (party_id, type_code)
