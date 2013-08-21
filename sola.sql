@@ -7,10 +7,10 @@ DROP SCHEMA IF EXISTS address CASCADE;
         
 CREATE SCHEMA address;
 
---Create schema application--
-DROP SCHEMA IF EXISTS application CASCADE;
+--Create schema administrative--
+DROP SCHEMA IF EXISTS administrative CASCADE;
         
-CREATE SCHEMA application;
+CREATE SCHEMA administrative;
 
 --Create schema source--
 DROP SCHEMA IF EXISTS source CASCADE;
@@ -22,15 +22,15 @@ DROP SCHEMA IF EXISTS system CASCADE;
         
 CREATE SCHEMA system;
 
+--Create schema application--
+DROP SCHEMA IF EXISTS application CASCADE;
+        
+CREATE SCHEMA application;
+
 --Create schema cadastre--
 DROP SCHEMA IF EXISTS cadastre CASCADE;
         
 CREATE SCHEMA cadastre;
-
---Create schema administrative--
-DROP SCHEMA IF EXISTS administrative CASCADE;
-        
-CREATE SCHEMA administrative;
 
 --Create schema party--
 DROP SCHEMA IF EXISTS party CASCADE;
@@ -2833,9 +2833,9 @@ CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
    ON address.address FOR EACH ROW
    EXECUTE PROCEDURE f_for_trg_track_history();
     
---Table application.admin_fee_rate ----
-DROP TABLE IF EXISTS application.admin_fee_rate CASCADE;
-CREATE TABLE application.admin_fee_rate(
+--Table administrative.admin_fee_rate ----
+DROP TABLE IF EXISTS administrative.admin_fee_rate CASCADE;
+CREATE TABLE administrative.admin_fee_rate(
     fee_code varchar(20) NOT NULL,
     rate_code varchar(20) NOT NULL,
     rate_value numeric(20, 2) NOT NULL DEFAULT (0),
@@ -2846,21 +2846,21 @@ CREATE TABLE application.admin_fee_rate(
 );
 
 
-comment on table application.admin_fee_rate is '';
+comment on table administrative.admin_fee_rate is '';
     
- -- Data for the table application.admin_fee_rate -- 
-insert into application.admin_fee_rate(fee_code, rate_code, rate_value) values('stampDuty', 'lowerRate', 0.01);
-insert into application.admin_fee_rate(fee_code, rate_code, rate_value) values('stampDuty', 'upperRate', 0.03);
-insert into application.admin_fee_rate(fee_code, rate_code, rate_value) values('stampDuty', 'thresholdValue', 7000);
-insert into application.admin_fee_rate(fee_code, rate_code, rate_value) values('transferDuty', 'lowerRate', 0.03);
-insert into application.admin_fee_rate(fee_code, rate_code, rate_value) values('transferDuty', 'upperRate', 0.04);
-insert into application.admin_fee_rate(fee_code, rate_code, rate_value) values('transferDuty', 'thresholdValue', 10000);
+ -- Data for the table administrative.admin_fee_rate -- 
+insert into administrative.admin_fee_rate(fee_code, rate_code, rate_value) values('stampDuty', 'lowerRate', 0.01);
+insert into administrative.admin_fee_rate(fee_code, rate_code, rate_value) values('stampDuty', 'upperRate', 0.03);
+insert into administrative.admin_fee_rate(fee_code, rate_code, rate_value) values('stampDuty', 'thresholdValue', 7000);
+insert into administrative.admin_fee_rate(fee_code, rate_code, rate_value) values('transferDuty', 'lowerRate', 0.03);
+insert into administrative.admin_fee_rate(fee_code, rate_code, rate_value) values('transferDuty', 'upperRate', 0.04);
+insert into administrative.admin_fee_rate(fee_code, rate_code, rate_value) values('transferDuty', 'thresholdValue', 10000);
 
 
 
---Table application.admin_fee_type ----
-DROP TABLE IF EXISTS application.admin_fee_type CASCADE;
-CREATE TABLE application.admin_fee_type(
+--Table administrative.admin_fee_type ----
+DROP TABLE IF EXISTS administrative.admin_fee_type CASCADE;
+CREATE TABLE administrative.admin_fee_type(
     code varchar(20) NOT NULL,
     display_value varchar(255) NOT NULL,
     description varchar(255),
@@ -2873,18 +2873,18 @@ CREATE TABLE application.admin_fee_type(
 );
 
 
-comment on table application.admin_fee_type is '';
+comment on table administrative.admin_fee_type is '';
     
- -- Data for the table application.admin_fee_type -- 
-insert into application.admin_fee_type(code, display_value, status) values('groundRent', 'Ground Rent', 'c');
-insert into application.admin_fee_type(code, display_value, status) values('stampDuty', 'Stamp Duty', 'c');
-insert into application.admin_fee_type(code, display_value, status) values('transferDuty', 'Transfer Duty', 'c');
+ -- Data for the table administrative.admin_fee_type -- 
+insert into administrative.admin_fee_type(code, display_value, status) values('groundRent', 'Ground Rent', 'c');
+insert into administrative.admin_fee_type(code, display_value, status) values('stampDuty', 'Stamp Duty', 'c');
+insert into administrative.admin_fee_type(code, display_value, status) values('transferDuty', 'Transfer Duty', 'c');
 
 
 
---Table application.admin_rate_type ----
-DROP TABLE IF EXISTS application.admin_rate_type CASCADE;
-CREATE TABLE application.admin_rate_type(
+--Table administrative.admin_rate_type ----
+DROP TABLE IF EXISTS administrative.admin_rate_type CASCADE;
+CREATE TABLE administrative.admin_rate_type(
     code varchar(20) NOT NULL,
     display_value varchar(255) NOT NULL,
     description varchar(500),
@@ -2897,12 +2897,12 @@ CREATE TABLE application.admin_rate_type(
 );
 
 
-comment on table application.admin_rate_type is '';
+comment on table administrative.admin_rate_type is '';
     
- -- Data for the table application.admin_rate_type -- 
-insert into application.admin_rate_type(code, display_value, description, status) values('lowerRate', 'Lower Rate', '', 'c');
-insert into application.admin_rate_type(code, display_value, status) values('upperRate', 'Upper Rate', 'c');
-insert into application.admin_rate_type(code, display_value, status) values('thresholdValue', 'Threshold Value', 'c');
+ -- Data for the table administrative.admin_rate_type -- 
+insert into administrative.admin_rate_type(code, display_value, description, status) values('lowerRate', 'Lower Rate', '', 'c');
+insert into administrative.admin_rate_type(code, display_value, status) values('upperRate', 'Upper Rate', 'c');
+insert into administrative.admin_rate_type(code, display_value, status) values('thresholdValue', 'Threshold Value', 'c');
 
 
 
@@ -4641,71 +4641,81 @@ insert into cadastre.dimension_type(code, display_value, status) values('liminal
 
 --Table administrative.dispute ----
 DROP TABLE IF EXISTS administrative.dispute CASCADE;
-CREATE TABLE administrative.dispute (
-  id                 varchar(50) NOT NULL, 
-  nr                 varchar(255) NOT NULL, 
-  lodgement_date     timestamp without time zone NOT NULL DEFAULT now(), 
-  completion_date    timestamp  without time zone,
-  dispute_category_code   varchar(40), 
-  dispute_type_code       varchar(40), 
-  status_code 		 varchar(20) NOT NULL DEFAULT ('Pending'), 
-  rrr_id             varchar(40), 
-  plot_location      varchar(255), 
-  cadastre_object_id varchar(40), 
-  casetype           varchar(100),
-  action_required    varchar(555),
-  dispute_description varchar(255),
-  primary_respondent bool NOT NULL DEFAULT (false),
-  rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
-  rowversion integer NOT NULL DEFAULT (0),
-  change_action char(1) NOT NULL DEFAULT ('i'),
-  change_user varchar(50),
-  change_time timestamp NOT NULL DEFAULT (now()),
-  
-   -- Internal constraints
-  CONSTRAINT dispute_pkey PRIMARY KEY(id)
-  );
- 
- COMMENT ON TABLE administrative.dispute IS 'First table created that captures basic information about a dispute.';
+CREATE TABLE administrative.dispute(
+    id varchar(50) NOT NULL,
+    nr varchar(50) NOT NULL,
+    lodgement_date timestamp DEFAULT (now()),
+    completion_date timestamp,
+    dispute_category_code varchar(40),
+    dispute_type_code varchar(40),
+    status_code varchar(40) NOT NULL DEFAULT ('pending'),
+    rrr_id varchar(40),
+    plot_location varchar(200),
+    cadastre_object_id varchar(40),
+    casetype varchar(100),
+    action_required varchar(555),
+    primary_respondent bool NOT NULL DEFAULT ('false'),
+    rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
+    rowversion integer NOT NULL DEFAULT (0),
+    change_action char(1) NOT NULL DEFAULT ('i'),
+    change_user varchar(50),
+    change_time timestamp NOT NULL DEFAULT (now()),
 
-  -- Index dispute_index_on_rowidentifier  --
+    -- Internal constraints
+    
+    CONSTRAINT dispute_id_unique UNIQUE (id),
+    CONSTRAINT dispute_nr_unique UNIQUE (nr),
+    CONSTRAINT dispute_pkey PRIMARY KEY (id)
+);
+
+
+
+-- Index dispute_index_on_rowidentifier  --
 CREATE INDEX dispute_index_on_rowidentifier ON administrative.dispute (rowidentifier);
+    
 
+comment on table administrative.dispute is 'First table created that captures basic information about a dispute.';
+    
 DROP TRIGGER IF EXISTS __track_changes ON administrative.dispute CASCADE;
 CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
    ON administrative.dispute FOR EACH ROW
    EXECUTE PROCEDURE f_for_trg_track_changes();
-  
+    
+
+----Table administrative.dispute_historic used for the history of data of table administrative.dispute ---
 DROP TABLE IF EXISTS administrative.dispute_historic CASCADE;
-CREATE TABLE administrative.dispute_historic (
-  id                 varchar(50) , 
-  nr                 varchar(255), 
-  lodgement_date     timestamp without time zone,
-  completion_date    timestamp without time zone,
-  dispute_category_code   varchar(40),
-  dispute_type_code       varchar(40),  
-  status_code        char(50) , 
-  rrr_id             varchar(40), 
-  plot_location      varchar(255), 
-  cadastre_object_id varchar(40), 
-  casetype           varchar(100),
-  action_required    varchar(555),
-  dispute_description varchar(255),
-  primary_respondent bool,
-  rowidentifier varchar(40),
-  rowversion integer,
-  change_action char(1) ,
-  change_user varchar(50),
-  change_time timestamp,
-  change_time_valid_until TIMESTAMP NOT NULL default NOW()
-  );
-  
-  CREATE INDEX dispute_historic_index_on_rowidentifier ON administrative.dispute_historic (rowidentifier);
-  
-  DROP TRIGGER IF EXISTS __track_changes ON administrative.dispute_historic CASCADE;
-CREATE TRIGGER __track_changes AFTER UPDATE OR DELETE
-   ON administrative.dispute_historic FOR EACH ROW
-   EXECUTE PROCEDURE f_for_trg_track_changes();
+CREATE TABLE administrative.dispute_historic
+(
+    id varchar(50),
+    nr varchar(50),
+    lodgement_date timestamp,
+    completion_date timestamp,
+    dispute_category_code varchar(40),
+    dispute_type_code varchar(40),
+    status_code varchar(40),
+    rrr_id varchar(40),
+    plot_location varchar(200),
+    cadastre_object_id varchar(40),
+    casetype varchar(100),
+    action_required varchar(555),
+    primary_respondent bool,
+    rowidentifier varchar(40),
+    rowversion integer,
+    change_action char(1),
+    change_user varchar(50),
+    change_time timestamp,
+    change_time_valid_until TIMESTAMP NOT NULL default NOW()
+);
+
+
+-- Index dispute_historic_index_on_rowidentifier  --
+CREATE INDEX dispute_historic_index_on_rowidentifier ON administrative.dispute_historic (rowidentifier);
+    
+
+DROP TRIGGER IF EXISTS __track_history ON administrative.dispute CASCADE;
+CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
+   ON administrative.dispute FOR EACH ROW
+   EXECUTE PROCEDURE f_for_trg_track_history();
     
 --Table administrative.dispute_action ----
 DROP TABLE IF EXISTS administrative.dispute_action CASCADE;
@@ -4757,63 +4767,14 @@ insert into administrative.dispute_category(code, display_value, description, st
 
 --Table administrative.dispute_comments ----
 DROP TABLE IF EXISTS administrative.dispute_comments CASCADE;
-  CREATE TABLE administrative.dispute_comments (
-  id                     varchar(50) NOT NULL, 
-  dispute_nr             varchar(50) NOT NULL, 
-  dispute_action_code    varchar(50), 
-  other_authorities_code varchar(50),
-  update_date     		 timestamp without time zone NOT NULL DEFAULT now(),
-  comments               varchar(500), 
-  updated_by             varchar(255),  
-  rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
-  rowversion integer NOT NULL DEFAULT (0),
-  change_action char(1) NOT NULL DEFAULT ('i'),
-  change_user varchar(50),
-  change_time timestamp NOT NULL DEFAULT (now()),
-  
-  -- Internal constraints
- 
-    CONSTRAINT dispute_comments_pkey PRIMARY KEY (id)
-  
-  );
-  
-  COMMENT ON TABLE administrative.dispute_comments IS 'Captures updates happening on a specific dispute. ';
-  
-  DROP TRIGGER IF EXISTS __track_changes ON administrative.dispute_comments CASCADE;
-  CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
-   ON administrative.dispute_comments FOR EACH ROW
-   EXECUTE PROCEDURE f_for_trg_track_changes();
-  
-  DROP TABLE IF EXISTS administrative.dispute_comments_historic CASCADE;
-  CREATE TABLE administrative.dispute_comments_historic (
-  id                     varchar(50), 
-  dispute_nr             varchar(50), 
-  dispute_action_code    varchar(50), 
-  other_authorities_code varchar(50),
-  update_date      		 timestamp without time zone ,
-  comments               varchar(500), 
-  updated_by             varchar(255), 
-  rowidentifier varchar(40),
-  rowversion integer,
-  change_action char(1) ,
-  change_user varchar(50),
-  change_time timestamp,
-  change_time_valid_until TIMESTAMP NOT NULL default NOW()
-  
-  );
-  
-  CREATE INDEX dispute_comments_historic_index_on_rowidentifier ON administrative.dispute_comments_historic (rowidentifier);
-  
-  DROP TRIGGER IF EXISTS __track_changes ON administrative.dispute_comments_historic CASCADE;
-  CREATE TRIGGER __track_changes AFTER UPDATE OR DELETE
-   ON administrative.dispute_comments_historic FOR EACH ROW
-   EXECUTE PROCEDURE f_for_trg_track_changes();
-   
---Table administrative.dispute_source
-DROP TABLE IF EXISTS administrative.disputes_source CASCADE;
-CREATE TABLE administrative.disputes_source(
-    dispute_id varchar(40) NOT NULL,
-    source_id varchar(40) NOT NULL,
+CREATE TABLE administrative.dispute_comments(
+    id varchar(50) NOT NULL,
+    dispute_nr varchar(50) NOT NULL,
+    dispute_action_code varchar(40) NOT NULL,
+    other_authorities_code varchar(40),
+    update_date timestamp NOT NULL DEFAULT (now()),
+    comments varchar(500),
+    updated_by varchar(255),
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -4822,27 +4783,36 @@ CREATE TABLE administrative.disputes_source(
 
     -- Internal constraints
     
-    CONSTRAINT disputes_source_pkey PRIMARY KEY (dispute_id,source_id)
+    CONSTRAINT dispute_comments_id_unique UNIQUE (id),
+    CONSTRAINT dispute_comments_dispute_nr_unique UNIQUE (dispute_nr),
+    CONSTRAINT dispute_comments_pkey PRIMARY KEY (id)
 );
 
--- Index dispute_source_index_on_rowidentifier  --
-CREATE INDEX disputes_source_index_on_rowidentifier ON administrative.disputes_source (rowidentifier);
+
+
+-- Index dispute_comments_index_on_rowidentifier  --
+CREATE INDEX dispute_comments_index_on_rowidentifier ON administrative.dispute_comments (rowidentifier);
     
 
-comment on table administrative.disputes_source is 'Sources (documents) submitted with a dispute';
+comment on table administrative.dispute_comments is 'Captures updates happening on a specific dispute. ';
     
-DROP TRIGGER IF EXISTS __track_changes ON administrative.disputes_source CASCADE;
+DROP TRIGGER IF EXISTS __track_changes ON administrative.dispute_comments CASCADE;
 CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
-   ON administrative.disputes_source FOR EACH ROW
+   ON administrative.dispute_comments FOR EACH ROW
    EXECUTE PROCEDURE f_for_trg_track_changes();
     
 
-----Table administrative.disputes_source_historic used for the history of data of table administrative.adisputes_source ---
-DROP TABLE IF EXISTS administrative.disputes_source_historic CASCADE;
-CREATE TABLE administrative.disputes_source_historic
+----Table administrative.dispute_comments_historic used for the history of data of table administrative.dispute_comments ---
+DROP TABLE IF EXISTS administrative.dispute_comments_historic CASCADE;
+CREATE TABLE administrative.dispute_comments_historic
 (
-    dispute_id varchar(40),
-    source_id varchar(40),
+    id varchar(50),
+    dispute_nr varchar(50),
+    dispute_action_code varchar(40),
+    other_authorities_code varchar(40),
+    update_date timestamp,
+    comments varchar(500),
+    updated_by varchar(255),
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),
@@ -4852,49 +4822,68 @@ CREATE TABLE administrative.disputes_source_historic
 );
 
 
--- Index disputes_source_historic_index_on_rowidentifier  --
-CREATE INDEX disputes_source_historic_index_on_rowidentifier ON administrative.disputes_source_historic (rowidentifier);
+-- Index dispute_comments_historic_index_on_rowidentifier  --
+CREATE INDEX dispute_comments_historic_index_on_rowidentifier ON administrative.dispute_comments_historic (rowidentifier);
     
 
-DROP TRIGGER IF EXISTS __track_history ON administrative.disputes_source CASCADE;
+DROP TRIGGER IF EXISTS __track_history ON administrative.dispute_comments CASCADE;
 CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
-   ON administrative.disputes_source FOR EACH ROW
+   ON administrative.dispute_comments FOR EACH ROW
    EXECUTE PROCEDURE f_for_trg_track_history();
     
 --Table administrative.dispute_party ----
 DROP TABLE IF EXISTS administrative.dispute_party CASCADE;
-  CREATE TABLE administrative.dispute_party (
-  id                       varchar(50) NOT NULL,
-  dispute_nr               varchar(50) NOT NULL, 
-  party_id                 varchar(50) NOT NULL, 
-  party_role     varchar(100) NOT NULL, 
-  party_name	 varchar(100) NOT NULL, 
-  rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
-  rowversion integer NOT NULL DEFAULT (0),
-  change_action char(1) NOT NULL DEFAULT ('i'),
-  change_user varchar(50),
-  change_time timestamp NOT NULL DEFAULT (now()),
-  
-   -- Internal constraints
-  CONSTRAINT dispute_party_pkey PRIMARY KEY(id)
-  );
-  COMMENT ON TABLE administrative.dispute_party IS 'Captures individuals involved in a dispsute';
-  
-  
-   DROP TABLE IF EXISTS administrative.dispute_party_historic CASCADE;
-  CREATE TABLE administrative.dispute_party_historic (
-  id                       varchar(50),
-  dispute_nr               varchar(50), 
-  party_id                 varchar(50), 
-  party_role     varchar(100),
-  party_name	 varchar(100) NOT NULL,
-  rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
-  rowversion integer ,
-  change_action char(1) ,
-  change_user varchar(50),
-  change_time timestamp ,
-  change_time_valid_until TIMESTAMP NOT NULL default NOW()
-  );
+CREATE TABLE administrative.dispute_party(
+    id varchar(50) NOT NULL,
+    dispute_nr varchar(50) NOT NULL,
+    party_id varchar(50) NOT NULL,
+    party_role varchar(100) NOT NULL,
+    rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
+    rowversion integer NOT NULL DEFAULT (0),
+    change_action char(1) NOT NULL DEFAULT ('i'),
+    change_user varchar(50),
+    change_time timestamp NOT NULL DEFAULT (now())
+);
+
+
+
+-- Index dispute_party_index_on_rowidentifier  --
+CREATE INDEX dispute_party_index_on_rowidentifier ON administrative.dispute_party (rowidentifier);
+    
+
+comment on table administrative.dispute_party is 'Captures individuals involved ina dispsute';
+    
+DROP TRIGGER IF EXISTS __track_changes ON administrative.dispute_party CASCADE;
+CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
+   ON administrative.dispute_party FOR EACH ROW
+   EXECUTE PROCEDURE f_for_trg_track_changes();
+    
+
+----Table administrative.dispute_party_historic used for the history of data of table administrative.dispute_party ---
+DROP TABLE IF EXISTS administrative.dispute_party_historic CASCADE;
+CREATE TABLE administrative.dispute_party_historic
+(
+    id varchar(50),
+    dispute_nr varchar(50),
+    party_id varchar(50),
+    party_role varchar(100),
+    rowidentifier varchar(40),
+    rowversion integer,
+    change_action char(1),
+    change_user varchar(50),
+    change_time timestamp,
+    change_time_valid_until TIMESTAMP NOT NULL default NOW()
+);
+
+
+-- Index dispute_party_historic_index_on_rowidentifier  --
+CREATE INDEX dispute_party_historic_index_on_rowidentifier ON administrative.dispute_party_historic (rowidentifier);
+    
+
+DROP TRIGGER IF EXISTS __track_history ON administrative.dispute_party CASCADE;
+CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
+   ON administrative.dispute_party FOR EACH ROW
+   EXECUTE PROCEDURE f_for_trg_track_history();
     
 --Table administrative.dispute_status ----
 DROP TABLE IF EXISTS administrative.dispute_status CASCADE;
@@ -5202,8 +5191,9 @@ CREATE TABLE cadastre.land_use_grade(
     land_use_code varchar(20) NOT NULL,
     land_grade_code varchar(20) NOT NULL,
     admin_fee numeric(29, 2) NOT NULL DEFAULT (0),
-    ground_rent_rate numeric(20, 2),
+    ground_rent_rate numeric(20, 2) NOT NULL DEFAULT (0),
     duty_on_ground_rent numeric(29, 2) NOT NULL DEFAULT (0),
+    registration_fee numeric(29, 2) NOT NULL DEFAULT (0),
 
     -- Internal constraints
     
@@ -5214,57 +5204,57 @@ CREATE TABLE cadastre.land_use_grade(
 comment on table cadastre.land_use_grade is '';
     
  -- Data for the table cadastre.land_use_grade -- 
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('commercial', 'grade1', 600, 0.79, 10);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('commercial', 'grade2', 200, 0.57, 10);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('commercial', 'grade3', 100, 0.35, 10);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('commercial', 'grade4', 100, 0.24, 10);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('hotel', 'grade1', 600, 0.60, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('hotel', 'grade2', 200, 0.38, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('hotel', 'grade3', 100, 0.23, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('industrial', 'grade1', 600, 0.60, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('industrial', 'grade2', 200, 0.38, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('industrial', 'grade3', 100, 0.23, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('petroleum', 'grade1', 600, 0.60, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('petroleum', 'grade2', 200, 0.38, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('petroleum', 'grade3', 100, 0.23, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('retail', 'grade1', 600, 0.60, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('retail', 'grade2', 200, 0.38, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('retail', 'grade3', 100, 0.23, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('warehouse', 'grade1', 600, 0.60, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('warehouse', 'grade2', 200, 0.38, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('warehouse', 'grade3', 100, 0.23, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('residential', 'grade1', 50, 0.29, 8);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('residential', 'grade2', 50, 0.24, 8);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('residential', 'grade3', 50, 0.21, 8);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('residential', 'grade4', 50, 0.17, 8);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('residential', 'grade5', 50, 0.12, 8);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('residential', 'grade6', 50, 0, 8);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('recreational', 'grade1', 0, 500, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('charitable', 'grade1', 0, 200, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('hospital', 'grade1', 0, 200, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('educational', 'grade1', 0, 200, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('religious', 'grade1', 0, 20, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('recreational', 'grade2', 0, 200, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricIrrigated', 'grade1', 0, 105, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricIrrigated', 'grade2', 0, 80, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricIrrigated', 'grade3', 0, 52, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricIrrigated', 'grade4', 0, 31, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricIrrigated', 'grade5', 0, 21, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricNonIrrigated', 'grade1', 0, 21, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricNonIrrigated', 'grade2', 0, 16, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricNonIrrigated', 'grade3', 0, 11, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricNonIrrigated', 'grade4', 0, 9, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricNonIrrigated', 'grade5', 0, 6, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricRangeGrazing', 'grade1', 0, 6, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricRangeGrazing', 'grade2', 0, 3, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricRangeGrazing', 'grade3', 0, 5, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricRangeGrazing', 'grade4', 0, 3, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricRangeGrazing', 'grade5', 0, 1, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricOther', 'grade1', 0, 105, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricOther', 'grade2', 0, 84, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricOther', 'grade3', 0, 63, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricOther', 'grade4', 0, 31, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent) values('agricOther', 'grade5', 0, 10, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('commercial', 'grade1', 600, 0.79, 10, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('commercial', 'grade2', 200, 0.57, 10, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('commercial', 'grade3', 100, 0.35, 10, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('commercial', 'grade4', 100, 0.24, 10, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hotel', 'grade1', 600, 0.60, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hotel', 'grade2', 200, 0.38, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hotel', 'grade3', 100, 0.23, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('industrial', 'grade1', 600, 0.60, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('industrial', 'grade2', 200, 0.38, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('industrial', 'grade3', 100, 0.23, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('petroleum', 'grade1', 600, 0.60, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('petroleum', 'grade2', 200, 0.38, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('petroleum', 'grade3', 100, 0.23, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('retail', 'grade1', 600, 0.60, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('retail', 'grade2', 200, 0.38, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('retail', 'grade3', 100, 0.23, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('warehouse', 'grade1', 600, 0.60, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('warehouse', 'grade2', 200, 0.38, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('warehouse', 'grade3', 100, 0.23, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('residential', 'grade1', 50, 0.29, 8, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('residential', 'grade2', 50, 0.24, 8, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('residential', 'grade3', 50, 0.21, 8, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('residential', 'grade4', 50, 0.17, 8, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('residential', 'grade5', 50, 0.12, 8, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('residential', 'grade6', 50, 0, 8, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade1', 100, 500, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('charitable', 'grade1', 100, 200, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hospital', 'grade1', 100, 200, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('educational', 'grade1', 100, 200, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('religious', 'grade1', 100, 20, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade2', 100, 200, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricIrrigated', 'grade1', 500, 105, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricIrrigated', 'grade2', 500, 80, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricIrrigated', 'grade3', 500, 52, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricIrrigated', 'grade4', 500, 31, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricIrrigated', 'grade5', 500, 21, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricNonIrrigated', 'grade1', 50, 21, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricNonIrrigated', 'grade2', 50, 16, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricNonIrrigated', 'grade3', 50, 11, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricNonIrrigated', 'grade4', 50, 9, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricNonIrrigated', 'grade5', 50, 6, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricRangeGrazing', 'grade1', 100, 6, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricRangeGrazing', 'grade2', 100, 3, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricRangeGrazing', 'grade3', 100, 5, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricRangeGrazing', 'grade4', 100, 3, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricRangeGrazing', 'grade5', 100, 1, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricOther', 'grade1', 100, 105, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricOther', 'grade2', 100, 84, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricOther', 'grade3', 100, 63, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricOther', 'grade4', 100, 31, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricOther', 'grade5', 100, 10, 0, 0);
 
 
 
@@ -8472,141 +8462,141 @@ ALTER TABLE administrative.dispute_comments ADD CONSTRAINT dispute_comments_othe
             FOREIGN KEY (other_authorities_code) REFERENCES administrative.other_authorities(code) ON UPDATE CASCADE ON DELETE RESTRICT;
 CREATE INDEX dispute_comments_other_authorities_code_fk89_ind ON administrative.dispute_comments (other_authorities_code);
 
-ALTER TABLE cadastre.spatial_value_area ADD CONSTRAINT spatial_value_area_spatial_unit_id_fk90 
-            FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.spatial_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX spatial_value_area_spatial_unit_id_fk90_ind ON cadastre.spatial_value_area (spatial_unit_id);
+ALTER TABLE administrative.admin_fee_rate ADD CONSTRAINT admin_fee_rate_fee_code_fk90 
+            FOREIGN KEY (fee_code) REFERENCES administrative.admin_fee_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX admin_fee_rate_fee_code_fk90_ind ON administrative.admin_fee_rate (fee_code);
 
-ALTER TABLE cadastre.spatial_value_area ADD CONSTRAINT spatial_value_area_type_code_fk91 
+ALTER TABLE administrative.admin_fee_rate ADD CONSTRAINT admin_fee_rate_rate_code_fk91 
+            FOREIGN KEY (rate_code) REFERENCES administrative.admin_rate_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX admin_fee_rate_rate_code_fk91_ind ON administrative.admin_fee_rate (rate_code);
+
+ALTER TABLE cadastre.spatial_value_area ADD CONSTRAINT spatial_value_area_spatial_unit_id_fk92 
+            FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.spatial_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX spatial_value_area_spatial_unit_id_fk92_ind ON cadastre.spatial_value_area (spatial_unit_id);
+
+ALTER TABLE cadastre.spatial_value_area ADD CONSTRAINT spatial_value_area_type_code_fk93 
             FOREIGN KEY (type_code) REFERENCES cadastre.area_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX spatial_value_area_type_code_fk91_ind ON cadastre.spatial_value_area (type_code);
+CREATE INDEX spatial_value_area_type_code_fk93_ind ON cadastre.spatial_value_area (type_code);
 
-ALTER TABLE cadastre.spatial_unit_address ADD CONSTRAINT spatial_unit_address_spatial_unit_id_fk92 
+ALTER TABLE cadastre.spatial_unit_address ADD CONSTRAINT spatial_unit_address_spatial_unit_id_fk94 
             FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.spatial_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX spatial_unit_address_spatial_unit_id_fk92_ind ON cadastre.spatial_unit_address (spatial_unit_id);
+CREATE INDEX spatial_unit_address_spatial_unit_id_fk94_ind ON cadastre.spatial_unit_address (spatial_unit_id);
 
-ALTER TABLE cadastre.spatial_unit_address ADD CONSTRAINT spatial_unit_address_address_id_fk93 
+ALTER TABLE cadastre.spatial_unit_address ADD CONSTRAINT spatial_unit_address_address_id_fk95 
             FOREIGN KEY (address_id) REFERENCES address.address(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX spatial_unit_address_address_id_fk93_ind ON cadastre.spatial_unit_address (address_id);
+CREATE INDEX spatial_unit_address_address_id_fk95_ind ON cadastre.spatial_unit_address (address_id);
 
-ALTER TABLE cadastre.spatial_unit_group ADD CONSTRAINT spatial_unit_group_found_in_spatial_unit_group_id_fk94 
+ALTER TABLE cadastre.spatial_unit_group ADD CONSTRAINT spatial_unit_group_found_in_spatial_unit_group_id_fk96 
             FOREIGN KEY (found_in_spatial_unit_group_id) REFERENCES cadastre.spatial_unit_group(id) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX spatial_unit_group_found_in_spatial_unit_group_id_fk94_ind ON cadastre.spatial_unit_group (found_in_spatial_unit_group_id);
+CREATE INDEX spatial_unit_group_found_in_spatial_unit_group_id_fk96_ind ON cadastre.spatial_unit_group (found_in_spatial_unit_group_id);
 
-ALTER TABLE cadastre.spatial_unit_in_group ADD CONSTRAINT spatial_unit_in_group_spatial_unit_group_id_fk95 
+ALTER TABLE cadastre.spatial_unit_in_group ADD CONSTRAINT spatial_unit_in_group_spatial_unit_group_id_fk97 
             FOREIGN KEY (spatial_unit_group_id) REFERENCES cadastre.spatial_unit_group(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX spatial_unit_in_group_spatial_unit_group_id_fk95_ind ON cadastre.spatial_unit_in_group (spatial_unit_group_id);
+CREATE INDEX spatial_unit_in_group_spatial_unit_group_id_fk97_ind ON cadastre.spatial_unit_in_group (spatial_unit_group_id);
 
-ALTER TABLE cadastre.spatial_unit_in_group ADD CONSTRAINT spatial_unit_in_group_spatial_unit_id_fk96 
+ALTER TABLE cadastre.spatial_unit_in_group ADD CONSTRAINT spatial_unit_in_group_spatial_unit_id_fk98 
             FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.spatial_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX spatial_unit_in_group_spatial_unit_id_fk96_ind ON cadastre.spatial_unit_in_group (spatial_unit_id);
+CREATE INDEX spatial_unit_in_group_spatial_unit_id_fk98_ind ON cadastre.spatial_unit_in_group (spatial_unit_id);
 
-ALTER TABLE cadastre.legal_space_utility_network ADD CONSTRAINT legal_space_utility_network_id_fk97 
+ALTER TABLE cadastre.legal_space_utility_network ADD CONSTRAINT legal_space_utility_network_id_fk99 
             FOREIGN KEY (id) REFERENCES cadastre.cadastre_object(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX legal_space_utility_network_id_fk97_ind ON cadastre.legal_space_utility_network (id);
+CREATE INDEX legal_space_utility_network_id_fk99_ind ON cadastre.legal_space_utility_network (id);
 
-ALTER TABLE cadastre.legal_space_utility_network ADD CONSTRAINT legal_space_utility_network_status_code_fk98 
+ALTER TABLE cadastre.legal_space_utility_network ADD CONSTRAINT legal_space_utility_network_status_code_fk100 
             FOREIGN KEY (status_code) REFERENCES cadastre.utility_network_status_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX legal_space_utility_network_status_code_fk98_ind ON cadastre.legal_space_utility_network (status_code);
+CREATE INDEX legal_space_utility_network_status_code_fk100_ind ON cadastre.legal_space_utility_network (status_code);
 
-ALTER TABLE cadastre.legal_space_utility_network ADD CONSTRAINT legal_space_utility_network_type_code_fk99 
+ALTER TABLE cadastre.legal_space_utility_network ADD CONSTRAINT legal_space_utility_network_type_code_fk101 
             FOREIGN KEY (type_code) REFERENCES cadastre.utility_network_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
-CREATE INDEX legal_space_utility_network_type_code_fk99_ind ON cadastre.legal_space_utility_network (type_code);
+CREATE INDEX legal_space_utility_network_type_code_fk101_ind ON cadastre.legal_space_utility_network (type_code);
 
-ALTER TABLE administrative.ba_unit_contains_spatial_unit ADD CONSTRAINT ba_unit_contains_spatial_unit_ba_unit_id_fk100 
+ALTER TABLE administrative.ba_unit_contains_spatial_unit ADD CONSTRAINT ba_unit_contains_spatial_unit_ba_unit_id_fk102 
             FOREIGN KEY (ba_unit_id) REFERENCES administrative.ba_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX ba_unit_contains_spatial_unit_ba_unit_id_fk100_ind ON administrative.ba_unit_contains_spatial_unit (ba_unit_id);
+CREATE INDEX ba_unit_contains_spatial_unit_ba_unit_id_fk102_ind ON administrative.ba_unit_contains_spatial_unit (ba_unit_id);
 
-ALTER TABLE administrative.ba_unit_contains_spatial_unit ADD CONSTRAINT ba_unit_contains_spatial_unit_spatial_unit_id_fk101 
+ALTER TABLE administrative.ba_unit_contains_spatial_unit ADD CONSTRAINT ba_unit_contains_spatial_unit_spatial_unit_id_fk103 
             FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.spatial_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX ba_unit_contains_spatial_unit_spatial_unit_id_fk101_ind ON administrative.ba_unit_contains_spatial_unit (spatial_unit_id);
+CREATE INDEX ba_unit_contains_spatial_unit_spatial_unit_id_fk103_ind ON administrative.ba_unit_contains_spatial_unit (spatial_unit_id);
 
-ALTER TABLE administrative.ba_unit_contains_spatial_unit ADD CONSTRAINT ba_unit_contains_spatial_unit_spatial_unit_id_fk102 
+ALTER TABLE administrative.ba_unit_contains_spatial_unit ADD CONSTRAINT ba_unit_contains_spatial_unit_spatial_unit_id_fk104 
             FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.cadastre_object(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX ba_unit_contains_spatial_unit_spatial_unit_id_fk102_ind ON administrative.ba_unit_contains_spatial_unit (spatial_unit_id);
+CREATE INDEX ba_unit_contains_spatial_unit_spatial_unit_id_fk104_ind ON administrative.ba_unit_contains_spatial_unit (spatial_unit_id);
 
-ALTER TABLE cadastre.cadastre_object_target ADD CONSTRAINT cadastre_object_target_cadastre_object_id_fk103 
+ALTER TABLE cadastre.cadastre_object_target ADD CONSTRAINT cadastre_object_target_cadastre_object_id_fk105 
             FOREIGN KEY (cadastre_object_id) REFERENCES cadastre.cadastre_object(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX cadastre_object_target_cadastre_object_id_fk103_ind ON cadastre.cadastre_object_target (cadastre_object_id);
+CREATE INDEX cadastre_object_target_cadastre_object_id_fk105_ind ON cadastre.cadastre_object_target (cadastre_object_id);
 
-ALTER TABLE cadastre.cadastre_object_target ADD CONSTRAINT cadastre_object_target_transaction_id_fk104 
+ALTER TABLE cadastre.cadastre_object_target ADD CONSTRAINT cadastre_object_target_transaction_id_fk106 
             FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX cadastre_object_target_transaction_id_fk104_ind ON cadastre.cadastre_object_target (transaction_id);
+CREATE INDEX cadastre_object_target_transaction_id_fk106_ind ON cadastre.cadastre_object_target (transaction_id);
 
-ALTER TABLE cadastre.survey_point ADD CONSTRAINT survey_point_transaction_id_fk105 
+ALTER TABLE cadastre.survey_point ADD CONSTRAINT survey_point_transaction_id_fk107 
             FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX survey_point_transaction_id_fk105_ind ON cadastre.survey_point (transaction_id);
+CREATE INDEX survey_point_transaction_id_fk107_ind ON cadastre.survey_point (transaction_id);
 
-ALTER TABLE transaction.transaction_source ADD CONSTRAINT transaction_source_transaction_id_fk106 
+ALTER TABLE transaction.transaction_source ADD CONSTRAINT transaction_source_transaction_id_fk108 
             FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX transaction_source_transaction_id_fk106_ind ON transaction.transaction_source (transaction_id);
+CREATE INDEX transaction_source_transaction_id_fk108_ind ON transaction.transaction_source (transaction_id);
 
-ALTER TABLE transaction.transaction_source ADD CONSTRAINT transaction_source_source_id_fk107 
+ALTER TABLE transaction.transaction_source ADD CONSTRAINT transaction_source_source_id_fk109 
             FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX transaction_source_source_id_fk107_ind ON transaction.transaction_source (source_id);
+CREATE INDEX transaction_source_source_id_fk109_ind ON transaction.transaction_source (source_id);
 
-ALTER TABLE cadastre.cadastre_object_node_target ADD CONSTRAINT cadastre_object_node_target_transaction_id_fk108 
+ALTER TABLE cadastre.cadastre_object_node_target ADD CONSTRAINT cadastre_object_node_target_transaction_id_fk110 
             FOREIGN KEY (transaction_id) REFERENCES transaction.transaction(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX cadastre_object_node_target_transaction_id_fk108_ind ON cadastre.cadastre_object_node_target (transaction_id);
+CREATE INDEX cadastre_object_node_target_transaction_id_fk110_ind ON cadastre.cadastre_object_node_target (transaction_id);
 
-ALTER TABLE cadastre.land_use_grade ADD CONSTRAINT land_use_grade_land_use_code_fk109 
+ALTER TABLE cadastre.land_use_grade ADD CONSTRAINT land_use_grade_land_use_code_fk111 
             FOREIGN KEY (land_use_code) REFERENCES cadastre.land_use_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX land_use_grade_land_use_code_fk109_ind ON cadastre.land_use_grade (land_use_code);
+CREATE INDEX land_use_grade_land_use_code_fk111_ind ON cadastre.land_use_grade (land_use_code);
 
-ALTER TABLE cadastre.land_use_grade ADD CONSTRAINT land_use_grade_land_grade_code_fk110 
+ALTER TABLE cadastre.land_use_grade ADD CONSTRAINT land_use_grade_land_grade_code_fk112 
             FOREIGN KEY (land_grade_code) REFERENCES cadastre.land_grade_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX land_use_grade_land_grade_code_fk110_ind ON cadastre.land_use_grade (land_grade_code);
+CREATE INDEX land_use_grade_land_grade_code_fk112_ind ON cadastre.land_use_grade (land_grade_code);
 
-ALTER TABLE cadastre.ground_rent_multiplication_factor ADD CONSTRAINT ground_rent_multiplication_factor_land_use_code_fk111 
+ALTER TABLE cadastre.ground_rent_multiplication_factor ADD CONSTRAINT ground_rent_multiplication_factor_land_use_code_fk113 
             FOREIGN KEY (land_use_code) REFERENCES cadastre.land_use_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX ground_rent_multiplication_factor_land_use_code_fk111_ind ON cadastre.ground_rent_multiplication_factor (land_use_code);
+CREATE INDEX ground_rent_multiplication_factor_land_use_code_fk113_ind ON cadastre.ground_rent_multiplication_factor (land_use_code);
 
-ALTER TABLE cadastre.ground_rent_multiplication_factor ADD CONSTRAINT ground_rent_multiplication_factor_land_grade_code_fk112 
+ALTER TABLE cadastre.ground_rent_multiplication_factor ADD CONSTRAINT ground_rent_multiplication_factor_land_grade_code_fk114 
             FOREIGN KEY (land_grade_code) REFERENCES cadastre.land_grade_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX ground_rent_multiplication_factor_land_grade_code_fk112_ind ON cadastre.ground_rent_multiplication_factor (land_grade_code);
+CREATE INDEX ground_rent_multiplication_factor_land_grade_code_fk114_ind ON cadastre.ground_rent_multiplication_factor (land_grade_code);
 
-ALTER TABLE cadastre.ground_rent_multiplication_factor ADD CONSTRAINT ground_rent_multiplication_factor_valuation_zone_fk113 
+ALTER TABLE cadastre.ground_rent_multiplication_factor ADD CONSTRAINT ground_rent_multiplication_factor_valuation_zone_fk115 
             FOREIGN KEY (valuation_zone) REFERENCES cadastre.land_use_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX ground_rent_multiplication_factor_valuation_zone_fk113_ind ON cadastre.ground_rent_multiplication_factor (valuation_zone);
+CREATE INDEX ground_rent_multiplication_factor_valuation_zone_fk115_ind ON cadastre.ground_rent_multiplication_factor (valuation_zone);
 
-ALTER TABLE application.application_property ADD CONSTRAINT application_property_application_id_fk114 
+ALTER TABLE application.application_property ADD CONSTRAINT application_property_application_id_fk116 
             FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX application_property_application_id_fk114_ind ON application.application_property (application_id);
+CREATE INDEX application_property_application_id_fk116_ind ON application.application_property (application_id);
 
-ALTER TABLE application.application_property ADD CONSTRAINT application_property_ba_unit_id_fk115 
+ALTER TABLE application.application_property ADD CONSTRAINT application_property_ba_unit_id_fk117 
             FOREIGN KEY (ba_unit_id) REFERENCES administrative.ba_unit(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX application_property_ba_unit_id_fk115_ind ON application.application_property (ba_unit_id);
+CREATE INDEX application_property_ba_unit_id_fk117_ind ON application.application_property (ba_unit_id);
 
-ALTER TABLE application.application_uses_source ADD CONSTRAINT application_uses_source_application_id_fk116 
+ALTER TABLE application.application_uses_source ADD CONSTRAINT application_uses_source_application_id_fk118 
             FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX application_uses_source_application_id_fk116_ind ON application.application_uses_source (application_id);
+CREATE INDEX application_uses_source_application_id_fk118_ind ON application.application_uses_source (application_id);
 
-ALTER TABLE application.application_uses_source ADD CONSTRAINT application_uses_source_source_id_fk117 
+ALTER TABLE application.application_uses_source ADD CONSTRAINT application_uses_source_source_id_fk119 
             FOREIGN KEY (source_id) REFERENCES source.source(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX application_uses_source_source_id_fk117_ind ON application.application_uses_source (source_id);
+CREATE INDEX application_uses_source_source_id_fk119_ind ON application.application_uses_source (source_id);
 
-ALTER TABLE application.request_type_requires_source_type ADD CONSTRAINT request_type_requires_source_type_source_type_code_fk118 
+ALTER TABLE application.request_type_requires_source_type ADD CONSTRAINT request_type_requires_source_type_source_type_code_fk120 
             FOREIGN KEY (source_type_code) REFERENCES source.administrative_source_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX request_type_requires_source_type_source_type_code_fk118_ind ON application.request_type_requires_source_type (source_type_code);
+CREATE INDEX request_type_requires_source_type_source_type_code_fk120_ind ON application.request_type_requires_source_type (source_type_code);
 
-ALTER TABLE application.request_type_requires_source_type ADD CONSTRAINT request_type_requires_source_type_request_type_code_fk119 
+ALTER TABLE application.request_type_requires_source_type ADD CONSTRAINT request_type_requires_source_type_request_type_code_fk121 
             FOREIGN KEY (request_type_code) REFERENCES application.request_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX request_type_requires_source_type_request_type_code_fk119_ind ON application.request_type_requires_source_type (request_type_code);
+CREATE INDEX request_type_requires_source_type_request_type_code_fk121_ind ON application.request_type_requires_source_type (request_type_code);
 
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_application_id_fk120 
+ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_application_id_fk122 
             FOREIGN KEY (application_id) REFERENCES application.application(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX application_spatial_unit_application_id_fk120_ind ON application.application_spatial_unit (application_id);
+CREATE INDEX application_spatial_unit_application_id_fk122_ind ON application.application_spatial_unit (application_id);
 
-ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_spatial_unit_id_fk121 
+ALTER TABLE application.application_spatial_unit ADD CONSTRAINT application_spatial_unit_spatial_unit_id_fk123 
             FOREIGN KEY (spatial_unit_id) REFERENCES cadastre.cadastre_object(id) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX application_spatial_unit_spatial_unit_id_fk121_ind ON application.application_spatial_unit (spatial_unit_id);
-
-ALTER TABLE application.admin_fee_rate ADD CONSTRAINT admin_fee_rate_fee_code_fk122 
-            FOREIGN KEY (fee_code) REFERENCES application.admin_fee_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX admin_fee_rate_fee_code_fk122_ind ON application.admin_fee_rate (fee_code);
-
-ALTER TABLE application.admin_fee_rate ADD CONSTRAINT admin_fee_rate_rate_code_fk123 
-            FOREIGN KEY (rate_code) REFERENCES application.admin_rate_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
-CREATE INDEX admin_fee_rate_rate_code_fk123_ind ON application.admin_fee_rate (rate_code);
+CREATE INDEX application_spatial_unit_spatial_unit_id_fk123_ind ON application.application_spatial_unit (spatial_unit_id);
 
 ALTER TABLE system.appuser_setting ADD CONSTRAINT appuser_setting_user_id_fk124 
             FOREIGN KEY (user_id) REFERENCES system.appuser(id) ON UPDATE CASCADE ON DELETE CASCADE;
