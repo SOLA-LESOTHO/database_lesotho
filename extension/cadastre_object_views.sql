@@ -12,6 +12,25 @@ DROP VIEW IF EXISTS cadastre.all_plots;
 DROP VIEW IF EXISTS cadastre.all_plots27;
 DROP VIEW IF EXISTS cadastre.all_plots29;
 
+DROP SEQUENCE IF EXISTS cadastre.view_id_seq;
+CREATE SEQUENCE cadastre.view_id_seq
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 99999999
+  START 1
+  CACHE 1;
+ALTER TABLE cadastre.view_id_seq
+  OWNER TO postgres;
+COMMENT ON SEQUENCE cadastre.view_id_seq
+  IS 'Used to generate a unique integer number for the cadastre_object table. This id is used as a key by the cadastre views as QGIS requires a unique integer and cannot handle a guid.';
+
+  
+ALTER TABLE cadastre.cadastre_object
+ADD view_id integer NOT NULL DEFAULT nextval('cadastre.view_id_seq'::regclass);
+
+ALTER TABLE cadastre.cadastre_object_historic
+ADD view_id integer;
+
 -- Create user with read-only access rights
 do 
 $body$
@@ -40,7 +59,7 @@ REVOKE ALL PRIVILEGES ON DATABASE sola FROM sola_reader;
 CREATE OR REPLACE VIEW cadastre.plots27
 AS
 
-SELECT c.id, (c.name_firstpart || '-' || c.name_lastpart) AS parcel_code, c.geom_polygon, c.status_code,
+SELECT c.view_id, c.id, (c.name_firstpart || '-' || c.name_lastpart) AS parcel_code, c.geom_polygon, c.status_code,
 (SELECT size FROM cadastre.spatial_value_area WHERE spatial_unit_id = c.id AND type_code = 'officialArea' LIMIT 1) AS official_area
 FROM cadastre.cadastre_object c 
 WHERE c.type_code= 'parcel' AND c.geom_polygon IS NOT NULL AND ST_SRID(c.geom_polygon) = 22287;
@@ -49,7 +68,7 @@ WHERE c.type_code= 'parcel' AND c.geom_polygon IS NOT NULL AND ST_SRID(c.geom_po
 CREATE OR REPLACE VIEW cadastre.plots29
 AS
 
-SELECT c.id, (c.name_firstpart || '-' || c.name_lastpart) AS parcel_code, c.geom_polygon, c.status_code,
+SELECT c.view_id, c.id, (c.name_firstpart || '-' || c.name_lastpart) AS parcel_code, c.geom_polygon, c.status_code,
 (SELECT size FROM cadastre.spatial_value_area WHERE spatial_unit_id = c.id AND type_code = 'officialArea' LIMIT 1) AS official_area
 FROM cadastre.cadastre_object c 
 WHERE c.type_code= 'parcel' AND c.geom_polygon IS NOT NULL AND ST_SRID(c.geom_polygon) = 22289;
@@ -58,7 +77,7 @@ WHERE c.type_code= 'parcel' AND c.geom_polygon IS NOT NULL AND ST_SRID(c.geom_po
 CREATE OR REPLACE VIEW cadastre.all_plots
 AS
 
-SELECT c.id, (c.name_firstpart || '-' || c.name_lastpart) AS parcel_code, c.geom_polygon, c.status_code,
+SELECT c.view_id, c.id, (c.name_firstpart || '-' || c.name_lastpart) AS parcel_code, c.geom_polygon, c.status_code,
 (SELECT size FROM cadastre.spatial_value_area WHERE spatial_unit_id = c.id AND type_code = 'officialArea' LIMIT 1) AS official_area
 FROM cadastre.cadastre_object c 
 WHERE c.type_code= 'parcel' AND c.geom_polygon IS NOT NULL;
@@ -67,7 +86,7 @@ WHERE c.type_code= 'parcel' AND c.geom_polygon IS NOT NULL;
 CREATE OR REPLACE VIEW cadastre.all_plots27
 AS
 
-SELECT c.id, (c.name_firstpart || '-' || c.name_lastpart) AS parcel_code, 
+SELECT c.view_id, c.id, (c.name_firstpart || '-' || c.name_lastpart) AS parcel_code, 
 (CASE WHEN ST_SRID(c.geom_polygon) != 22287 THEN ST_TRANSFORM(c.geom_polygon, 22287) ELSE c.geom_polygon END) AS geom_polygon, c.status_code,
 (SELECT size FROM cadastre.spatial_value_area WHERE spatial_unit_id = c.id AND type_code = 'officialArea' LIMIT 1) AS official_area
 FROM cadastre.cadastre_object c
@@ -77,7 +96,7 @@ WHERE c.type_code= 'parcel' AND c.geom_polygon IS NOT NULL;
 CREATE OR REPLACE VIEW cadastre.all_plots29
 AS
 
-SELECT c.id, (c.name_firstpart || '-' || c.name_lastpart) AS parcel_code, 
+SELECT c.view_id, c.id, (c.name_firstpart || '-' || c.name_lastpart) AS parcel_code, 
 (CASE WHEN ST_SRID(c.geom_polygon) != 22289 THEN ST_TRANSFORM(c.geom_polygon, 22289) ELSE c.geom_polygon END) AS geom_polygon, c.status_code,
 (SELECT size FROM cadastre.spatial_value_area WHERE spatial_unit_id = c.id AND type_code = 'officialArea' LIMIT 1) AS official_area
 FROM cadastre.cadastre_object c 
