@@ -65,3 +65,40 @@ ALTER TABLE administrative.dispute_party ALTER COLUMN party_name SET NOT NULL;
 
 ALTER TABLE administrative.dispute_party_historic ADD COLUMN party_name character varying(100);
 ALTER TABLE administrative.dispute_party_historic ALTER COLUMN party_name SET NOT NULL;
+
+
+ALTER TABLE cadastre.land_use_grade ADD COLUMN registration_fee numeric(29,2);
+ALTER TABLE cadastre.land_use_grade ALTER COLUMN registration_fee SET NOT NULL;
+ALTER TABLE cadastre.land_use_grade ALTER COLUMN registration_fee SET DEFAULT 0;
+
+
+UPDATE cadastre.land_use_grade
+SET registration_fee = '100'
+WHERE land_use_code = 'commercial';
+
+
+UPDATE cadastre.land_use_grade
+SET registration_fee = '100'
+WHERE land_use_code = 'hotel';
+
+UPDATE cadastre.land_use_grade
+SET registration_fee = '100'
+WHERE land_use_code = 'industrial';
+
+
+UPDATE cadastre.land_use_grade
+SET registration_fee = '100'
+WHERE land_use_code = 'petroleum';
+
+
+UPDATE cadastre.land_use_grade
+SET registration_fee = '100'
+WHERE land_use_code = 'retail';
+
+UPDATE cadastre.land_use_grade
+SET registration_fee = '100'
+WHERE land_use_code = 'warehouse';
+
+UPDATE cadastre.land_use_grade
+SET registration_fee = '25'
+WHERE land_use_code = 'residential';
