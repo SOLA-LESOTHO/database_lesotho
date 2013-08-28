@@ -9,7 +9,7 @@ ALTER TABLE administrative.dispute ALTER COLUMN status_code SET DEFAULT 'Pending
 
 ALTER TABLE administrative.dispute ALTER COLUMN plot_location SET DATA TYPE character varying(255);
 
-ALTER TABLE administrative.dispute ADD COLUMN dispute_description character varying(255);
+ALTER TABLE administrative.dispute ALTER COLUMN dispute_description SET DATA TYPE character varying(255);
 
 ALTER TABLE administrative.dispute ALTER COLUMN lodgement_date SET NOT NULL;
 
@@ -25,7 +25,7 @@ ALTER TABLE administrative.dispute_historic ALTER COLUMN status_code SET DEFAULT
 
 ALTER TABLE administrative.dispute_historic ALTER COLUMN plot_location SET DATA TYPE character varying(255);
 
-ALTER TABLE administrative.dispute_historic ADD COLUMN dispute_description character varying(255);
+ALTER TABLE administrative.dispute_historic ALTER COLUMN dispute_description SET DATA TYPE character varying(255);
 
 ALTER TABLE administrative.dispute_historic ALTER COLUMN lodgement_date SET NOT NULL;
 
@@ -59,12 +59,12 @@ insert into administrative.dispute_reports(code, display_value, status) values('
 insert into administrative.dispute_reports(code, display_value, status) values('confirmation', 'Confirmation', 'c'); 
  
 --
-ALTER TABLE administrative.dispute_party ADD COLUMN party_name character varying(100);
-ALTER TABLE administrative.dispute_party ALTER COLUMN party_name SET NOT NULL;
-
-
-ALTER TABLE administrative.dispute_party_historic ADD COLUMN party_name character varying(100);
+ALTER TABLE administrative.dispute_party_historic ALTER COLUMN party_name SET DATA TYPE character varying(100);
 ALTER TABLE administrative.dispute_party_historic ALTER COLUMN party_name SET NOT NULL;
+
+
+ALTER TABLE administrative.dispute_party ALTER COLUMN party_name SET DATA TYPE character varying(100);
+ALTER TABLE administrative.dispute_party ALTER COLUMN party_name SET NOT NULL;
 
 
 ALTER TABLE cadastre.land_use_grade ADD COLUMN registration_fee numeric(29,2);
