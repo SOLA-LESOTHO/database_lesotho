@@ -149,5 +149,9 @@ $BODY$
 ALTER FUNCTION administrative.f_for_tbl_ba_unit_trg_check_cadastre_object()
   OWNER TO postgres;
 
- ALTER TABLE administrative.ba_unit
+ALTER TABLE administrative.ba_unit
   ADD CONSTRAINT ba_unit_unique_name_parts UNIQUE (name_firstpart, name_lastpart);
+  
+ -- refernce_nr has a length of 50 in production
+ ALTER TABLE source.source
+  ALTER reference_nr TYPE VARCHAR(50);

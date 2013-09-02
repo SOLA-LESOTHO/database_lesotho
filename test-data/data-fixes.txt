@@ -1,0 +1,28 @@
+-- This file contains statements to fix data issues with the Lesotho Data
+
+-- Add Migration DCDB User to link records to 
+INSERT INTO system.appuser(id, username, first_name, last_name, description, change_user)
+   SELECT uuid_generate_v1(), 'dcdb-migration', 'DCDB', 'Migration', 'DCDB Migration User', 'dcdb-migration'
+   WHERE NOT EXISTS (SELECT username FROM system.appuser WHERE username = 'dcdb-migration');
+	
+	
+-- Create the dcdb-migration transaction used for the cadastre_object table
+INSERT INTO transaction.transaction(id, status_code, approval_datetime, change_user) 
+ SELECT 'dcdb-migration', 'approved', now(), 'dcdb-migration'
+ WHERE NOT EXISTS (SELECT id FROM transaction.transaction WHERE id = 'dcdb-migration');
+
+-- Create the dcdb-migration transaction used for the cadastre_object table
+INSERT INTO transaction.transaction(id, status_code, approval_datetime, change_user)
+ SELECT 'adm-migration', 'approved', now(), 'adm-migration'
+ WHERE NOT EXISTS (SELECT id FROM transaction.transaction WHERE id = 'adm-migration');
+	
+-- Fixup the level.id to match the spatial_unit.level_id from production.
+ALTER TABLE cadastre.level DISABLE TRIGGER ALL;
+DELETE FROM cadastre.level;
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('5e14c1b4-04f6-11e3-9139-0bd508b5ca74', 'Zones', 'all', 'polygon', 'mixed', '5e14c1b4-04f6-11e3-96cc-efadb9115ff0', 1, 'i', 'test', '2013-08-14 17:29:53.813');
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('5e172314-04f6-11e3-9524-37a0cb407d58', 'Roads', 'all', 'unStructuredLine', 'network', '5e172314-04f6-11e3-ac3e-df0312b049a0', 1, 'i', 'test', '2013-08-14 17:29:53.828');
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('5e198474-04f6-11e3-93fa-b3e10fa4579a', 'Parcels', 'all', 'polygon', 'primaryRight', '5e198474-04f6-11e3-84e5-1bf1da6f9acb', 1, 'i', 'test', '2013-08-14 17:29:53.844');
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('cadastreObject', 'Cadastre object', 'all', 'polygon', 'primaryRight', '5e1be5d4-04f6-11e3-844f-a37ec24be803', 1, 'i', 'db:postgres', '2013-08-14 17:29:53.859');
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('5e52a588-04f6-11e3-abf3-ef01f855acad', 'Subplots', 'all', 'polygon', 'primaryRight', '5e52a588-04f6-11e3-86d1-2b1258374ed7', 1, 'i', 'test', '2013-08-14 17:29:54.218');
+INSERT INTO cadastre.level (id, name, register_type_code, structure_code, type_code, rowidentifier, rowversion, change_action, change_user, change_time) VALUES ('60982a1a-04f7-11e3-8ffc-fb5f81b04e88', 'Grids', 'all', 'polygon', 'mixed', '609a8b7a-04f7-11e3-a896-3f0b9572da0a', 1, 'i', 'test', '2013-08-14 17:37:07.526');
+ALTER TABLE cadastre.level ENABLE TRIGGER ALL;

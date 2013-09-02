@@ -5,6 +5,10 @@ logs/
 Thumbs.db
 thumbs.db
 *.log
+test-data/*.sql
+~test-data/data-fixes.sql
+# Do not upload lesotho data 
+test-data/*.7z
 
 #Ingore temporary vpp files
 *.vpp~*

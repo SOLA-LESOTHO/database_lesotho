@@ -59,6 +59,15 @@ INSERT INTO application.request_type(code, request_category_code, display_value,
             description)
     VALUES ('registrarCancel','registrationServices','Correct Lease (Cancel Right)','c',5,0.00,0.00,0.00,1,
 	'Lease correction <details>',NULL,'cancel','Cancel a right to correct lease details');
+		
+	
+INSERT INTO source.administrative_source_type (code, display_value, status)
+SELECT 'allocationTitle', 'Allocation Title', 'c'
+WHERE NOT EXISTS (SELECT code FROM source.administrative_source_type WHERE code = 'allocationTitle'); 
+
+INSERT INTO source.administrative_source_type (code, display_value, status)
+SELECT 'titleDocument', 'Title Document', 'c'
+WHERE NOT EXISTS (SELECT code FROM source.administrative_source_type WHERE code = 'titleDocument');  
 	
 /*
 INSERT INTO application.request_type(code, request_category_code, display_value, 
