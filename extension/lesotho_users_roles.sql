@@ -129,6 +129,8 @@ INSERT INTO approle (code, display_value, status, description) VALUES ('consentA
 INSERT INTO approle (code, display_value, status, description) VALUES ('DisputeView', 'Dispute - View', 'c', 'Allows the user to open the Disputes and Court Cases form');
 INSERT INTO approle (code, display_value, status, description) VALUES ('registrarCorrection', 'Serivce - Correct Lease', 'c', 'Lease Service. Allows the Correct Lease service to be started. ');
 INSERT INTO approle (code, display_value, status, description) VALUES ('registrarCancel', 'Serivce - Correct Lease (Cancel Right)', 'c', 'Lease Service. Allows the Correct Lease (Cancel Right). ');
+INSERT INTO approle (code, display_value, status, description) VALUES ('viewAssignAll', 'Dashboard - View all assigned applications', 'c', 'Allows users to view all assigned applications');
+INSERT INTO approle (code, display_value, status, description) VALUES ('viewUnassignAll', 'Dashboard - View all unassigned applications', 'c', 'Allows users to view all unassigned applications');
 
 ALTER TABLE approle ENABLE TRIGGER ALL;
 
@@ -248,6 +250,8 @@ INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('ApplnResubmit'
 INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('ApplnValidate', 'manager-id');
 INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('ApplnWithdraw', 'manager-id');
 INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('DashbrdViewAssign', 'manager-id');
+INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('viewAssignAll', 'manager-id');
+INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('viewUnassignAll', 'manager-id');
 INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('DashbrdViewUnassign', 'manager-id');
 INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('SourceSave', 'manager-id');
 INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('SourceSearch', 'manager-id');
