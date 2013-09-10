@@ -2484,6 +2484,17 @@ COMMENT ON FUNCTION party.is_rightholder(
  id varchar
 ) IS 'Gets if a party is rightholder.';
     
+-- Sequence party.party_nr_seq --
+DROP SEQUENCE IF EXISTS party.party_nr_seq;
+CREATE SEQUENCE party.party_nr_seq
+INCREMENT 1
+MINVALUE 1
+MAXVALUE 999999
+START 1
+CACHE 1
+CYCLE;
+COMMENT ON SEQUENCE party.party_nr_seq IS '';
+    
 -- Function public.f_for_trg_track_changes --
 CREATE OR REPLACE FUNCTION public.f_for_trg_track_changes(
 
@@ -3013,6 +3024,7 @@ CREATE TABLE application.application(
     status_code varchar(20) NOT NULL DEFAULT ('lodged'),
     receipt_reference varchar(100),
     receipt_date date,
+    collection_date date,
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -3073,6 +3085,7 @@ CREATE TABLE application.application_historic
     status_code varchar(20),
     receipt_reference varchar(100),
     receipt_date date,
+    collection_date date,
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),
