@@ -2484,6 +2484,17 @@ COMMENT ON FUNCTION party.is_rightholder(
  id varchar
 ) IS 'Gets if a party is rightholder.';
     
+-- Sequence party.party_nr_seq --
+DROP SEQUENCE IF EXISTS party.party_nr_seq;
+CREATE SEQUENCE party.party_nr_seq
+INCREMENT 1
+MINVALUE 1
+MAXVALUE 999999
+START 1
+CACHE 1
+CYCLE;
+COMMENT ON SEQUENCE party.party_nr_seq IS '';
+    
 -- Function public.f_for_trg_track_changes --
 CREATE OR REPLACE FUNCTION public.f_for_trg_track_changes(
 
@@ -3012,6 +3023,8 @@ CREATE TABLE application.application(
     action_notes varchar(8000),
     status_code varchar(20) NOT NULL DEFAULT ('lodged'),
     receipt_reference varchar(100),
+    receipt_date date,
+    collection_date date,
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -3071,6 +3084,8 @@ CREATE TABLE application.application_historic
     action_notes varchar(8000),
     status_code varchar(20),
     receipt_reference varchar(100),
+    receipt_date date,
+    collection_date date,
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),
@@ -5258,12 +5273,12 @@ insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, g
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('residential', 'grade4', 50, 0.17, 8, 25);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('residential', 'grade5', 50, 0.12, 8, 25);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('residential', 'grade6', 50, 0.12, 8, 25);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade1', 100, 500, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('charitable', 'grade1', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hospital', 'grade1', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('educational', 'grade1', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('religious', 'grade1', 100, 20, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade2', 100, 200, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade1', 100, 500, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('charitable', 'grade1', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hospital', 'grade1', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('educational', 'grade1', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('religious', 'grade1', 100, 20, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade2', 100, 200, 0, 25);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricIrrigated', 'grade1', 500, 105, 0, 0);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricIrrigated', 'grade2', 500, 80, 0, 0);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricIrrigated', 'grade3', 500, 52, 0, 0);
@@ -5284,42 +5299,42 @@ insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, g
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricOther', 'grade3', 100, 63, 0, 0);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricOther', 'grade4', 100, 31, 0, 0);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('agricOther', 'grade5', 100, 10, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade3', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade4', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade5', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade6', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('charitable', 'grade2', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('charitable', 'grade3', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('charitable', 'grade4', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('charitable', 'grade5', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('charitable', 'grade6', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hospital', 'grade2', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hospital', 'grade3', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hospital', 'grade4', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hospital', 'grade5', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hospital', 'grade6', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('educational', 'grade2', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('educational', 'grade3', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('educational', 'grade4', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('educational', 'grade5', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('educational', 'grade6', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('religious', 'grade2', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('religious', 'grade3', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('religious', 'grade4', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('religious', 'grade5', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('religious', 'grade6', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('devotional', 'grade1', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('devotional', 'grade2', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('devotional', 'grade3', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('devotional', 'grade4', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('devotional', 'grade5', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('devotional', 'grade6', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('benovelent', 'grade1', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('benovelent', 'grade2', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('benovelent', 'grade3', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('benovelent', 'grade4', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('benovelent', 'grade5', 100, 200, 0, 0);
-insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('benovelent', 'grade6', 100, 200, 0, 0);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade3', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade4', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade5', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('recreational', 'grade6', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('charitable', 'grade2', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('charitable', 'grade3', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('charitable', 'grade4', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('charitable', 'grade5', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('charitable', 'grade6', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hospital', 'grade2', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hospital', 'grade3', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hospital', 'grade4', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hospital', 'grade5', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hospital', 'grade6', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('educational', 'grade2', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('educational', 'grade3', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('educational', 'grade4', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('educational', 'grade5', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('educational', 'grade6', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('religious', 'grade2', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('religious', 'grade3', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('religious', 'grade4', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('religious', 'grade5', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('religious', 'grade6', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('devotional', 'grade1', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('devotional', 'grade2', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('devotional', 'grade3', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('devotional', 'grade4', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('devotional', 'grade5', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('devotional', 'grade6', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('benovelent', 'grade1', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('benovelent', 'grade2', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('benovelent', 'grade3', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('benovelent', 'grade4', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('benovelent', 'grade5', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('benovelent', 'grade6', 100, 200, 0, 25);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('commercial', 'grade5', 100, 0.24, 10, 100);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('commercial', 'grade6', 100, 0.24, 10, 100);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('hotel', 'grade4', 100, 0.23, 0, 100);
@@ -5337,6 +5352,12 @@ insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, g
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('warehouse', 'grade4', 100, 0.23, 0, 100);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('warehouse', 'grade5', 100, 0.23, 0, 100);
 insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('warehouse', 'grade6', 100, 0.23, 0, 100);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('institutional', 'grade1', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('institutional', 'grade2', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('institutional', 'grade3', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('institutional', 'grade4', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('institutional', 'grade5', 100, 200, 0, 25);
+insert into cadastre.land_use_grade(land_use_code, land_grade_code, admin_fee, ground_rent_rate, duty_on_ground_rent, registration_fee) values('institutional', 'grade6', 100, 200, 0, 25);
 
 
 
