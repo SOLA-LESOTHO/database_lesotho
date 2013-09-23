@@ -4978,6 +4978,60 @@ insert into administrative.dispute_type(code, display_value, status) values('oth
 
 
 
+--Table administrative.disputes_source ----
+DROP TABLE IF EXISTS administrative.disputes_source CASCADE;
+CREATE TABLE administrative.disputes_source(
+    dispute_id varchar(40) NOT NULL,
+    source_id varchar(40) NOT NULL,
+    rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
+    rowversion integer NOT NULL DEFAULT (0),
+    change_action char(1) NOT NULL DEFAULT ('i'),
+    change_user varchar(50),
+    change_time timestamp NOT NULL DEFAULT (now()),
+
+    -- Internal constraints
+    
+    CONSTRAINT disputes_source_pkey PRIMARY KEY (dispute_id,source_id)
+);
+
+
+
+-- Index disputes_source_index_on_rowidentifier  --
+CREATE INDEX disputes_source_index_on_rowidentifier ON administrative.disputes_source (rowidentifier);
+    
+
+comment on table administrative.disputes_source is '';
+    
+DROP TRIGGER IF EXISTS __track_changes ON administrative.disputes_source CASCADE;
+CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
+   ON administrative.disputes_source FOR EACH ROW
+   EXECUTE PROCEDURE f_for_trg_track_changes();
+    
+
+----Table administrative.disputes_source_historic used for the history of data of table administrative.disputes_source ---
+DROP TABLE IF EXISTS administrative.disputes_source_historic CASCADE;
+CREATE TABLE administrative.disputes_source_historic
+(
+    dispute_id varchar(40),
+    source_id varchar(40),
+    rowidentifier varchar(40),
+    rowversion integer,
+    change_action char(1),
+    change_user varchar(50),
+    change_time timestamp,
+    change_time_valid_until TIMESTAMP NOT NULL default NOW()
+);
+
+
+-- Index disputes_source_historic_index_on_rowidentifier  --
+CREATE INDEX disputes_source_historic_index_on_rowidentifier ON administrative.disputes_source_historic (rowidentifier);
+    
+
+DROP TRIGGER IF EXISTS __track_history ON administrative.disputes_source CASCADE;
+CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
+   ON administrative.disputes_source FOR EACH ROW
+   EXECUTE PROCEDURE f_for_trg_track_history();
+    
 --Table document.document ----
 DROP TABLE IF EXISTS document.document CASCADE;
 CREATE TABLE document.document(
