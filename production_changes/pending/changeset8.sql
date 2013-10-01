@@ -70,3 +70,35 @@ delete from administrative.transaction_type where code='transfer';
 insert into administrative.transaction_type (code, display_value, description) values ('servetude', 'PRIVATE SERVITUDE', 'PRIVATE SERVITUDE');
 insert into administrative.transaction_type (code, display_value, description) values ('sub_lease', 'SUB LEASE', 'SUB LEASE');
 insert into administrative.transaction_type (code, display_value, description) values ('transfer', 'TRANSFER', 'TRANSFER');
+
+
+---
+INSERT INTO cadastre.land_use_grade(
+            land_use_code, land_grade_code, admin_fee, ground_rent_rate, 
+            duty_on_ground_rent, registration_fee)
+    VALUES ('agricIntensive', 'grade1', '100', '300', 
+            '0', '0');
+
+INSERT INTO cadastre.land_use_grade(
+            land_use_code, land_grade_code, admin_fee, ground_rent_rate, 
+            duty_on_ground_rent, registration_fee)
+    VALUES ('agricIntensive', 'grade2', '100', '300', 
+            '0', '0');
+
+INSERT INTO cadastre.land_use_grade(
+            land_use_code, land_grade_code, admin_fee, ground_rent_rate, 
+            duty_on_ground_rent, registration_fee)
+    VALUES ('agricIntensive', 'grade3', '100', '300', 
+            '0', '0');
+
+INSERT INTO cadastre.land_use_grade(
+            land_use_code, land_grade_code, admin_fee, ground_rent_rate, 
+            duty_on_ground_rent, registration_fee)
+    VALUES ('agricIntensive', 'grade4', '100', '300', 
+            '0', '0');
+
+INSERT INTO cadastre.land_use_grade(
+            land_use_code, land_grade_code, admin_fee, ground_rent_rate, 
+            duty_on_ground_rent, registration_fee)
+    VALUES ('agricIntensive', 'grade5', '100', '300', 
+            '0', '0');
