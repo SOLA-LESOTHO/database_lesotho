@@ -1,5 +1,5 @@
-UPDATE party.party
-   SET  ext_id= btrim(to_char(nextval('party.party_nr_seq'::regclass), '000000'::text))
+﻿UPDATE party.party
+   SET  ext_id= btrim(to_char(nextval('party.party_nr_seq'::regclass), '000000'::text));
    
 CREATE SEQUENCE party.party_nr_seq
   INCREMENT 1

@@ -1,8 +1,8 @@
-INSERT INTO approle (code, display_value, status, description) VALUES ('viewAssignAll', 'Dashboard - View all assigned applications', 'c', 'Allows users to view all assigned applications');
-INSERT INTO approle (code, display_value, status, description) VALUES ('viewUnassignAll', 'Dashboard - View all unassigned applications', 'c', 'Allows users to view all unassigned applications');
+﻿INSERT INTO system.approle (code, display_value, status, description) VALUES ('viewAssignAll', 'Dashboard - View all assigned applications', 'c', 'Allows users to view all assigned applications');
+INSERT INTO system.approle (code, display_value, status, description) VALUES ('viewUnassignAll', 'Dashboard - View all unassigned applications', 'c', 'Allows users to view all unassigned applications');
 
-INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('viewAssignAll', 'manager-id');
-INSERT INTO approle_appgroup (approle_code, appgroup_id) VALUES ('viewUnassignAll', 'manager-id');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES ('viewAssignAll', 'manager-id');
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) VALUES ('viewUnassignAll', 'manager-id');
 
 INSERT INTO system.br(id, technical_type_code, feedback) 
 VALUES('check-lease-reg-for-new-lease', 'sql', 'Lease registration service must exist on the application.');
