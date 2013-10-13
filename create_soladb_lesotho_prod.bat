@@ -91,38 +91,38 @@ REM Direct standard output to NUL, but capture any errors in the build.log
 echo >> build.log
 echo Loading system schema...
 echo Loading system schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%system.sql >NUL 2>>build.log
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%testDataPath%system.sql >NUL 2>>build.log
 echo Loading cadastre schema...
 echo Loading cadastre schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%cadastre.sql >NUL 2>>build.log
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%testDataPath%cadastre.sql >NUL 2>>build.log
 echo Loading address schema...
 echo Loading address schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%address.sql >NUL 2>>build.log
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%testDataPath%address.sql >NUL 2>>build.log
 echo Loading party schema...
 echo Loading party schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%party.sql >NUL 2>>build.log
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%testDataPath%party.sql >NUL 2>>build.log
 echo Loading administration schema...
 echo Loading administration schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%administration.sql >NUL 2>>build.log
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%testDataPath%administration.sql >NUL 2>>build.log
 echo Loading application schema...
 echo Loading application schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%application.sql >NUL 2>>build.log
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%testDataPath%application.sql >NUL 2>>build.log
 echo Loading document schema...
 echo Loading document schema... >> build.log 2>&1
-REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%sample_documents.sql >NUL 2>>build.log
-REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%standard_documents.sql >NUL 2>>build.log
+REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%testDataPath%sample_documents.sql >NUL 2>>build.log
+REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%testDataPath%standard_documents.sql >NUL 2>>build.log
 echo Loading source schema...
 echo Loading source schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%source.sql >NUL 2>>build.log
-REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%sample_documents_source.sql >NUL 2>>build.log
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%testDataPath%source.sql >NUL 2>>build.log
+REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%testDataPath%sample_documents_source.sql >NUL 2>>build.log
 REM Source for standard documents should already be loaded from the database extract (source.sql). 
-REM %psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%standard_documents_source.sql >NUL 2>>build.log
+REM %psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%testDataPath%standard_documents_source.sql >NUL 2>>build.log
 echo Loading transaction schema...
 echo Loading transaction schema... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%transaction.sql >NUL 2>>build.log
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%testDataPath%transaction.sql >NUL 2>>build.log
 echo Applying data fixes...
 echo Applying data fixes... >> build.log 2>&1
-%psql_path% --host=%host% --port=5432 --username=%username% --dbname=%dbname% --file=%testDataPath%data-fixes.txt >> build.log 2>&1
+%psql_path% --host=%host% --port=%port% --username=%username% --dbname=%dbname% --file=%testDataPath%data-fixes.txt >> build.log 2>&1
 
 
 echo Finished at %time% - Check build.log for errors!

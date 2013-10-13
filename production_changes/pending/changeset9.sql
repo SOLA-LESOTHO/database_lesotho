@@ -182,13 +182,17 @@ BEGIN
    SELECT get_translation(req.display_value, null) AS req_type,
 	  CASE req.request_category_code 
 	     WHEN 'registrationServices' THEN get_translation(cat.display_value, null)
-	     WHEN 'cadastralServices' THEN get_translation(cat.display_value, null)
+	     WHEN 'leaseServices' THEN get_translation(cat.display_value, null)
+	     WHEN 'surveyServices' THEN get_translation(cat.display_value, null)
+	     WHEN 'legalServices' THEN get_translation(cat.display_value, null)
 	     ELSE 'Information Services'  END AS req_cat,
 	     
 	  CASE req.request_category_code 
 	     WHEN 'registrationServices' THEN 1
-             WHEN 'cadastralServices' THEN 2
-	     ELSE 3 END AS group_idx,
+             WHEN 'leaseServices' THEN 2
+             WHEN 'surveyServices' THEN 3
+             WHEN 'legalServices' THEN 4
+	     ELSE 5 END AS group_idx,
 		 
 	  -- Count of the pending and lodged services associated with
 	  -- lodged applications at the start of the reporting period
