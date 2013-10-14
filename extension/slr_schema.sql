@@ -1,5 +1,31 @@
+-- Creates the slr schema in the SOLA database that will be used to
+-- migrate the SLR data into SOLA. Also applies a data fix to ensure
+-- all cadastre_object records have a matching cadastre.spatial_unit
+-- record. It appears the earlier migrations may have failed to 
+-- create the correct spatial unit records. 
+
 DROP SCHEMA IF EXISTS slr CASCADE;
 CREATE SCHEMA slr; 
+
+INSERT INTO transaction.transaction(id, status_code, approval_datetime, change_user) 
+SELECT 'slr-migration', 'approved', now(), 'slr-migration' WHERE NOT EXISTS 
+(SELECT id FROM transaction.transaction WHERE id = 'adm-migration');
+
+
+-- Fix the spatial unit records and cadastre_object records that are unmatched. 
+DELETE FROM cadastre.spatial_unit
+WHERE level_id = (SELECT id FROM cadastre.level WHERE name = 'Parcels')
+AND NOT EXISTS (SELECT c.id from cadastre.cadastre_object c WHERE c.id = spatial_unit.id);
+
+INSERT INTO cadastre.spatial_unit (id, label, level_id, change_user)
+SELECT co.id, co.name_firstpart || '-' || co.name_lastpart, l.id, 'slr-migration'
+FROM   cadastre.cadastre_object co,
+       cadastre.level l
+WHERE  l.name = 'Parcels'
+AND    NOT EXISTS (SELECT s.id FROM cadastre.spatial_unit s
+                   WHERE s.id = co.id);
+				   
+				   
 
 DROP TABLE IF EXISTS slr.slr_source;
 CREATE TABLE slr.slr_source
@@ -115,5 +141,24 @@ CREATE TABLE slr.slr_parcel
   lease_number character varying (50),
   village character varying(100),
   area_desc character varying (100),
-  adjudication_parcel_number character varying(40)
+  adjudication_parcel_number character varying(40),
+  area NUMERIC (29,2),
+  address_id character varying(40), 
+  matched boolean DEFAULT false,
+  update_geom boolean DEFAULT false,
+  update_address boolean DEFAULT false,
+  update_area boolean DEFAULT false,
+  update_zone boolean DEFAULT false
 );
+
+ALTER TABLE cadastre.cadastre_object
+DROP COLUMN IF EXISTS adjudication_parcel_number;
+
+ALTER TABLE cadastre.cadastre_object
+ADD adjudication_parcel_number character varying(40);
+
+ALTER TABLE cadastre.cadastre_object_historic
+DROP COLUMN IF EXISTS adjudication_parcel_number;
+
+ALTER TABLE cadastre.cadastre_object_historic
+ADD adjudication_parcel_number character varying(40);
