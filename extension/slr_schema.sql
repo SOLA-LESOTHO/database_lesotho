@@ -9,7 +9,7 @@ CREATE SCHEMA slr;
 
 INSERT INTO transaction.transaction(id, status_code, approval_datetime, change_user) 
 SELECT 'slr-migration', 'approved', now(), 'slr-migration' WHERE NOT EXISTS 
-(SELECT id FROM transaction.transaction WHERE id = 'adm-migration');
+(SELECT id FROM transaction.transaction WHERE id = 'slr-migration');
 
 
 -- Fix the spatial unit records and cadastre_object records that are unmatched. 
@@ -26,6 +26,19 @@ AND    NOT EXISTS (SELECT s.id FROM cadastre.spatial_unit s
                    WHERE s.id = co.id);
 				   
 				   
+-- Fix the sequence nr business rule for administrative.notation
+DROP SEQUENCE IF EXISTS administrative.notation_reference_nr_seq;
+CREATE SEQUENCE  administrative.notation_reference_nr_seq
+  INCREMENT 1
+  MINVALUE 50000
+  MAXVALUE 999999
+  START 50000
+  CACHE 1;
+  
+UPDATE system.br_definition 
+SET body = 'SELECT trim(to_char(nextval(''administrative.notation_reference_nr_seq''), ''000000'')) AS vl'
+WHERE br_id = 'generate-notation-reference-nr'; 
+			   
 
 DROP TABLE IF EXISTS slr.slr_source;
 CREATE TABLE slr.slr_source
@@ -142,7 +155,7 @@ CREATE TABLE slr.slr_parcel
   village character varying(100),
   area_desc character varying (100),
   adjudication_parcel_number character varying(40),
-  area NUMERIC (29,2),
+  area int, 
   address_id character varying(40), 
   matched boolean DEFAULT false,
   update_geom boolean DEFAULT false,
@@ -161,4 +174,83 @@ ALTER TABLE cadastre.cadastre_object_historic
 DROP COLUMN IF EXISTS adjudication_parcel_number;
 
 ALTER TABLE cadastre.cadastre_object_historic
+ADD adjudication_parcel_number character varying(40);
+
+
+DROP TABLE IF EXISTS slr.slr_party;
+CREATE TABLE slr.slr_party
+(
+  id character varying(40),
+  name character varying(255),
+  last_name character varying(255),
+  party_role character varying(50),
+  lease_number character varying (50),
+  alias character varying(50),
+  gender character varying (50),
+  dob date,
+  email character varying (50),
+  mobile character varying(15), 
+  home_phone character varying(15),
+  work_phone character varying(15),
+  marital_status character varying(50),
+  marriage_type character varying(50),
+  addr character varying(255),
+  addr_id character varying(40),
+  account_holder int DEFAULT 0,
+  slr_reference character varying(255),
+  matched boolean DEFAULT false
+);
+
+-- Add party role types for slr-migration
+INSERT INTO party.party_role_type (code, display_value, status)
+SELECT 'landlord', 'Landlord', 'c'
+WHERE NOT EXISTS (SELECT code FROM party.party_role_type WHERE code = 'landlord'); 
+
+INSERT INTO party.party_role_type (code, display_value, status)
+SELECT 'occupant', 'Occupant', 'c'
+WHERE NOT EXISTS (SELECT code FROM party.party_role_type WHERE code = 'occupant'); 
+
+INSERT INTO party.party_role_type (code, display_value, status)
+SELECT 'trustee', 'Authorised Trustee', 'c'
+WHERE NOT EXISTS (SELECT code FROM party.party_role_type WHERE code = 'trustee'); 
+
+INSERT INTO party.party_role_type (code, display_value, status)
+SELECT 'representative', 'Authorised Representative', 'c'
+WHERE NOT EXISTS (SELECT code FROM party.party_role_type WHERE code = 'representative'); 
+
+INSERT INTO party.party_role_type (code, display_value, status)
+SELECT 'trustor', 'Trustor', 'c'
+WHERE NOT EXISTS (SELECT code FROM party.party_role_type WHERE code = 'trustor'); 
+
+
+DROP TABLE IF EXISTS slr.slr_lease;
+CREATE TABLE slr.slr_lease
+(
+  id character varying(40),
+  rrr_id character varying(40),
+  notation_id character varying(40), 
+  lease_number character varying (50),
+  land_use character varying(50),
+  stamp_duty character varying (50),
+  ground_rent character varying (50),
+  reg_fee character varying (50),
+  term character varying(50), 
+  status character varying(20),
+  area int, 
+  reg_date DATE,
+  cadastre_object_id character varying(40),
+  adjudication_parcel_number character varying(40),
+  matched boolean DEFAULT false
+);
+
+ALTER TABLE administrative.ba_unit
+DROP COLUMN IF EXISTS adjudication_parcel_number;
+
+ALTER TABLE  administrative.ba_unit
+ADD adjudication_parcel_number character varying(40);
+
+ALTER TABLE  administrative.ba_unit_historic
+DROP COLUMN IF EXISTS adjudication_parcel_number;
+
+ALTER TABLE  administrative.ba_unit_historic
 ADD adjudication_parcel_number character varying(40);
