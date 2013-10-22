@@ -38,6 +38,42 @@ CREATE SEQUENCE  administrative.notation_reference_nr_seq
 UPDATE system.br_definition 
 SET body = 'SELECT trim(to_char(nextval(''administrative.notation_reference_nr_seq''), ''000000'')) AS vl'
 WHERE br_id = 'generate-notation-reference-nr'; 
+
+-- Add setting that can be used to enable the SLR Database connection
+INSERT INTO system.setting(name, vl, active, description)
+SELECT 'slr-db-connection', 'OFF', TRUE, 
+       'Indicates if SOLA has a valid connection to the SLR Lesotho database. To enable, set to ON'
+WHERE NOT EXISTS (SELECT name FROM system.setting WHERE name = 'slr-db-connection'); 
+
+-- Add new Security Role
+INSERT INTO system.approle (code, display_value, status, description) 
+SELECT 'SlrMigration', 'SLR Migration', 'c', 'Allows the user to perform SLR migration tasks using SOLA Admin.'
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'SlrMigration');
+
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) 
+SELECT 'SlrMigration', 'administrator-id'
+WHERE NOT EXISTS (SELECT approle_code FROM system.approle_appgroup
+                  WHERE approle_code = 'SlrMigration'
+				  AND   appgroup_id = 'administrator-id'); 
+
+				  
+-- Add Service to support registration of pending SLR leases
+INSERT INTO application.request_type(code, request_category_code, display_value, 
+            status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
+            nr_properties_required, notation_template, rrr_type_code, type_action_code, 
+            description)
+    VALUES ('grantSlrLease','registrationServices','Grant SLR Lease','x',5,0,0.00,0.00,0,
+	'','lease','vary', 'Allows pending leases migrated from the SLR database to be granted/registered in SOLA');
+
+INSERT INTO system.approle (code, display_value, status, description) 
+SELECT 'grantSlrLease', 'Service - Grant SLR Lease', 'c', 'Registration Service - Allows the Grant SLR Lease service to be started.'
+WHERE NOT EXISTS (SELECT code FROM system.approle WHERE code = 'grantSlrLease');
+
+INSERT INTO system.approle_appgroup (approle_code, appgroup_id) 
+SELECT 'grantSlrLease', 'lease-correct-id'
+WHERE NOT EXISTS (SELECT approle_code FROM system.approle_appgroup
+                  WHERE approle_code = 'grantSlrLease'
+				  AND   appgroup_id = 'lease-correct-id'); 	
 			   
 
 DROP TABLE IF EXISTS slr.slr_source;
