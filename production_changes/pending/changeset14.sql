@@ -2,6 +2,43 @@
 
 -- DROP FUNCTION application.getresponsetime(character varying, character varying, character varying);
 
+CREATE OR REPLACE FUNCTION application.count_weekend_days(start_date DATE, end_date DATE)
+RETURNS INT AS
+$$
+SELECT CAST(SUM(case when application.is_weekend_day($1 + ofs) then 1 else 0 end) as int)
+from generate_series(0, $2 - $1) ofs
+$$
+LANGUAGE 'sql';
+
+CREATE OR REPLACE FUNCTION application.is_weekend_day(fromdate DATE)
+RETURNS BOOLEAN AS
+$$
+	SELECT CASE EXTRACT(DOW FROM $1)
+		WHEN 0 THEN
+			TRUE
+		WHEN 6 THEN
+			TRUE
+		ELSE
+			FALSE
+		END
+$$
+LANGUAGE sql;
+
+CREATE OR REPLACE FUNCTION application.count_workdays(start_date DATE, end_date DATE)
+RETURNS INT AS
+$$ 
+DECLARE
+		lead_time integer:= (($2-$1) +1);
+		weekend_days integer := application.count_weekend_days($1,$2);
+		workdays integer := lead_time - weekend_days;
+		
+BEGIN
+
+	RETURN workdays;
+END;
+$$
+LANGUAGE 'plpgsql';
+
 CREATE OR REPLACE FUNCTION application.getresponsetime(character varying, character varying, character varying)
   RETURNS SETOF record AS
 $BODY$
@@ -40,7 +77,7 @@ BEGIN
 		total_time:=rec.total_time;
 		average_time:=rec.average_time;
 		
-		select into recToReturn request_type::varchar, service_count::integer, total_time::integer, average_time::float;        
+		select into recToReturn request_type::varchar, service_count::integer, total_time::integer, round(average_time::float);        
 		return next recToReturn;
 	end loop;
 END;
