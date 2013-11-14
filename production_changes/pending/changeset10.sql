@@ -30,8 +30,8 @@ BEGIN
 	AND ser.lodging_datetime BETWEEN to_date('''|| fromDate || ''',''yyyy-mm-dd'')  and to_date('''|| toDate || ''',''yyyy-mm-dd'')
 	GROUP BY nt.request_type)
 
-SELECT request_type, service_count, total_time, (total_time/service_count::float) AS average_time
-FROM results_table';
+	SELECT request_type, service_count, total_time, (total_time/service_count::float) AS average_time
+	FROM results_table';
 			
 	FOR rec in EXECUTE sqlSt loop
 	    request_type:= rec.request_type;
