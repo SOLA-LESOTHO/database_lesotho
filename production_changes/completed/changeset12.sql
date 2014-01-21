@@ -20,14 +20,14 @@ BEGIN
 	and  r.status_code = ''current''
 	and r.registration_date BETWEEN to_date('''|| fromdate || ''',''yyyy-mm-dd'')  and to_date('''|| todate || ''',''yyyy-mm-dd''))
 
-	select mortgages, amount, round(amount/mortgages) as average_amount from result_table';
+	select mortgages, amount,(amount/mortgages) as average_amount from result_table';
 
 	FOR rec in EXECUTE sqlSt LOOP
 		mortgages:= rec.mortgages;
 		amount:= rec.amount;
 		average_amount:= rec.average_amount;
 		
-		select into recToReturn mortgages::integer, amount::float, average_amount::float;        
+		select into recToReturn mortgages::integer, amount::float, round(average_amount::float);        
 		return next recToReturn;
 	END LOOP;
 END;

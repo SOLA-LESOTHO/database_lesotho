@@ -104,7 +104,7 @@ SELECT get_translation(req.display_value, null) AS req_type,
    FROM  application.request_type req, 
 	 application.request_category_type cat
    WHERE req.status = 'c'
-   AND   cat.code = req.request_category_code	AND req.request_category_code = $3				 
+   AND   cat.code = req.request_category_code AND  req.request_category_code = $3
    ORDER BY group_idx, req_type;
 END; $BODY$
   LANGUAGE plpgsql VOLATILE
