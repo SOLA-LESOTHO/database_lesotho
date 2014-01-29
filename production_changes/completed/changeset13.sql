@@ -112,4 +112,3 @@ END; $BODY$
   ROWS 1000;
 
 
-select * from application.get_work_statistics('2013-01-01', '2013-12-11')
