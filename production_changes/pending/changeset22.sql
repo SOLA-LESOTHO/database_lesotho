@@ -38,7 +38,7 @@ BEGIN
 	AND ser.lodging_datetime BETWEEN to_date('''|| $1 ||''',''yyyy-mm-dd'')  and to_date('''|| $2 ||''',''yyyy-mm-dd'')
 	GROUP BY nt.request_type)
 	--standard deviation is a measure of the average distance of the values in the data set from their mean
-	SELECT request_type, service_count, total_time, round(total_time/service_count::float) AS average_time, frequent_day, round(stddev) as stddev, minimum, maximum,
+	SELECT request_type, service_count, total_time, round(total_time/service_count::float)::float AS average_time, frequent_day, round(stddev) as stddev, minimum, maximum,
 	 (maximum - minimum) as rng
 	FROM results_table order by request_type';
 			
@@ -67,7 +67,7 @@ ALTER FUNCTION application.getresponsetime(character varying, character varying,
   OWNER TO postgres;
 
 
-/*select * from application.getResponseTime('2013-01-09' ,'2014-01-24')
+/*select * from application.getResponseTime('2013-01-09' ,'2014-01-24', 'registrationServices')
         AS ResponseTimeReport(request_type varchar, service_count integer, total_time integer, average_time float, frequent_day integer, std_deviation integer
 	    ,min_days integer, max_days integer, rng integer);
 
