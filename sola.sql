@@ -3324,10 +3324,10 @@ CREATE TABLE application.application(
     action_code varchar(20) NOT NULL DEFAULT ('lodge'),
     action_notes varchar(8000),
     status_code varchar(20) NOT NULL DEFAULT ('lodged'),
+    stage_code varchar(20) NOT NULL,
     receipt_reference varchar(100),
     receipt_date date,
     collection_date date,
-    stage_code varchar(20) NOT NULL,
     rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
     rowversion integer NOT NULL DEFAULT (0),
     change_action char(1) NOT NULL DEFAULT ('i'),
@@ -3386,10 +3386,10 @@ CREATE TABLE application.application_historic
     action_code varchar(20),
     action_notes varchar(8000),
     status_code varchar(20),
+    stage_code varchar(20),
     receipt_reference varchar(100),
     receipt_date date,
     collection_date date,
-    stage_code varchar(20),
     rowidentifier varchar(40),
     rowversion integer,
     change_action char(1),
@@ -7818,204 +7818,6 @@ insert into administrative.other_authorities(code, display_value, description, s
 
 
 
---Table cadastre.cadastre_object2 ----
-DROP TABLE IF EXISTS cadastre.cadastre_object2 CASCADE;
-CREATE TABLE cadastre.cadastre_object2(
-    id varchar(40) NOT NULL,
-    type_code varchar(20) NOT NULL DEFAULT ('parcel'),
-    building_unit_type_code varchar(20),
-    approval_datetime timestamp,
-    historic_datetime timestamp,
-    source_reference varchar(100),
-    name_firstpart varchar(20) NOT NULL,
-    name_lastpart varchar(50) NOT NULL,
-    status_code varchar(20) NOT NULL DEFAULT ('pending'),
-    geom_polygon GEOMETRY
-        CONSTRAINT enforce_dims_geom_polygon CHECK (st_ndims(geom_polygon) = 2),
-        CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) = 2193),
-        CONSTRAINT enforce_valid_geom_polygon CHECK (st_isvalid(geom_polygon)),
-        CONSTRAINT enforce_geotype_geom_polygon CHECK (geometrytype(geom_polygon) = 'POLYGON'::text OR geom_polygon IS NULL),
-    transaction_id varchar(40) NOT NULL,
-    land_use_code varchar(255) DEFAULT ('residential'),
-    rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
-    rowversion integer NOT NULL DEFAULT (0),
-    change_action char(1) NOT NULL DEFAULT ('i'),
-    change_user varchar(50),
-    change_time timestamp NOT NULL DEFAULT (now()),
-
-    -- Internal constraints
-    
-    CONSTRAINT cadastre_object2_name UNIQUE (),
-    CONSTRAINT cadastre_object2_pkey PRIMARY KEY (id)
-);
-
-
-
--- Index cadastre_object2_index_on_geom_polygon  --
-CREATE INDEX cadastre_object2_index_on_geom_polygon ON cadastre.cadastre_object2 using gist(geom_polygon);
-    
--- Index cadastre_object2_index_on_rowidentifier  --
-CREATE INDEX cadastre_object2_index_on_rowidentifier ON cadastre.cadastre_object2 (rowidentifier);
-    
-
-comment on table cadastre.cadastre_object2 is 'It is a specialisation of spatial_unit. Cadastre objects are targeted from cadastre change and redefine cadastre processes.';
-    
-DROP TRIGGER IF EXISTS __track_changes ON cadastre.cadastre_object2 CASCADE;
-CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
-   ON cadastre.cadastre_object2 FOR EACH ROW
-   EXECUTE PROCEDURE f_for_trg_track_changes();
-    
-
-----Table cadastre.cadastre_object2_historic used for the history of data of table cadastre.cadastre_object2 ---
-DROP TABLE IF EXISTS cadastre.cadastre_object2_historic CASCADE;
-CREATE TABLE cadastre.cadastre_object2_historic
-(
-    id varchar(40),
-    type_code varchar(20),
-    building_unit_type_code varchar(20),
-    approval_datetime timestamp,
-    historic_datetime timestamp,
-    source_reference varchar(100),
-    name_firstpart varchar(20),
-    name_lastpart varchar(50),
-    status_code varchar(20),
-    geom_polygon GEOMETRY
-        CONSTRAINT enforce_dims_geom_polygon CHECK (st_ndims(geom_polygon) = 2),
-        CONSTRAINT enforce_srid_geom_polygon CHECK (st_srid(geom_polygon) = 2193),
-        CONSTRAINT enforce_valid_geom_polygon CHECK (st_isvalid(geom_polygon)),
-        CONSTRAINT enforce_geotype_geom_polygon CHECK (geometrytype(geom_polygon) = 'POLYGON'::text OR geom_polygon IS NULL),
-    transaction_id varchar(40),
-    land_use_code varchar(255),
-    rowidentifier varchar(40),
-    rowversion integer,
-    change_action char(1),
-    change_user varchar(50),
-    change_time timestamp,
-    change_time_valid_until TIMESTAMP NOT NULL default NOW()
-);
-
-
--- Index cadastre_object2_historic_index_on_geom_polygon  --
-CREATE INDEX cadastre_object2_historic_index_on_geom_polygon ON cadastre.cadastre_object2_historic using gist(geom_polygon);
-    
--- Index cadastre_object2_historic_index_on_rowidentifier  --
-CREATE INDEX cadastre_object2_historic_index_on_rowidentifier ON cadastre.cadastre_object2_historic (rowidentifier);
-    
-
-DROP TRIGGER IF EXISTS __track_history ON cadastre.cadastre_object2 CASCADE;
-CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
-   ON cadastre.cadastre_object2 FOR EACH ROW
-   EXECUTE PROCEDURE f_for_trg_track_history();
-    
---Table application.application2 ----
-DROP TABLE IF EXISTS application.application2 CASCADE;
-CREATE TABLE application.application2(
-    id varchar(40) NOT NULL,
-    nr varchar(15) NOT NULL,
-    agent_id varchar(40),
-    contact_person_id varchar(40) NOT NULL,
-    lodging_datetime timestamp NOT NULL DEFAULT (now()),
-    expected_completion_date date NOT NULL DEFAULT (now()),
-    assignee_id varchar(40),
-    assigned_datetime timestamp,
-    location GEOMETRY
-        CONSTRAINT enforce_dims_location CHECK (st_ndims(location) = 2),
-        CONSTRAINT enforce_srid_location CHECK (st_srid(location) = 2193),
-        CONSTRAINT enforce_valid_location CHECK (st_isvalid(location)),
-        CONSTRAINT enforce_geotype_location CHECK (geometrytype(location) = 'MULTIPOINT'::text OR location IS NULL),
-    services_fee numeric(20, 2) NOT NULL DEFAULT (0),
-    tax numeric(20, 2) NOT NULL DEFAULT (0),
-    total_fee numeric(20, 2) NOT NULL DEFAULT (0),
-    total_amount_paid numeric(20, 2) NOT NULL DEFAULT (0),
-    fee_paid bool NOT NULL DEFAULT (false),
-    action_code varchar(20) NOT NULL DEFAULT ('lodge'),
-    action_notes varchar(255),
-    status_code varchar(20) NOT NULL DEFAULT ('lodged'),
-    receipt_reference varchar(100),
-    rowidentifier varchar(40) NOT NULL DEFAULT (uuid_generate_v1()),
-    rowversion integer NOT NULL DEFAULT (0),
-    change_action char(1) NOT NULL DEFAULT ('i'),
-    change_user varchar(50),
-    change_time timestamp NOT NULL DEFAULT (now()),
-
-    -- Internal constraints
-    
-    CONSTRAINT application2_check_assigned CHECK ((assignee_id is null and assigned_datetime is null) or (assignee_id is not null and assigned_datetime is not null)),
-    CONSTRAINT application2_pkey PRIMARY KEY (id)
-);
-
-
-
--- Index application2_index_on_location  --
-CREATE INDEX application2_index_on_location ON application.application2 using gist(location);
-    
--- Index application2_index_on_rowidentifier  --
-CREATE INDEX application2_index_on_rowidentifier ON application.application2 (rowidentifier);
-    
-
-comment on table application.application2 is 'An application is a bundle of services that a client or customer wants from the registration office.
-LADM Reference Object
-FLOSS SOLA Extension
-LADM Definition
-Not Applicable';
-    
-DROP TRIGGER IF EXISTS __track_changes ON application.application2 CASCADE;
-CREATE TRIGGER __track_changes BEFORE UPDATE OR INSERT
-   ON application.application2 FOR EACH ROW
-   EXECUTE PROCEDURE f_for_trg_track_changes();
-    
-
-----Table application.application2_historic used for the history of data of table application.application2 ---
-DROP TABLE IF EXISTS application.application2_historic CASCADE;
-CREATE TABLE application.application2_historic
-(
-    id varchar(40),
-    nr varchar(15),
-    agent_id varchar(40),
-    contact_person_id varchar(40),
-    lodging_datetime timestamp,
-    expected_completion_date date,
-    assignee_id varchar(40),
-    assigned_datetime timestamp,
-    location GEOMETRY
-        CONSTRAINT enforce_dims_location CHECK (st_ndims(location) = 2),
-        CONSTRAINT enforce_srid_location CHECK (st_srid(location) = 2193),
-        CONSTRAINT enforce_valid_location CHECK (st_isvalid(location)),
-        CONSTRAINT enforce_geotype_location CHECK (geometrytype(location) = 'MULTIPOINT'::text OR location IS NULL),
-    services_fee numeric(20, 2),
-    tax numeric(20, 2),
-    total_fee numeric(20, 2),
-    total_amount_paid numeric(20, 2),
-    fee_paid bool,
-    action_code varchar(20),
-    action_notes varchar(255),
-    status_code varchar(20),
-    receipt_reference varchar(100),
-    rowidentifier varchar(40),
-    rowversion integer,
-    change_action char(1),
-    change_user varchar(50),
-    change_time timestamp,
-    change_time_valid_until TIMESTAMP NOT NULL default NOW()
-);
-
-
--- Index application2_historic_index_on_location  --
-CREATE INDEX application2_historic_index_on_location ON application.application2_historic using gist(location);
-    
--- Index application2_historic_index_on_rowidentifier  --
-CREATE INDEX application2_historic_index_on_rowidentifier ON application.application2_historic (rowidentifier);
-    
-
-DROP TRIGGER IF EXISTS __track_history ON application.application2 CASCADE;
-CREATE TRIGGER __track_history AFTER UPDATE OR DELETE
-   ON application.application2 FOR EACH ROW
-   EXECUTE PROCEDURE f_for_trg_track_history();
-    
- -- Extra script for the table application.application2 -- 
-CREATE INDEX application_historic_id_ind ON application.application_historic (id);
-
-
 --Table administrative.dispute_action ----
 DROP TABLE IF EXISTS administrative.dispute_action CASCADE;
 CREATE TABLE administrative.dispute_action(
@@ -8676,22 +8478,71 @@ CREATE TABLE application.application_stage_type(
 comment on table application.application_stage_type is '';
     
  -- Data for the table application.application_stage_type -- 
-insert into application.application_stage_type(code, display_value, status, description) values('newApp', 'New applicatoin lodged', 'c', 'Application awaiting approval for processing');
+insert into application.application_stage_type(code, display_value, status, description) values('newApp', 'New application lodged', 'c', 'Application awaiting approval for processing');
 insert into application.application_stage_type(code, display_value, status, description) values('appApprove', 'Application awaiting approval', 'c', 'All services in the application have been completed and the application can now be approved');
 insert into application.application_stage_type(code, display_value, status, description) values('appProcess', 'Application to be processed', 'c', 'The application has been lodged and is ready to be processed');
-insert into application.application_stage_type(code, display_value, status, description) values('appInfoWrong', 'Application sent back to correct input information', 'c', 'Processed application has incomplete or incorrect information and cannot be approved');
+insert into application.application_stage_type(code, display_value, status, description) values('appInfoIncorrect', 'Application sent back to correct input information', 'c', 'Processed application has incomplete or incorrect information and cannot be approved');
 insert into application.application_stage_type(code, display_value, status, description) values('missingPlot', 'Application sent back because of missing plot', 'c', 'Application cannot be processed because of missing plot. Awaiting response from Survey and Mapping department');
 insert into application.application_stage_type(code, display_value, status, description) values('areaMismatch', 'Application sent back to correct plot area mismatch', 'c', 'Application cannot be processed because the cadastral area in the system is different from the area on the S10 Form');
-insert into application.application_stage_type(code, display_value, status, description) values('custCollect', 'Customer Services to enter collection details', 'c', 'Customer Services enters details of the person who collects the completed, approved application');
+insert into application.application_stage_type(code, display_value, status, description) values('custCollect', 'Enter collection details', 'c', 'Enter details of the person who collects the completed, approved application');
 insert into application.application_stage_type(code, display_value, status, description) values('callCustomer', 'Customer Services to call customer for signature', 'c', 'The customer is called to sign the draft');
 insert into application.application_stage_type(code, display_value, status, description) values('custSign', 'Customer to sign draft', 'c', 'Lease draft awaits customer’s signature');
 insert into application.application_stage_type(code, display_value, status, description) values('executiveSign', 'Executive Office to sign lease draft', 'c', 'The lease draft shall be signed by the Director General');
 insert into application.application_stage_type(code, display_value, status, description) values('bindDraft', 'Leasing Services to bind lease draft', 'c', 'The lease draft shall now be bound and made ready for registration');
 insert into application.application_stage_type(code, display_value, status, description) values('checkDraft', 'Director of Lease Services to check draft', 'c', 'The signed lease draft is ready to be checked and the application approved');
 insert into application.application_stage_type(code, display_value, status, description) values('logDraft', 'Leasing Services to Log ready drafts', 'c', 'The application is ready to be logged as completed and approved for registration');
+insert into application.application_stage_type(code, display_value, status, description) values('appRegister', 'Application ready for registration', 'c', 'The lease application is ready to be registered');
+insert into application.application_stage_type(code, display_value, status, description) values('appArchive', 'Application ready for archiving', 'c', 'The application is ready to be archived');
 
 
 
+
+--Table system.appstage_appgroup ----
+DROP TABLE IF EXISTS system.appstage_appgroup CASCADE;
+CREATE TABLE system.appstage_appgroup(
+    appstage_code varchar(20) NOT NULL,
+    appgroup_id varchar(40) NOT NULL,
+
+    -- Internal constraints
+    
+    CONSTRAINT appstage_appgroup_pkey PRIMARY KEY (appstage_code,appgroup_id)
+);
+
+
+comment on table system.appstage_appgroup is '';
+ 
+ -- Data for the table system.appstage_appgroup -- 
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('newApp', 'cust-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('newApp', 'deeds-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('newApp', 'surveymapp-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appApprove', 'deeds-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appApprove', 'lease-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appApprove', 'surveymapp-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appApprove', 'manager-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appProcess', 'deeds-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appProcess', 'lease-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appProcess', 'lease-correct-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appProcess', 'surveymapp-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appArchive', 'cust-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appArchive', 'deeds-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appArchive', 'lease-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appArchive', 'surveymapp-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appInfoIncorrect', 'cust-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appInfoIncorrect', 'deeds-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appInfoIncorrect', 'lease-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appInfoIncorrect', 'surveymapp-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('missingPlot', 'lease-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('areaMismatch', 'lease-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('custCollect', 'cust-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('custCollect', 'deeds-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('callCustomer', 'cust-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('custSign', 'cust-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('executiveSign', 'dg-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('bindDraft', 'lease-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('checkDraft', 'lease-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('logDraft', 'lease-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appRegister', 'deeds-reps-id');
+ 
 
 ALTER TABLE source.source ADD CONSTRAINT source_archive_id_fk0 
             FOREIGN KEY (archive_id) REFERENCES source.archive(id) ON UPDATE CASCADE ON DELETE RESTRICT;
@@ -9292,6 +9143,14 @@ CREATE INDEX consent_party_consent_id_fk148_ind ON administrative.consent_party 
 ALTER TABLE application.application ADD CONSTRAINT application_stage_code_fk149 
             FOREIGN KEY (stage_code) REFERENCES application.application_stage_type(code) ON UPDATE CASCADE ON DELETE RESTRICT;
 CREATE INDEX application_stage_code_fk149_ind ON application.application (stage_code);
+
+ALTER TABLE system.appstage_appgroup ADD CONSTRAINT appstage_appgroup_appstage_code_fk150 
+            FOREIGN KEY (appstage_code) REFERENCES application.application_stage_type(code) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX appstage_appgroup_appstage_code_fk150_ind ON system.appstage_appgroup (appstage_code);
+
+ALTER TABLE system.appstage_appgroup ADD CONSTRAINT appstage_appgroup_appgroup_id_fk151 
+            FOREIGN KEY (appgroup_id) REFERENCES system.appgroup(id) ON UPDATE CASCADE ON DELETE CASCADE;
+CREATE INDEX appstage_appgroup_appgroup_id_fk151_ind ON system.appstage_appgroup (appgroup_id);
 --Generate triggers for tables --
 -- triggers for table source.source -- 
 
@@ -9481,80 +9340,6 @@ DROP TRIGGER IF EXISTS trg_geommodify ON cadastre.cadastre_object CASCADE;
 CREATE TRIGGER trg_geommodify after insert or update of geom_polygon
    ON cadastre.cadastre_object FOR EACH ROW
    EXECUTE PROCEDURE cadastre.f_for_tbl_cadastre_object_trg_geommodify();
-    
--- triggers for table cadastre.cadastre_object2 -- 
-
- 
-
-CREATE OR REPLACE FUNCTION cadastre.f_for_tbl_cadastre_object2_trg_remove() RETURNS TRIGGER 
-AS $$
-BEGIN
-  delete from cadastre.spatial_unit where id=old.id;
-  return old;
-END;
-$$ LANGUAGE plpgsql;
-DROP TRIGGER IF EXISTS trg_remove ON cadastre.cadastre_object2 CASCADE;
-CREATE TRIGGER trg_remove before delete
-   ON cadastre.cadastre_object2 FOR EACH ROW
-   EXECUTE PROCEDURE cadastre.f_for_tbl_cadastre_object2_trg_remove();
-    
-
-CREATE OR REPLACE FUNCTION cadastre.f_for_tbl_cadastre_object2_trg_new() RETURNS TRIGGER 
-AS $$
-BEGIN
-  if (select count(*)=0 from cadastre.spatial_unit where id=new.id) then
-    insert into cadastre.spatial_unit(id, rowidentifier, level_id, change_user) 
-    values(new.id, new.rowidentifier, 'cadastreObject', new.change_user);
-  end if;
-  return new;
-END;
-
-$$ LANGUAGE plpgsql;
-DROP TRIGGER IF EXISTS trg_new ON cadastre.cadastre_object2 CASCADE;
-CREATE TRIGGER trg_new before insert
-   ON cadastre.cadastre_object2 FOR EACH ROW
-   EXECUTE PROCEDURE cadastre.f_for_tbl_cadastre_object2_trg_new();
-    
-
-CREATE OR REPLACE FUNCTION cadastre.f_for_tbl_cadastre_object2_trg_geommodify() RETURNS TRIGGER 
-AS $$
-declare
-  rec record;
-  rec_snap record;
-  tolerance float;
-  modified_geom geometry;
-begin
-
-  if new.status_code != 'current' then
-    return new;
-  end if;
-
-  if new.type_code not in (select code from cadastre.cadastre_object_type where in_topology) then
-    return new;
-  end if;
-
-  tolerance = coalesce(system.get_setting('map-tolerance')::double precision, 0.01);
-  for rec in select co.id, co.geom_polygon 
-                 from cadastre.cadastre_object co 
-                 where  co.id != new.id and co.type_code = new.type_code and co.status_code = 'current'
-                     and co.geom_polygon is not null 
-                     and new.geom_polygon && co.geom_polygon 
-                     and st_dwithin(new.geom_polygon, co.geom_polygon, tolerance)
-  loop
-    modified_geom = cadastre.add_topo_points(new.geom_polygon, rec.geom_polygon);
-    if not st_equals(modified_geom, rec.geom_polygon) then
-      update cadastre.cadastre_object 
-        set geom_polygon= modified_geom, change_user= new.change_user 
-      where id= rec.id;
-    end if;
-  end loop;
-  return new;
-end;
-$$ LANGUAGE plpgsql;
-DROP TRIGGER IF EXISTS trg_geommodify ON cadastre.cadastre_object2 CASCADE;
-CREATE TRIGGER trg_geommodify after insert or update of geom_polygon
-   ON cadastre.cadastre_object2 FOR EACH ROW
-   EXECUTE PROCEDURE cadastre.f_for_tbl_cadastre_object2_trg_geommodify();
     
 
 --Extra modifications added to the script that cannot be generated --
