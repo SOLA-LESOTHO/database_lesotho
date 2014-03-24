@@ -3324,7 +3324,7 @@ CREATE TABLE application.application(
     action_code varchar(20) NOT NULL DEFAULT ('lodge'),
     action_notes varchar(8000),
     status_code varchar(20) NOT NULL DEFAULT ('lodged'),
-    stage_code varchar(20) NOT NULL,
+    stage_code varchar(20),
     receipt_reference varchar(100),
     receipt_date date,
     collection_date date,
