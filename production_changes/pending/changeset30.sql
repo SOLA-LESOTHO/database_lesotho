@@ -85,35 +85,51 @@ CREATE INDEX appstage_appgroup_appstage_code_fk141_ind
 
  -- Data for the table system.appstage_appgroup -- 
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('newApp', 'cust-reps-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('newApp', 'deeds-reps-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('newApp', 'surveymapp-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appApprove', 'deeds-reps-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appApprove', 'lease-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appApprove', 'surveymapp-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appApprove', 'manager-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appProcess', 'deeds-reps-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appProcess', 'lease-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appProcess', 'lease-correct-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appProcess', 'surveymapp-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appArchive', 'cust-reps-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appArchive', 'deeds-reps-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appArchive', 'lease-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appArchive', 'surveymapp-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('custSign', 'cust-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('custCollect', 'cust-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('custCollect', 'cust-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('callCustomer', 'cust-reps-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appInfoIncorrect', 'cust-reps-id');
+
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('newApp', 'deeds-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('custCollect', 'deeds-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appProcess', 'deeds-reps-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appApprove', 'deeds-reps-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appInfoIncorrect', 'deeds-reps-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appInfoIncorrect', 'lease-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appRegister', 'deeds-reps-id');
+
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('newApp', 'surveymapp-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appApprove', 'surveymapp-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appProcess', 'surveymapp-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appArchive', 'surveymapp-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appInfoIncorrect', 'surveymapp-id');
+
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appApprove', 'lease-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appProcess', 'lease-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appArchive', 'lease-id');
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appInfoIncorrect', 'lease-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('missingPlot', 'lease-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('areaMismatch', 'lease-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('custCollect', 'cust-reps-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('custCollect', 'deeds-reps-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('callCustomer', 'cust-reps-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('custSign', 'cust-reps-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('executiveSign', 'dg-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('bindDraft', 'lease-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('checkDraft', 'lease-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('logDraft', 'lease-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appRegister', 'deeds-reps-id');
+
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appApprove', 'manager-id');
+
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appProcess', 'lease-correct-id');
+
+
+
+
+
+
+
+
+
+
+
+INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('executiveSign', 'dg-id');
 
 
 
