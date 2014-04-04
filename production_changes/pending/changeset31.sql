@@ -16,22 +16,23 @@ if $3 is not null then
 return query
 
 	WITH app_lodged AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'newApp' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'newApp'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
+	
 	app_to_be_approved AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'appApprove' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'appApprove'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
@@ -40,158 +41,154 @@ return query
 
 	
 	to_be_archived AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'appArchive' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'appArchive'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
-
 
 	customer_to_sign AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'custSign' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'custSign'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
-
 
 	collected_by_customer AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'custCollect' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'custCollect'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
-
 
 	call_customer AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'callCustomer' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'callCustomer'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
-
 	queried AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'appInfoIncorrect' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'appInfoIncorrect'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
 	to_be_processed AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'appProcess' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'appProcess' and app.rowversion > 2
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
 	to_be_registered AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'appRegister' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'appRegister'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
 	missing_plot AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'missingPlot' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'missingPlot'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
 	area_mismatch AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'areaMismatch' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'areaMismatch'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
 	executive_to_sign AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'appProcess' 
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'appProcesss'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
 	bind_draft AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'bindDraft' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'bindDraft'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
 	check_draft AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'checkDraft	' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'checkDraft'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
 	log_draft AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'logDraft' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'logDraft'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
 	exec_to_sign AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
+	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'executiveSign' and ser.request_type_code = $3
+	from application.service as ser 
+	inner join application.application as app on ser.application_id = app.id 
+	where app.status_code = 'executiveSign'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
@@ -245,7 +242,7 @@ return query
 	where to_be_registered.display_value = rt.display_value)::int as to_be_registered
 	
 	from application.request_type as rt, application.service as ser 
-	where rt.code = ser.request_type_code order by rt.display_value;
+	where rt.code = ser.request_type_code and rt.request_category_code = $3 order by rt.display_value;
 
 else 
 	return query
@@ -492,4 +489,4 @@ $BODY$
 ALTER FUNCTION application.application_stages_report(date, date, varchar)
   OWNER TO postgres;
 
- /*select * from application.application_stages_report('2013-08-01', '2014-03-25','leaseServices')*/
+ /*select * from application.application_stages_report('2013-08-01', '2014-03-25', 'leaseServices')*/
