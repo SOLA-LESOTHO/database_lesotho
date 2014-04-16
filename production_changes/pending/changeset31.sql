@@ -3,7 +3,7 @@ DROP FUNCTION application.application_stages_report(date, date, varchar);
 
 CREATE OR REPLACE FUNCTION application.application_stages_report(IN date, IN date, varchar)
   RETURNS TABLE(application varchar, app_lodged integer, to_be_processed integer, missing_plot integer, area_mismatch integer, queried integer, bind_draft integer, check_draft integer, log_draft integer,
-executive_to_sign integer, app_to_be_approved integer, customer_to_sign integer, to_be_archived integer, call_customer integer, collected_by_customer integer, to_be_registered integer
+executive_to_sign integer, app_to_be_approved integer, customer_to_sign integer, to_be_archived integer, collected_by_customer integer, to_be_registered integer
 ) AS
 $BODY$ 
 DECLARE
@@ -68,17 +68,6 @@ return query
 	from application.service as ser 
 	inner join application.application as app on ser.application_id = app.id 
 	where app.status_code = 'custCollect'
-	and app.change_time BETWEEN $1 and $2 
-	order by ser.request_type_code)
-	select request.display_value, count(*) as application_count
-	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
-
-	call_customer AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, ser.status_code service_status, app.status_code application_status,
-	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service as ser 
-	inner join application.application as app on ser.application_id = app.id 
-	where app.status_code = 'callCustomer'
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
@@ -247,7 +236,7 @@ return query
 else 
 	return query
 
-	WITH app_lodged AS (with requests as (
+	WITH lodged AS (with requests as (
 	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
 	from application.service ser, application.application app, application.request_type req_type
@@ -258,7 +247,7 @@ else
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
-	app_to_be_approved AS (with requests as (
+	approved AS (with requests as (
 	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
 	from application.service ser, application.application app, application.request_type req_type
@@ -271,7 +260,7 @@ else
 
 
 	
-	to_be_archived AS (with requests as (
+	archived AS (with requests as (
 	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
 	from application.service ser, application.application app, application.request_type req_type
@@ -283,7 +272,7 @@ else
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
 
-	customer_to_sign AS (with requests as (
+	customer_signed AS (with requests as (
 	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
 	from application.service ser, application.application app, application.request_type req_type
@@ -295,7 +284,7 @@ else
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
 
-	collected_by_customer AS (with requests as (
+	collected AS (with requests as (
 	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
 	from application.service ser, application.application app, application.request_type req_type
@@ -330,7 +319,7 @@ else
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
-	to_be_processed AS (with requests as (
+	processed AS (with requests as (
 	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
 	from application.service ser, application.application app, application.request_type req_type
@@ -341,7 +330,7 @@ else
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
-	executive_to_sign AS (with requests as (
+	executive_signed AS (with requests as (
 	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
 	from application.service ser, application.application app, application.request_type req_type
@@ -352,7 +341,7 @@ else
 	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
 
-	to_be_registered AS (with requests as (
+	registered AS (with requests as (
 	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
 	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
 	from application.service ser, application.application app, application.request_type req_type
@@ -383,53 +372,9 @@ else
 	and app.change_time BETWEEN $1 and $2 
 	order by ser.request_type_code)
 	select request.display_value, count(*) as application_count
-	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
-
-	bind_draft AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
-	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'bindDraft' 
-	and app.change_time BETWEEN $1 and $2 
-	order by ser.request_type_code)
-	select request.display_value, count(*) as application_count
-	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
-
-	check_draft AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
-	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'checkDraft' 
-	and app.change_time BETWEEN $1 and $2 
-	order by ser.request_type_code)
-	select request.display_value, count(*) as application_count
-	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
-
-	log_draft AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
-	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'logDraft' 
-	and app.change_time BETWEEN $1 and $2 
-	order by ser.request_type_code)
-	select request.display_value, count(*) as application_count
-	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value),
-
-	exec_to_sign AS (with requests as (
-	select ser.id service_id, application_id, ser.request_type_code request_type, request_category_code category, ser.status_code service_status, app.status_code application_status,
-	ser.change_user service_user, app.change_user app_user, app.stage_code app_stage, app.lodging_datetime, app.change_time
-	from application.service ser, application.application app, application.request_type req_type
-	where ser.application_id = app.id and ser.request_type_code = req_type.code
-	and app.stage_code = 'executiveSign' 
-	and app.change_time BETWEEN $1 and $2 
-	order by ser.request_type_code)
-	select request.display_value, count(*) as application_count
 	from requests inner join application.request_type as request on requests.request_type = request.code group by request_type ,request.display_value)
-	
 
+	
 	select distinct rt.display_value, (select application_count
 	from app_lodged 
 	where app_lodged.display_value = rt.display_value)::int as lodged,
@@ -466,9 +411,6 @@ else
 	(select application_count
 	from to_be_archived 
 	where to_be_archived.display_value = rt.display_value)::int as to_be_archived,
-	(select application_count
-	from call_customer
-	where call_customer.display_value = rt.display_value)::int as call_customer,
 	(select application_count
 	from collected_by_customer
 	where collected_by_customer.display_value = rt.display_value)::int as collected_by_customer,
