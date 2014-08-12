@@ -29,10 +29,6 @@ insert into application.application_stage_type(code, display_value, status) valu
 insert into application.application_stage_type(code, display_value, status) values('executiveSign', 'Executive office to sign lease draft', 'c');
 insert into application.application_stage_type(code, display_value, status) values('registrationProcess', 'Registration Services to process application', 'c');
 
-ALTER table application.application
-ADD COLUMN stage_code CHARACTER VARYING (20);
 
-ALTER TABLE application.application_historic
-ADD COLUMN stage_code CHARACTER VARYING (20);
 
 

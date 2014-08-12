@@ -41,7 +41,7 @@ WHERE br_id = 'generate-notation-reference-nr';
 
 -- Add setting that can be used to enable the SLR Database connection
 INSERT INTO system.setting(name, vl, active, description)
-SELECT 'slr-db-connection', 'OFF', TRUE, 
+SELECT 'slr-db-connection', 'ON', TRUE, 
        'Indicates if SOLA has a valid connection to the SLR Lesotho database. To enable, set to ON'
 WHERE NOT EXISTS (SELECT name FROM system.setting WHERE name = 'slr-db-connection'); 
 
@@ -62,7 +62,7 @@ INSERT INTO application.request_type(code, request_category_code, display_value,
             status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
             nr_properties_required, notation_template, rrr_type_code, type_action_code, 
             description)
-    VALUES ('grantSlrLease','registrationServices','Grant SLR Lease','x',5,0,0.00,0.00,0,
+    VALUES ('grantSlrLease','registrationServices','Grant SLR Lease','c',5,0,0.00,0.00,0,
 	'','lease','vary', 'Allows pending leases migrated from the SLR database to be granted/registered in SOLA');
 
 INSERT INTO system.approle (code, display_value, status, description) 

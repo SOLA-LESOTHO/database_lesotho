@@ -168,7 +168,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
 
- select * from application.customer_services_report( '2014-01-02', '2014-03-21') ;
+ /*select * from application.customer_services_report( '2014-01-02', '2014-03-21') ;*/
 
 
   /*select * from application.service ser, application.application app where ser.application_id = app.id and ser.request_type_code = 'consentApplication' 

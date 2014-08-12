@@ -45,4 +45,4 @@ $BODY$
   COST 100
   ROWS 10000;
 
-select * from administrative.registration_report('2013-02-11','2014-02-27') order by service_name
+/*select * from administrative.registration_report('2013-02-11','2014-02-27') order by service_name*/

@@ -108,7 +108,7 @@ END;
 $BODY$
   LANGUAGE plpgsql VOLATILE;
 
- select * from application.lease_services_report( '2014-01-02', '2014-03-19') 
+ /*select * from application.lease_services_report( '2014-01-02', '2014-03-19')*/
 
 
 

@@ -42,7 +42,7 @@ insert into application.application_stage_type(code, display_value, status, desc
 
 -- Table: system.appstage_appgroup
 
--- DROP TABLE system.appstage_appgroup;
+DROP TABLE IF EXISTS system.appstage_appgroup;
 
 CREATE TABLE system.appstage_appgroup
 (
@@ -66,7 +66,7 @@ COMMENT ON TABLE system.appstage_appgroup
 
 -- Index: system.appstage_appgroup_appgroup_id_fk142_ind
 
--- DROP INDEX system.appstage_appgroup_appgroup_id_fk142_ind;
+DROP INDEX IF EXISTS system.appstage_appgroup_appgroup_id_fk142_ind;
 
 CREATE INDEX appstage_appgroup_appgroup_id_fk142_ind
   ON system.appstage_appgroup
@@ -75,7 +75,7 @@ CREATE INDEX appstage_appgroup_appgroup_id_fk142_ind
 
 -- Index: system.appstage_appgroup_appstage_code_fk141_ind
 
--- DROP INDEX system.appstage_appgroup_appstage_code_fk141_ind;
+DROP INDEX IF EXISTS system.appstage_appgroup_appstage_code_fk141_ind;
 
 CREATE INDEX appstage_appgroup_appstage_code_fk141_ind
   ON system.appstage_appgroup
@@ -87,7 +87,6 @@ CREATE INDEX appstage_appgroup_appstage_code_fk141_ind
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('newApp', 'cust-reps-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appArchive', 'cust-reps-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('custSign', 'cust-reps-id');
-INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('custCollect', 'cust-reps-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('custCollect', 'cust-reps-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('callCustomer', 'cust-reps-id');
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appInfoIncorrect', 'cust-reps-id');
@@ -118,17 +117,6 @@ INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('logDra
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appApprove', 'manager-id');
 
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('appProcess', 'lease-correct-id');
-
-
-
-
-
-
-
-
-
-
-
 INSERT INTO system.appstage_appgroup(appstage_code, appgroup_id) VALUES ('executiveSign', 'dg-id');
 
 
