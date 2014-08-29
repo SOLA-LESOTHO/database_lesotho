@@ -1,4 +1,4 @@
--- DROP TABLE administrative.transaction_type;
+﻿--DROP TABLE administrative.transaction_type;
 
 CREATE TABLE administrative.transaction_type
 (

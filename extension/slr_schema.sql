@@ -1,4 +1,4 @@
--- Creates the slr schema in the SOLA database that will be used to
+﻿-- Creates the slr schema in the SOLA database that will be used to
 -- migrate the SLR data into SOLA. Also applies a data fix to ensure
 -- all cadastre_object records have a matching cadastre.spatial_unit
 -- record. It appears the earlier migrations may have failed to 
@@ -58,6 +58,7 @@ WHERE NOT EXISTS (SELECT approle_code FROM system.approle_appgroup
 
 				  
 -- Add Service to support registration of pending SLR leases
+DELETE FROM application.request_type WHERE code LIKE 'grantSlrLease';
 INSERT INTO application.request_type(code, request_category_code, display_value, 
             status, nr_days_to_complete, base_fee, area_base_fee, value_base_fee, 
             nr_properties_required, notation_template, rrr_type_code, type_action_code, 
